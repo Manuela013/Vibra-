@@ -3227,6 +3227,1616 @@ renderProfile();
 renderReels();
 
 </script>
+/* =========================================================
+   VIBRA V3 - UPGRADE
+   Não substitui a V2.
+   Adiciona melhorias à estrutura existente.
+========================================================= */
 
+/* ---------------------------------------------------------
+   1. ESTADO DA V3
+--------------------------------------------------------- */
+
+let vibraV3 = {
+    replyTarget: null,
+    editingMessage: null,
+    recording: false,
+    recorder: null,
+    audioChunks: [],
+    chatTheme: localStorage.getItem("vibra_chat_theme") || "default",
+    nickname: localStorage.getItem("vibra_nickname") || "",
+    comments: JSON.parse(localStorage.getItem("vibra_comments") || "{}"),
+    reposts: JSON.parse(localStorage.getItem("vibra_reposts") || "[]"),
+    notifications: JSON.parse(
+        localStorage.getItem("vibra_notifications") || "[]"
+    )
+};
+
+
+/* ---------------------------------------------------------
+   2. MELHORIA VISUAL
+--------------------------------------------------------- */
+
+const v3Style = document.createElement("style");
+
+v3Style.textContent = `
+    .v3-action-sheet{
+        display:flex;
+        flex-direction:column;
+        gap:4px;
+        margin-top:15px;
+    }
+
+    .v3-action{
+        width:100%;
+        padding:15px;
+        background:transparent;
+        color:var(--text);
+        border-radius:12px;
+        text-align:left;
+        transition:.18s;
+    }
+
+    .v3-action:hover{
+        background:var(--surface-2);
+    }
+
+    .v3-danger{
+        color:#ed4956;
+    }
+
+    .v3-reply-preview{
+        display:none;
+        align-items:center;
+        gap:10px;
+        padding:9px 12px;
+        background:var(--surface-2);
+        border-top:1px solid var(--border);
+        font-size:12px;
+    }
+
+    .v3-reply-preview.active{
+        display:flex;
+    }
+
+    .v3-reply-preview-content{
+        flex:1;
+        overflow:hidden;
+    }
+
+    .v3-reply-preview-content strong{
+        display:block;
+        margin-bottom:2px;
+    }
+
+    .v3-reply-close{
+        background:transparent;
+        color:var(--muted);
+        font-size:18px;
+    }
+
+    .v3-message-meta{
+        display:flex;
+        align-items:center;
+        justify-content:flex-end;
+        gap:5px;
+        margin-top:3px;
+        font-size:9px;
+        opacity:.6;
+    }
+
+    .v3-edited{
+        font-size:9px;
+        opacity:.65;
+    }
+
+    .v3-audio-message{
+        display:flex;
+        align-items:center;
+        gap:9px;
+        min-width:170px;
+    }
+
+    .v3-audio-message audio{
+        max-width:180px;
+        height:32px;
+    }
+
+    .v3-recording{
+        color:#ed4956;
+        font-weight:700;
+        animation:v3Pulse 1s infinite;
+    }
+
+    @keyframes v3Pulse{
+        50%{opacity:.4}
+    }
+
+    .v3-chat-theme-default{
+        background:var(--bg);
+    }
+
+    .v3-chat-theme-night{
+        background:#080808!important;
+    }
+
+    .v3-chat-theme-lavender{
+        background:#f4f0ff!important;
+    }
+
+    .v3-chat-theme-ocean{
+        background:#eef8ff!important;
+    }
+
+    body.dark .v3-chat-theme-lavender{
+        background:#171321!important;
+    }
+
+    body.dark .v3-chat-theme-ocean{
+        background:#0d171d!important;
+    }
+
+    .v3-comment{
+        padding:12px 0;
+        border-bottom:1px solid var(--border);
+    }
+
+    .v3-comment-head{
+        display:flex;
+        gap:9px;
+        align-items:center;
+    }
+
+    .v3-comment-body{
+        margin:7px 0 0 43px;
+        line-height:1.45;
+    }
+
+    .v3-comment-actions{
+        margin-left:43px;
+        display:flex;
+        gap:15px;
+        margin-top:6px;
+    }
+
+    .v3-comment-actions button{
+        background:transparent;
+        color:var(--muted);
+        font-size:12px;
+    }
+
+    .v3-story-viewer{
+        position:fixed;
+        inset:0;
+        z-index:500;
+        background:#000;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        touch-action:none;
+    }
+
+    .v3-story-media{
+        max-width:100%;
+        max-height:100%;
+        object-fit:contain;
+    }
+
+    .v3-story-progress{
+        position:absolute;
+        top:12px;
+        left:12px;
+        right:12px;
+        height:3px;
+        background:rgba(255,255,255,.3);
+        border-radius:10px;
+        overflow:hidden;
+        z-index:2;
+    }
+
+    .v3-story-progress-bar{
+        height:100%;
+        width:0;
+        background:white;
+    }
+
+    .v3-story-close{
+        position:absolute;
+        top:22px;
+        right:18px;
+        width:40px;
+        height:40px;
+        border-radius:50%;
+        background:rgba(0,0,0,.45);
+        color:white;
+        font-size:22px;
+        z-index:3;
+    }
+
+    .v3-story-hold{
+        position:absolute;
+        inset:0;
+        z-index:1;
+    }
+
+    .v3-profile-empty{
+        grid-column:1/-1;
+        padding:50px 20px;
+        text-align:center;
+        color:var(--muted);
+    }
+
+    @media(max-width:650px){
+        .v3-audio-message audio{
+            max-width:145px;
+        }
+    }
+`;
+
+document.head.appendChild(v3Style);
+
+
+/* ---------------------------------------------------------
+   3. CHAT: ÁREA DE RESPOSTA
+--------------------------------------------------------- */
+
+const chatComposer = document.querySelector(".chat-composer");
+
+if(chatComposer && !document.getElementById("v3ReplyPreview")){
+
+    const replyPreview = document.createElement("div");
+
+    replyPreview.id = "v3ReplyPreview";
+    replyPreview.className = "v3-reply-preview";
+
+    replyPreview.innerHTML = `
+        <div class="v3-reply-preview-content">
+            <strong>Respondendo</strong>
+            <span id="v3ReplyText"></span>
+        </div>
+
+        <button
+            class="v3-reply-close"
+            onclick="cancelV3Reply()"
+        >
+            ×
+        </button>
+    `;
+
+    chatComposer.parentNode.insertBefore(
+        replyPreview,
+        chatComposer
+    );
+}
+
+
+/* ---------------------------------------------------------
+   4. RESPONDER MENSAGEM
+--------------------------------------------------------- */
+
+function startV3Reply(message){
+
+    vibraV3.replyTarget = message;
+
+    const preview =
+        document.getElementById("v3ReplyPreview");
+
+    const text =
+        document.getElementById("v3ReplyText");
+
+    if(preview && text){
+
+        text.textContent =
+            message.dataset.messageText ||
+            message.textContent;
+
+        preview.classList.add("active");
+    }
+
+    chatInput.focus();
+}
+
+function cancelV3Reply(){
+
+    vibraV3.replyTarget = null;
+
+    const preview =
+        document.getElementById("v3ReplyPreview");
+
+    if(preview){
+        preview.classList.remove("active");
+    }
+}
+
+
+/* ---------------------------------------------------------
+   5. EDITAR MENSAGEM
+--------------------------------------------------------- */
+
+function editV3Message(message){
+
+    const oldText =
+        message.dataset.messageText ||
+        message.textContent;
+
+    const newText =
+        prompt(
+            "Editar mensagem:",
+            oldText
+        );
+
+    if(newText === null) return;
+
+    const clean =
+        newText.trim();
+
+    if(!clean) return;
+
+    message.dataset.messageText = clean;
+
+    const textNode =
+        message.querySelector(".v3-message-text");
+
+    if(textNode){
+
+        textNode.textContent = clean;
+
+    }else{
+
+        message.textContent = clean;
+    }
+
+    message.dataset.edited = "true";
+
+    const meta =
+        message.querySelector(".v3-message-meta");
+
+    if(meta){
+
+        meta.innerHTML =
+            `<span class="v3-edited">editada</span>`;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   6. MENU DE MENSAGEM V3
+--------------------------------------------------------- */
+
+function showV3MessageMenu(message){
+
+    window.selectedMessage = message;
+
+    showModal(`
+        <h2>Mensagem</h2>
+
+        <div class="v3-action-sheet">
+
+            <button
+                class="v3-action"
+                onclick="
+                    startV3Reply(window.selectedMessage);
+                    closeModal();
+                "
+            >
+                ↩️ Responder
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    editV3Message(window.selectedMessage);
+                    closeModal();
+                "
+            >
+                ✏️ Editar
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    navigator.clipboard?.writeText(
+                        window.selectedMessage.dataset.messageText ||
+                        window.selectedMessage.textContent
+                    );
+                    closeModal();
+                "
+            >
+                📋 Copiar
+            </button>
+
+            <button
+                class="v3-action v3-danger"
+                onclick="
+                    window.selectedMessage.remove();
+                    closeModal();
+                "
+            >
+                🗑️ Excluir
+            </button>
+
+        </div>
+    `);
+}
+
+
+/* ---------------------------------------------------------
+   7. SUBSTITUI MENU ANTIGO
+--------------------------------------------------------- */
+
+window.showMessageMenu = showV3MessageMenu;
+
+
+/* ---------------------------------------------------------
+   8. ENVIO DE MENSAGEM MELHORADO
+--------------------------------------------------------- */
+
+const oldSendMessage = sendMessage;
+
+window.sendMessage = function(){
+
+    const text =
+        chatInput.value.trim();
+
+    if(!text) return;
+
+    const messages =
+        document.getElementById("messages");
+
+    const empty =
+        messages.querySelector(".empty");
+
+    if(empty) empty.remove();
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message me";
+
+    message.dataset.messageText =
+        text;
+
+    let replyHTML = "";
+
+    if(vibraV3.replyTarget){
+
+        const replyText =
+            vibraV3.replyTarget.dataset.messageText ||
+            vibraV3.replyTarget.textContent;
+
+        replyHTML = `
+            <div class="message reply">
+                ↩ ${escapeHTML(replyText)}
+            </div>
+        `;
+    }
+
+    message.innerHTML = `
+        ${replyHTML}
+
+        <div class="v3-message-text">
+            ${escapeHTML(text)}
+        </div>
+
+        <div class="v3-message-meta">
+            agora
+        </div>
+    `;
+
+    message.addEventListener(
+        "contextmenu",
+        function(e){
+
+            e.preventDefault();
+
+            showV3MessageMenu(this);
+        }
+    );
+
+    messages.appendChild(message);
+
+    chatInput.value = "";
+
+    cancelV3Reply();
+
+    messages.scrollTop =
+        messages.scrollHeight;
+};
+
+
+/* ---------------------------------------------------------
+   9. GRAVAÇÃO DE ÁUDIO REAL
+--------------------------------------------------------- */
+
+async function toggleV3Audio(){
+
+    if(vibraV3.recording){
+
+        if(vibraV3.recorder){
+            vibraV3.recorder.stop();
+        }
+
+        return;
+    }
+
+    if(!navigator.mediaDevices ||
+       !navigator.mediaDevices.getUserMedia){
+
+        alert(
+            "Seu navegador não permite gravação de áudio."
+        );
+
+        return;
+    }
+
+    try{
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                audio:true
+            });
+
+        const recorder =
+            new MediaRecorder(stream);
+
+        vibraV3.recorder =
+            recorder;
+
+        vibraV3.audioChunks = [];
+
+        recorder.ondataavailable =
+            event => {
+
+                if(event.data.size > 0){
+                    vibraV3.audioChunks.push(
+                        event.data
+                    );
+                }
+            };
+
+        recorder.onstop = () => {
+
+            stream.getTracks().forEach(
+                track => track.stop()
+            );
+
+            const blob =
+                new Blob(
+                    vibraV3.audioChunks,
+                    {type:"audio/webm"}
+                );
+
+            const url =
+                URL.createObjectURL(blob);
+
+            addV3AudioMessage(url);
+
+            vibraV3.recording = false;
+
+            updateV3AudioButton();
+        };
+
+        recorder.start();
+
+        vibraV3.recording = true;
+
+        updateV3AudioButton();
+
+    }catch(error){
+
+        alert(
+            "Não foi possível acessar o microfone."
+        );
+
+        console.error(error);
+    }
+}
+
+
+function updateV3AudioButton(){
+
+    const button =
+        document.getElementById("audioBtn");
+
+    if(!button) return;
+
+    if(vibraV3.recording){
+
+        button.innerHTML =
+            `<span class="v3-recording">●</span>`;
+
+        button.title =
+            "Parar gravação";
+
+    }else{
+
+        button.textContent =
+            "🎤";
+
+        button.title =
+            "Áudio";
+    }
+}
+
+
+function addV3AudioMessage(url){
+
+    const messages =
+        document.getElementById("messages");
+
+    const empty =
+        messages.querySelector(".empty");
+
+    if(empty) empty.remove();
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message me";
+
+    message.innerHTML = `
+        <div class="v3-audio-message">
+            🎙️
+            <audio
+                src="${url}"
+                controls
+            ></audio>
+        </div>
+
+        <div class="v3-message-meta">
+            agora
+        </div>
+    `;
+
+    message.addEventListener(
+        "contextmenu",
+        e => {
+
+            e.preventDefault();
+
+            showV3MessageMenu(message);
+        }
+    );
+
+    messages.appendChild(message);
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+const audioButton =
+    document.getElementById("audioBtn");
+
+if(audioButton){
+
+    audioButton.onclick =
+        toggleV3Audio;
+}
+
+
+/* ---------------------------------------------------------
+   10. VISUALIZAÇÃO ÚNICA
+--------------------------------------------------------- */
+
+function sendV3ViewOnce(){
+
+    const messages =
+        document.getElementById("messages");
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message me";
+
+    message.dataset.viewOnce =
+        "true";
+
+    message.innerHTML = `
+        👁️ Mídia de visualização única
+    `;
+
+    message.onclick = function(){
+
+        if(this.dataset.opened === "true"){
+            return;
+        }
+
+        this.dataset.opened = "true";
+
+        showModal(`
+            <h2>👁️ Visualização única</h2>
+
+            <div style="
+                min-height:180px;
+                display:grid;
+                place-items:center;
+                text-align:center;
+            ">
+                <div>
+                    <div style="font-size:45px">
+                        👁️
+                    </div>
+
+                    <p style="
+                        color:var(--muted);
+                        margin-top:10px;
+                    ">
+                        Esta mídia foi visualizada.
+                    </p>
+                </div>
+            </div>
+        `);
+    };
+
+    messages.appendChild(message);
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+/* ---------------------------------------------------------
+   11. TEMAS DOS CHATS
+--------------------------------------------------------- */
+
+function setV3ChatTheme(theme){
+
+    const chat =
+        document.getElementById("chatPage");
+
+    if(!chat) return;
+
+    chat.classList.remove(
+        "v3-chat-theme-default",
+        "v3-chat-theme-night",
+        "v3-chat-theme-lavender",
+        "v3-chat-theme-ocean"
+    );
+
+    chat.classList.add(
+        "v3-chat-theme-" + theme
+    );
+
+    vibraV3.chatTheme =
+        theme;
+
+    localStorage.setItem(
+        "vibra_chat_theme",
+        theme
+    );
+}
+
+
+function openV3ChatThemes(){
+
+    showModal(`
+        <h2>🎨 Tema da conversa</h2>
+
+        <div class="v3-action-sheet">
+
+            <button
+                class="v3-action"
+                onclick="
+                    setV3ChatTheme('default');
+                    closeModal();
+                "
+            >
+                ◻️ Padrão
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    setV3ChatTheme('night');
+                    closeModal();
+                "
+            >
+                🌙 Noturno
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    setV3ChatTheme('lavender');
+                    closeModal();
+                "
+            >
+                💜 Lavanda
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    setV3ChatTheme('ocean');
+                    closeModal();
+                "
+            >
+                💙 Oceano
+            </button>
+
+        </div>
+    `);
+}
+
+
+/* ---------------------------------------------------------
+   12. APELIDO PERSONALIZÁVEL
+--------------------------------------------------------- */
+
+function openV3Nickname(){
+
+    const current =
+        vibraV3.nickname;
+
+    const nickname =
+        prompt(
+            "Digite o apelido desta conversa:",
+            current
+        );
+
+    if(nickname === null) return;
+
+    vibraV3.nickname =
+        nickname.trim();
+
+    localStorage.setItem(
+        "vibra_nickname",
+        vibraV3.nickname
+    );
+
+    updateV3Nickname();
+}
+
+
+function updateV3Nickname(){
+
+    const info =
+        document.querySelector(".chat-head-info strong");
+
+    if(!info) return;
+
+    info.textContent =
+        vibraV3.nickname ||
+        "Mensagens";
+}
+
+
+/* ---------------------------------------------------------
+   13. CONFIGURAÇÕES DO CHAT
+--------------------------------------------------------- */
+
+function openV3ChatSettings(){
+
+    showModal(`
+        <h2>⚙️ Configurações da conversa</h2>
+
+        <div class="v3-action-sheet">
+
+            <button
+                class="v3-action"
+                onclick="
+                    openV3Nickname();
+                    closeModal();
+                "
+            >
+                🏷️ Personalizar apelido
+            </button>
+
+            <button
+                class="v3-action"
+                onclick="
+                    openV3ChatThemes();
+                "
+            >
+                🎨 Personalizar tema
+            </button>
+
+        </div>
+    `);
+}
+
+
+/* ---------------------------------------------------------
+   14. BOTÃO ⋮ DO CHAT
+--------------------------------------------------------- */
+
+const chatMenuButton =
+    document.querySelector(".chat-head .icon-btn:last-child");
+
+if(chatMenuButton){
+
+    chatMenuButton.onclick =
+        openV3ChatSettings;
+}
+
+
+/* ---------------------------------------------------------
+   15. COMENTÁRIOS REAIS LOCAIS
+--------------------------------------------------------- */
+
+function getV3Comments(id){
+
+    return vibraV3.comments[id] || [];
+}
+
+
+function saveV3Comments(){
+
+    localStorage.setItem(
+        "vibra_comments",
+        JSON.stringify(
+            vibraV3.comments
+        )
+    );
+}
+
+
+function openV3Comments(id){
+
+    const comments =
+        getV3Comments(id);
+
+    let commentsHTML = "";
+
+    if(!comments.length){
+
+        commentsHTML = `
+            <div style="
+                padding:25px 0;
+                text-align:center;
+                color:var(--muted);
+            ">
+                Ainda não há comentários.
+            </div>
+        `;
+
+    }else{
+
+        commentsHTML =
+            comments.map(
+                (comment,index) => `
+                    <div class="v3-comment">
+
+                        <div class="v3-comment-head">
+
+                            <div class="avatar">
+                                V
+                            </div>
+
+                            <strong>
+                                Você
+                            </strong>
+
+                        </div>
+
+                        <div class="v3-comment-body">
+                            ${escapeHTML(comment.text)}
+                        </div>
+
+                        <div class="v3-comment-actions">
+
+                            <button
+                                onclick="
+                                    likeV3Comment(
+                                        ${id},
+                                        ${index}
+                                    )
+                                "
+                            >
+                                ♡ ${comment.likes || 0}
+                            </button>
+
+                            <button
+                                onclick="
+                                    replyV3Comment(
+                                        ${id},
+                                        ${index}
+                                    )
+                                "
+                            >
+                                ↩ Responder
+                            </button>
+
+                            <button
+                                onclick="
+                                    deleteV3Comment(
+                                        ${id},
+                                        ${index}
+                                    )
+                                "
+                            >
+                                Excluir
+                            </button>
+
+                        </div>
+
+                    </div>
+                `
+            ).join("");
+    }
+
+    showModal(`
+        <h2>💬 Comentários</h2>
+
+        <div id="v3CommentsList">
+            ${commentsHTML}
+        </div>
+
+        <div style="
+            display:flex;
+            gap:8px;
+            margin-top:15px;
+        ">
+
+            <input
+                id="v3CommentInput"
+                placeholder="Adicionar comentário..."
+                style="
+                    flex:1;
+                    height:44px;
+                    border:1px solid var(--border);
+                    border-radius:12px;
+                    padding:0 12px;
+                    background:var(--surface-2);
+                    color:var(--text);
+                    outline:0;
+                "
+            >
+
+            <button
+                class="primary"
+                style="margin:0"
+                onclick="
+                    addV3Comment(${id})
+                "
+            >
+                Enviar
+            </button>
+
+        </div>
+    `);
+}
+
+
+function addV3Comment(id){
+
+    const input =
+        document.getElementById(
+            "v3CommentInput"
+        );
+
+    if(!input) return;
+
+    const text =
+        input.value.trim();
+
+    if(!text) return;
+
+    if(!vibraV3.comments[id]){
+        vibraV3.comments[id] = [];
+    }
+
+    vibraV3.comments[id].push({
+        id:Date.now(),
+        text,
+        likes:0
+    });
+
+    saveV3Comments();
+
+    addNotification(
+        "Seu comentário foi publicado."
+    );
+
+    openV3Comments(id);
+}
+
+
+function likeV3Comment(id,index){
+
+    const list =
+        getV3Comments(id);
+
+    if(!list[index]) return;
+
+    list[index].likes =
+        (list[index].likes || 0) + 1;
+
+    saveV3Comments();
+
+    openV3Comments(id);
+}
+
+
+function deleteV3Comment(id,index){
+
+    const list =
+        getV3Comments(id);
+
+    list.splice(index,1);
+
+    saveV3Comments();
+
+    openV3Comments(id);
+}
+
+
+function replyV3Comment(id,index){
+
+    const comment =
+        getV3Comments(id)[index];
+
+    if(!comment) return;
+
+    showModal(`
+        <h2>↩️ Responder comentário</h2>
+
+        <p style="
+            color:var(--muted);
+            margin:10px 0;
+        ">
+            ${escapeHTML(comment.text)}
+        </p>
+
+        <input
+            id="v3ReplyCommentInput"
+            placeholder="Escreva sua resposta..."
+            style="
+                width:100%;
+                height:44px;
+                border:1px solid var(--border);
+                border-radius:12px;
+                padding:0 12px;
+                background:var(--surface-2);
+                color:var(--text);
+            "
+        >
+
+        <button
+            class="primary"
+            style="width:100%"
+            onclick="
+                addV3CommentReply(
+                    ${id},
+                    ${index}
+                )
+            "
+        >
+            Responder
+        </button>
+    `);
+}
+
+
+function addV3CommentReply(id,index){
+
+    const input =
+        document.getElementById(
+            "v3ReplyCommentInput"
+        );
+
+    const text =
+        input?.value.trim();
+
+    if(!text) return;
+
+    if(!vibraV3.comments[id][index].replies){
+        vibraV3.comments[id][index].replies=[];
+    }
+
+    vibraV3.comments[id][index].replies.push({
+        text
+    });
+
+    saveV3Comments();
+
+    openV3Comments(id);
+}
+
+
+/* ---------------------------------------------------------
+   16. SUBSTITUI COMENTÁRIOS ANTIGOS
+--------------------------------------------------------- */
+
+window.comments =
+    openV3Comments;
+
+
+/* ---------------------------------------------------------
+   17. REPOSTS SEPARADOS
+--------------------------------------------------------- */
+
+function repostV3(id){
+
+    const post =
+        posts.find(p => p.id === id);
+
+    if(!post) return;
+
+    const index =
+        vibraV3.reposts.indexOf(id);
+
+    if(index === -1){
+
+        vibraV3.reposts.push(id);
+
+        addNotification(
+            "Publicação adicionada aos seus Repostados."
+        );
+
+    }else{
+
+        vibraV3.reposts.splice(
+            index,
+            1
+        );
+    }
+
+    localStorage.setItem(
+        "vibra_reposts",
+        JSON.stringify(
+            vibraV3.reposts
+        )
+    );
+
+    renderV3Profile();
+}
+
+
+/* ---------------------------------------------------------
+   18. PERFIL V3
+--------------------------------------------------------- */
+
+function renderV3Profile(){
+
+    const grid =
+        document.getElementById(
+            "profileGrid"
+        );
+
+    if(!grid) return;
+
+    const activeTab =
+        document.querySelector(
+            ".profile-tab.active"
+        )?.dataset.profile || "posts";
+
+    let data = [];
+
+    if(activeTab === "posts"){
+
+        data =
+            posts.filter(
+                p => p.type === "post"
+            );
+
+    }else if(activeTab === "reels"){
+
+        data =
+            posts.filter(
+                p => p.type === "reel"
+            );
+
+    }else if(activeTab === "reposts"){
+
+        data =
+            posts.filter(
+                p =>
+                    vibraV3.reposts.includes(
+                        p.id
+                    )
+            );
+
+    }else if(activeTab === "saved"){
+
+        data =
+            posts.filter(
+                p =>
+                    savedPosts.includes(
+                        p.id
+                    )
+            );
+    }
+
+    grid.innerHTML = "";
+
+    if(!data.length){
+
+        grid.innerHTML = `
+            <div class="v3-profile-empty">
+                <div style="
+                    font-size:35px;
+                    margin-bottom:10px;
+                ">
+                    ${activeTab === "reposts" ? "↻" : "○"}
+                </div>
+
+                <strong>
+                    ${
+                        activeTab === "reposts"
+                        ? "Nenhum repost ainda"
+                        : "Nenhum conteúdo aqui"
+                    }
+                </strong>
+
+                <p style="margin-top:5px">
+                    ${
+                        activeTab === "reposts"
+                        ? "Os conteúdos que você repostar aparecerão nesta aba."
+                        : "Seu conteúdo aparecerá aqui."
+                    }
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(post => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "grid-item";
+
+        if(post.url){
+
+            if(post.mime?.startsWith("video/")){
+
+                item.innerHTML =
+                    `<video
+                        src="${post.url}"
+                        muted
+                        playsinline
+                    ></video>`;
+
+            }else{
+
+                item.innerHTML =
+                    `<img
+                        src="${post.url}"
+                        alt=""
+                    >`;
+            }
+
+        }else{
+
+            item.innerHTML =
+                `<div style="
+                    width:100%;
+                    height:100%;
+                    display:grid;
+                    place-items:center;
+                    color:var(--muted);
+                ">
+                    Mídia
+                </div>`;
+        }
+
+        grid.appendChild(item);
+    });
+}
+
+
+/* ---------------------------------------------------------
+   19. STORY COM PRESSIONAR PARA PAUSAR
+--------------------------------------------------------- */
+
+function openV3Story(post){
+
+    const viewer =
+        document.createElement("div");
+
+    viewer.className =
+        "v3-story-viewer";
+
+    let media;
+
+    if(post.mime?.startsWith("video/")){
+
+        media =
+            document.createElement("video");
+
+        media.src =
+            post.url;
+
+        media.autoplay =
+            true;
+
+        media.muted =
+            false;
+
+        media.playsInline =
+            true;
+
+        media.className =
+            "v3-story-media";
+
+    }else{
+
+        media =
+            document.createElement("img");
+
+        media.src =
+            post.url;
+
+        media.className =
+            "v3-story-media";
+    }
+
+    const progress =
+        document.createElement("div");
+
+    progress.className =
+        "v3-story-progress";
+
+    const progressBar =
+        document.createElement("div");
+
+    progressBar.className =
+        "v3-story-progress-bar";
+
+    progress.appendChild(
+        progressBar
+    );
+
+    const close =
+        document.createElement("button");
+
+    close.className =
+        "v3-story-close";
+
+    close.textContent =
+        "×";
+
+    const hold =
+        document.createElement("div");
+
+    hold.className =
+        "v3-story-hold";
+
+    viewer.appendChild(media);
+    viewer.appendChild(progress);
+    viewer.appendChild(close);
+    viewer.appendChild(hold);
+
+    document.body.appendChild(viewer);
+
+    let paused =
+        false;
+
+    let start =
+        Date.now();
+
+    const duration =
+        post.mime?.startsWith("video/")
+        && media.duration
+        ? media.duration * 1000
+        : 5000;
+
+    function pauseStory(){
+
+        paused = true;
+
+        if(media.tagName === "VIDEO"){
+            media.pause();
+        }
+    }
+
+    function resumeStory(){
+
+        paused = false;
+
+        if(media.tagName === "VIDEO"){
+            media.play().catch(()=>{});
+        }
+
+        start =
+            Date.now();
+    }
+
+    function updateProgress(){
+
+        if(paused) return;
+
+        const elapsed =
+            Date.now() - start;
+
+        const percentage =
+            Math.min(
+                100,
+                (elapsed / duration) * 100
+            );
+
+        progressBar.style.width =
+            percentage + "%";
+
+        if(percentage >= 100){
+
+            closeViewer();
+
+        }else{
+
+            requestAnimationFrame(
+                updateProgress
+            );
+        }
+    }
+
+    function closeViewer(){
+
+        viewer.remove();
+
+        if(media.tagName === "VIDEO"){
+            media.pause();
+        }
+    }
+
+    close.onclick =
+        closeViewer;
+
+    hold.addEventListener(
+        "pointerdown",
+        pauseStory
+    );
+
+    hold.addEventListener(
+        "pointerup",
+        resumeStory
+    );
+
+    hold.addEventListener(
+        "pointercancel",
+        resumeStory
+    );
+
+    hold.addEventListener(
+        "pointerleave",
+        resumeStory
+    );
+
+    viewer.addEventListener(
+        "contextmenu",
+        e => e.preventDefault()
+    );
+
+    requestAnimationFrame(
+        updateProgress
+    );
+}
+
+
+/* ---------------------------------------------------------
+   20. INICIALIZAÇÃO V3
+--------------------------------------------------------- */
+
+setV3ChatTheme(
+    vibraV3.chatTheme
+);
+
+updateV3Nickname();
+
+const oldOpenStory =
+    window.openStory;
+
+window.openStory =
+    openV3Story;
+
+window.repost =
+    repostV3;
+
+window.renderProfile =
+    renderV3Profile;
+
+renderV3Profile();
+
+console.log(
+    "Vibra V3 carregado com sucesso."
+);
 </body>
 </html>
