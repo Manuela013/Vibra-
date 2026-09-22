@@ -5,4841 +5,2123 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Vibra</title>
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script src="supabase.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-/* =========================================================
-   VIBRA V2
-========================================================= */
 
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 :root{
-    --bg:#fafafa;
-    --surface:#fff;
-    --surface-2:#f4f4f5;
-    --text:#111;
-    --muted:#777;
-    --border:#e5e5e5;
-    --accent:#111;
-    --danger:#ed4956;
-    --shadow:0 8px 30px rgba(0,0,0,.08);
+  --bg:#f7f7f8;
+  --surface:#ffffff;
+  --surface2:#f0f0f3;
+  --text:#111111;
+  --muted:#777;
+  --border:#e5e5e8;
+  --accent:#111111;
+  --danger:#ed4956;
+  --shadow:0 8px 30px rgba(0,0,0,.07);
 }
 
 body.dark{
-    --bg:#000;
-    --surface:#0d0d0d;
-    --surface-2:#181818;
-    --text:#fff;
-    --muted:#999;
-    --border:#272727;
-    --accent:#fff;
-    --shadow:0 8px 30px rgba(0,0,0,.35);
-}
-
-html,
-body{
-    width:100%;
-    min-height:100%;
+  --bg:#090909;
+  --surface:#151515;
+  --surface2:#202020;
+  --text:#ffffff;
+  --muted:#aaa;
+  --border:#2d2d2d;
+  --accent:#ffffff;
+  --shadow:0 8px 30px rgba(0,0,0,.25);
 }
 
 body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    transition:.25s;
-}
-
-/* =========================================================
-   APP
-========================================================= */
-
-#app{
-    min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
 }
 
 button,
 input,
 textarea{
-    font:inherit;
+  font:inherit;
 }
 
 button{
-    cursor:pointer;
-    border:0;
+  cursor:pointer;
 }
 
-.hidden{
-    display:none!important;
+.app{
+  min-height:100vh;
 }
-
-/* =========================================================
-   HEADER
-========================================================= */
 
 .topbar{
-    height:64px;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:100;
-    background:rgba(255,255,255,.88);
-    backdrop-filter:blur(18px);
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
-}
-
-body.dark .topbar{
-    background:rgba(0,0,0,.88);
+  position:sticky;
+  top:0;
+  z-index:50;
+  height:64px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
 }
 
 .logo{
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:-1.5px;
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:-1px;
 }
 
 .top-actions{
-    display:flex;
-    align-items:center;
-    gap:8px;
+  display:flex;
+  gap:8px;
 }
 
 .icon-btn{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    background:transparent;
-    color:var(--text);
-    font-size:22px;
-    display:grid;
-    place-items:center;
-    transition:.2s;
-    position:relative;
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:var(--surface2);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
 }
 
-.icon-btn:hover{
-    background:var(--surface-2);
-    transform:scale(1.05);
+.layout{
+  width:min(1100px,100%);
+  margin:auto;
+  display:grid;
+  grid-template-columns:220px minmax(0,620px) 220px;
+  gap:22px;
+  padding:25px 15px 100px;
 }
 
-.badge{
-    position:absolute;
-    top:3px;
-    right:2px;
-    min-width:17px;
-    height:17px;
-    padding:0 4px;
-    border-radius:20px;
-    background:#ed4956;
-    color:#fff;
-    font-size:10px;
-    display:grid;
-    place-items:center;
+.sidebar{
+  position:sticky;
+  top:90px;
+  height:max-content;
 }
 
-/* =========================================================
-   MAIN
-========================================================= */
-
-main{
-    width:100%;
-    max-width:630px;
-    margin:0 auto;
-    padding:88px 16px 100px;
+.nav-item{
+  width:100%;
+  padding:13px 15px;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  border-radius:13px;
+  margin-bottom:5px;
+  font-size:15px;
 }
 
-.page{
-    display:none;
+.nav-item:hover,
+.nav-item.active{
+  background:var(--surface2);
+  font-weight:700;
 }
 
-.page.active{
-    display:block;
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:var(--shadow);
 }
 
-/* =========================================================
-   STORIES
-========================================================= */
-
-.stories{
-    display:flex;
-    gap:15px;
-    overflow-x:auto;
-    padding:4px 2px 20px;
-    scrollbar-width:none;
+.composer{
+  padding:18px;
+  margin-bottom:18px;
 }
 
-.stories::-webkit-scrollbar{
-    display:none;
+.composer textarea{
+  width:100%;
+  border:0;
+  outline:0;
+  resize:none;
+  background:transparent;
+  color:var(--text);
+  min-height:70px;
+  font-size:16px;
 }
 
-.story{
-    flex:0 0 70px;
-    text-align:center;
-    color:var(--text);
+.composer-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:10px;
 }
-
-.story-avatar{
-    width:68px;
-    height:68px;
-    border-radius:50%;
-    padding:3px;
-    background:linear-gradient(135deg,#ff006e,#8338ec,#3a86ff);
-    margin:auto;
-}
-
-.story-avatar-inner{
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:var(--surface);
-    display:grid;
-    place-items:center;
-    font-size:25px;
-}
-
-.story-name{
-    display:block;
-    font-size:11px;
-    margin-top:6px;
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-}
-
-.add-story .story-avatar{
-    background:var(--surface-2);
-    border:1px solid var(--border);
-}
-
-.add-story .story-avatar-inner{
-    color:var(--text);
-}
-
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
-.empty{
-    min-height:380px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:30px;
-}
-
-.empty-icon{
-    width:76px;
-    height:76px;
-    border:1px solid var(--border);
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    font-size:32px;
-    margin-bottom:20px;
-}
-
-.empty h2{
-    font-size:23px;
-    margin-bottom:8px;
-}
-
-.empty p{
-    color:var(--muted);
-    max-width:340px;
-    line-height:1.5;
-}
-
-/* =========================================================
-   BUTTONS
-========================================================= */
 
 .primary{
-    margin-top:22px;
-    background:var(--text);
-    color:var(--bg);
-    padding:12px 20px;
-    border-radius:12px;
-    font-weight:700;
-    transition:.2s;
-}
-
-.primary:hover{
-    transform:translateY(-2px);
-    opacity:.9;
+  border:0;
+  background:var(--accent);
+  color:var(--bg);
+  padding:10px 17px;
+  border-radius:10px;
+  font-weight:700;
 }
 
 .secondary{
-    background:var(--surface-2);
-    color:var(--text);
-    border:1px solid var(--border);
-    padding:10px 16px;
-    border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  padding:9px 13px;
+  border-radius:10px;
 }
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-.section-title{
-    font-size:26px;
-    font-weight:800;
-    margin-bottom:20px;
-}
-
-.search-box{
-    width:100%;
-    height:48px;
-    border-radius:14px;
-    background:var(--surface-2);
-    display:flex;
-    align-items:center;
-    padding:0 15px;
-    gap:10px;
-    margin-bottom:18px;
-}
-
-.search-box span{
-    color:var(--muted);
-    font-size:20px;
-}
-
-.search-box input{
-    width:100%;
-    background:transparent;
-    border:0;
-    outline:0;
-    color:var(--text);
-}
-
-.search-filters{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    margin-bottom:20px;
-}
-
-.search-filter{
-    padding:8px 15px;
-    border-radius:20px;
-    background:var(--surface-2);
-    color:var(--text);
-    white-space:nowrap;
-}
-
-.search-filter.active{
-    background:var(--text);
-    color:var(--bg);
-}
-
-/* =========================================================
-   CREATE
-========================================================= */
-
-.create-card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:var(--shadow);
-}
-
-.create-tabs{
-    display:flex;
-    border-bottom:1px solid var(--border);
-}
-
-.create-tab{
-    flex:1;
-    padding:15px;
-    background:transparent;
-    color:var(--muted);
-    font-weight:700;
-}
-
-.create-tab.active{
-    color:var(--text);
-    border-bottom:2px solid var(--text);
-}
-
-.upload{
-    min-height:280px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:30px;
-}
-
-.upload-label{
-    border:2px dashed var(--border);
-    border-radius:18px;
-    width:100%;
-    min-height:230px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.upload-label:hover{
-    border-color:var(--text);
-    background:var(--surface-2);
-}
-
-.upload-icon{
-    font-size:45px;
-    margin-bottom:12px;
-}
-
-.upload-label p{
-    color:var(--muted);
-    margin-top:5px;
-    font-size:14px;
-}
-
-/* =========================================================
-   EDITOR
-========================================================= */
-
-.editor{
-    border-top:1px solid var(--border);
-}
-
-.editor-header{
-    height:55px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 15px;
-    border-bottom:1px solid var(--border);
-}
-
-.editor-preview{
-    width:100%;
-    aspect-ratio:1/1;
-    background:#111;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    position:relative;
-}
-
-.editor-preview img,
-.editor-preview video{
-    max-width:100%;
-    max-height:100%;
-    object-fit:contain;
-}
-
-.editor-tools{
-    display:flex;
-    overflow-x:auto;
-    gap:5px;
-    padding:12px;
-    border-bottom:1px solid var(--border);
-}
-
-.tool{
-    min-width:75px;
-    padding:9px;
-    background:var(--surface-2);
-    color:var(--text);
-    border-radius:10px;
-}
-
-.tool small{
-    display:block;
-    margin-top:3px;
-}
-
-.editor-fields{
-    padding:15px;
-}
-
-.editor-fields textarea{
-    width:100%;
-    min-height:90px;
-    resize:none;
-    border:0;
-    outline:0;
-    background:var(--surface-2);
-    color:var(--text);
-    padding:13px;
-    border-radius:12px;
-}
-
-/* =========================================================
-   FEED POST
-========================================================= */
 
 .post{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:16px;
-    margin-bottom:18px;
-    overflow:hidden;
+  overflow:hidden;
+  margin-bottom:18px;
 }
 
 .post-head{
-    display:flex;
-    align-items:center;
-    padding:12px;
-    gap:10px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:15px;
 }
 
 .avatar{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    background:var(--surface-2);
-    display:grid;
-    place-items:center;
-    font-weight:700;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--surface2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+  font-weight:700;
 }
 
-.post-user{
-    flex:1;
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-.post-user strong{
-    display:block;
-    font-size:14px;
+.user-info{
+  flex:1;
 }
 
-.post-user span{
-    color:var(--muted);
-    font-size:11px;
+.username{
+  font-weight:700;
+}
+
+.date{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.post-content{
+  padding:0 15px 15px;
+  line-height:1.5;
+  white-space:pre-wrap;
 }
 
 .post-media{
-    width:100%;
-    aspect-ratio:1/1;
-    background:var(--surface-2);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-.post-media img,
-.post-media video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+  width:100%;
+  max-height:700px;
+  display:block;
+  object-fit:contain;
+  background:#000;
 }
 
 .post-actions{
+  display:flex;
+  gap:5px;
+  padding:10px 12px;
+  border-top:1px solid var(--border);
+}
+
+.action{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  padding:9px 10px;
+  border-radius:9px;
+}
+
+.action:hover{
+  background:var(--surface2);
+}
+
+.action.liked{
+  color:var(--danger);
+}
+
+.comments{
+  padding:0 15px 15px;
+}
+
+.comment{
+  padding:7px 0;
+  font-size:14px;
+}
+
+.comment b{
+  margin-right:5px;
+}
+
+.comment-form{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+
+.comment-form input{
+  flex:1;
+  background:var(--surface2);
+  color:var(--text);
+  border:0;
+  outline:0;
+  border-radius:9px;
+  padding:9px 11px;
+}
+
+.right-card{
+  padding:18px;
+}
+
+.right-title{
+  font-weight:800;
+  margin-bottom:13px;
+}
+
+.search-box{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+}
+
+.search-box input{
+  width:100%;
+  padding:11px 13px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  outline:none;
+}
+
+.profile{
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.profile .avatar{
+  width:75px;
+  height:75px;
+  font-size:25px;
+}
+
+.profile-name{
+  font-size:22px;
+  font-weight:800;
+}
+
+.profile-bio{
+  margin-top:13px;
+  color:var(--muted);
+}
+
+.tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  margin-top:20px;
+}
+
+.tab{
+  flex:1;
+  padding:12px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+}
+
+.tab.active{
+  color:var(--text);
+  font-weight:700;
+  border-bottom:2px solid var(--text);
+}
+
+.empty{
+  text-align:center;
+  padding:55px 20px;
+  color:var(--muted);
+}
+
+.login{
+  width:min(420px,calc(100% - 30px));
+  margin:80px auto;
+  padding:30px;
+}
+
+.login h1{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.login p{
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface);
+  color:var(--text);
+  outline:none;
+}
+
+.login .primary{
+  width:100%;
+  margin-top:5px;
+}
+
+.switch{
+  text-align:center;
+  margin-top:16px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.switch button{
+  border:0;
+  background:none;
+  color:var(--text);
+  font-weight:700;
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:15px;
+}
+
+.modal-bg.open{
+  display:flex;
+}
+
+.modal{
+  width:min(520px,100%);
+  background:var(--surface);
+  color:var(--text);
+  border-radius:20px;
+  padding:22px;
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.modal textarea{
+  width:100%;
+  min-height:130px;
+  resize:vertical;
+  padding:12px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:11px;
+  outline:none;
+}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:12px;
+}
+
+.toast{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#111;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:12px;
+  display:none;
+  z-index:200;
+}
+
+.toast.show{
+  display:block;
+}
+
+.mobile-nav{
+  display:none;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    grid-template-columns:1fr;
+    width:min(650px,100%);
+  }
+
+  .sidebar,
+  .right{
+    display:none;
+  }
+
+  .mobile-nav{
     display:flex;
-    gap:4px;
-    padding:8px 10px;
-}
-
-.post-action{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:transparent;
-    color:var(--text);
-    font-size:21px;
-}
-
-.post-action:hover{
-    background:var(--surface-2);
-}
-
-.post-action.saved{
-    font-weight:bold;
-}
-
-.post-caption{
-    padding:0 13px 15px;
-    font-size:14px;
-    line-height:1.45;
-}
-
-.post-caption strong{
-    margin-right:5px;
-}
-
-/* =========================================================
-   REELS
-========================================================= */
-
-.reels-container{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.reel{
-    position:relative;
-    width:100%;
-    height:calc(100vh - 110px);
-    max-height:820px;
-    background:#111;
-    border-radius:18px;
-    overflow:hidden;
-}
-
-.reel-media{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.reel-overlay{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    padding:20px;
-    background:linear-gradient(transparent 55%,rgba(0,0,0,.8));
-    color:#fff;
-}
-
-.reel-info{
-    max-width:80%;
-}
-
-.reel-actions{
-    position:absolute;
-    right:12px;
-    bottom:25px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.reel-btn{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:rgba(0,0,0,.5);
-    color:#fff;
-    font-size:21px;
-}
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-.profile-top{
-    display:flex;
-    align-items:center;
-    gap:25px;
-}
-
-.profile-avatar{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-    display:grid;
-    place-items:center;
-    font-size:34px;
-    font-weight:700;
-}
-
-.stats{
-    display:flex;
-    gap:22px;
-}
-
-.stat{
-    text-align:center;
-}
-
-.stat strong{
-    display:block;
-    font-size:18px;
-}
-
-.stat span{
-    color:var(--muted);
-    font-size:12px;
-}
-
-.profile-info{
-    margin-top:20px;
-}
-
-.profile-info h2{
-    font-size:18px;
-}
-
-.profile-info p{
-    color:var(--muted);
-    margin-top:3px;
-}
-
-.profile-actions{
-    display:flex;
-    gap:8px;
-    margin-top:15px;
-}
-
-.profile-tabs{
-    display:flex;
-    border-bottom:1px solid var(--border);
-    margin-top:25px;
-}
-
-.profile-tab{
-    flex:1;
-    padding:14px 5px;
-    background:transparent;
-    color:var(--muted);
-}
-
-.profile-tab.active{
-    color:var(--text);
-    border-bottom:2px solid var(--text);
-}
-
-.profile-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:3px;
-    margin-top:3px;
-}
-
-.grid-item{
-    aspect-ratio:1;
-    background:var(--surface-2);
-    overflow:hidden;
-}
-
-.grid-item img,
-.grid-item video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-/* =========================================================
-   CHAT
-========================================================= */
-
-.chat-page{
-    position:fixed;
-    inset:64px 0 0;
-    background:var(--bg);
-    max-width:none;
-    padding:0;
-}
-
-.chat-layout{
-    max-width:630px;
-    height:100%;
-    margin:auto;
-    display:flex;
-    flex-direction:column;
-}
-
-.chat-head{
-    height:65px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:0 15px;
-}
-
-.chat-head-info{
-    flex:1;
-}
-
-.chat-head-info strong{
-    display:block;
-}
-
-.chat-head-info span{
-    font-size:11px;
-    color:#2eb85c;
-}
-
-.messages{
-    flex:1;
-    overflow-y:auto;
-    padding:20px 15px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-.message{
-    max-width:75%;
-    padding:10px 13px;
-    border-radius:18px;
-    font-size:14px;
-    line-height:1.4;
-}
-
-.message.me{
-    align-self:flex-end;
-    background:var(--text);
-    color:var(--bg);
-    border-bottom-right-radius:5px;
-}
-
-.message.them{
-    align-self:flex-start;
-    background:var(--surface-2);
-    border-bottom-left-radius:5px;
-}
-
-.message.reply{
-    opacity:.7;
-    font-size:12px;
-    border-left:3px solid currentColor;
-    margin-bottom:5px;
-    padding-left:8px;
-}
-
-.chat-composer{
-    min-height:65px;
-    padding:10px;
-    border-top:1px solid var(--border);
-    display:flex;
-    gap:8px;
-    align-items:center;
-}
-
-.chat-input{
-    flex:1;
-    height:43px;
-    border-radius:22px;
-    border:1px solid var(--border);
-    background:var(--surface-2);
-    color:var(--text);
-    padding:0 15px;
-    outline:0;
-}
-
-.send{
-    width:43px;
-    height:43px;
-    border-radius:50%;
-    background:var(--text);
-    color:var(--bg);
-}
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-
-.notification{
-    display:flex;
-    gap:12px;
-    align-items:center;
-    padding:15px;
-    border-bottom:1px solid var(--border);
-}
-
-.notification-dot{
-    width:8px;
-    height:8px;
-    background:#ed4956;
-    border-radius:50%;
-}
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-.settings-section{
-    margin-bottom:28px;
-}
-
-.settings-section h3{
-    font-size:13px;
-    color:var(--muted);
-    margin-bottom:8px;
-    text-transform:uppercase;
-}
-
-.setting{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:16px 0;
-    background:transparent;
-    color:var(--text);
-    border-bottom:1px solid var(--border);
-    text-align:left;
-}
-
-.setting span{
-    display:flex;
-    gap:12px;
-    align-items:center;
-}
-
-/* =========================================================
-   BOTTOM NAV
-========================================================= */
-
-.bottom-nav{
     position:fixed;
     bottom:0;
     left:0;
     right:0;
-    height:66px;
-    background:rgba(255,255,255,.92);
-    backdrop-filter:blur(18px);
-    border-top:1px solid var(--border);
-    z-index:100;
-    display:flex;
-    justify-content:center;
-}
-
-body.dark .bottom-nav{
-    background:rgba(0,0,0,.92);
-}
-
-.nav-inner{
-    width:100%;
-    max-width:630px;
-    display:flex;
-    justify-content:space-around;
-}
-
-.nav-item{
-    flex:1;
-    background:transparent;
-    color:var(--muted);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-}
-
-.nav-item span{
-    font-size:22px;
-}
-
-.nav-item small{
-    font-size:9px;
-}
-
-.nav-item.active{
-    color:var(--text);
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-    z-index:300;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.modal-bg{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.6);
-}
-
-.modal-box{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:430px;
-    max-height:85vh;
-    overflow:auto;
+    height:64px;
     background:var(--surface);
-    border-radius:20px;
-    padding:22px;
-    box-shadow:var(--shadow);
-}
+    border-top:1px solid var(--border);
+    z-index:60;
+    justify-content:space-around;
+  }
 
-.modal-box h2{
-    margin-bottom:15px;
-}
-
-.modal-close{
-    position:absolute;
-    right:15px;
-    top:15px;
-    width:35px;
-    height:35px;
-    border-radius:50%;
-    background:var(--surface-2);
+  .mobile-nav button{
+    flex:1;
+    border:0;
+    background:transparent;
     color:var(--text);
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width:650px){
-
-    .topbar{
-        padding:0 15px;
-    }
-
-    main{
-        padding-left:10px;
-        padding-right:10px;
-    }
-
-    .post{
-        border-left:0;
-        border-right:0;
-        border-radius:0;
-    }
-
-    .reel{
-        border-radius:0;
-        height:calc(100vh - 130px);
-    }
-
-    .profile-top{
-        gap:18px;
-    }
-
-    .profile-avatar{
-        width:80px;
-        height:80px;
-    }
-
-    .stats{
-        gap:15px;
-    }
+    font-size:20px;
+  }
 
 }
 
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(5px);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.page.active{
-    animation:fade .2s ease;
-}
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<div id="loginScreen" class="login card">
 
-<header class="topbar">
+  <h1>Vibra</h1>
+
+  <p id="loginDescription">
+    Entre na sua conta para continuar.
+  </p>
+
+  <div class="field">
+    <input id="email" type="email" placeholder="Seu e-mail">
+  </div>
+
+  <div class="field">
+    <input id="password" type="password" placeholder="Sua senha">
+  </div>
+
+  <button class="primary" id="authButton" onclick="handleAuth()">
+    Entrar
+  </button>
+
+  <div class="switch">
+    <span id="switchText">Ainda não tem uma conta?</span>
+    <button onclick="toggleAuthMode()" id="switchButton">
+      Criar conta
+    </button>
+  </div>
+
+</div>
+
+
+<div id="app" class="app hidden">
+
+  <header class="topbar">
 
     <div class="logo">Vibra</div>
 
     <div class="top-actions">
 
-        <button class="icon-btn" id="themeBtn" title="Tema">
-            ◐
-        </button>
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        ◐
+      </button>
 
-        <button class="icon-btn" id="notificationsBtn" title="Notificações">
-            ♡
-            <span class="badge hidden" id="notificationBadge">0</span>
-        </button>
-
-        <button class="icon-btn" id="chatBtn" title="Mensagens">
-            ◌
-        </button>
+      <button class="icon-btn" onclick="logout()" title="Sair">
+        ↪
+      </button>
 
     </div>
 
-</header>
+  </header>
 
 
-<main>
+  <div class="layout">
 
-<!-- =======================================================
-     HOME
-======================================================== -->
+    <aside class="sidebar">
 
-<section class="page active" id="homePage">
+      <button class="nav-item active" onclick="showPage('home',this)">
+        🏠 Início
+      </button>
 
-    <div class="stories" id="stories">
+      <button class="nav-item" onclick="showPage('search',this)">
+        🔎 Buscar
+      </button>
 
-        <button class="story add-story" id="addStory">
+      <button class="nav-item" onclick="openCreate()">
+        ➕ Criar
+      </button>
 
-            <div class="story-avatar">
-                <div class="story-avatar-inner">＋</div>
-            </div>
+      <button class="nav-item" onclick="showPage('profile',this)">
+        👤 Perfil
+      </button>
 
-            <span class="story-name">Seu story</span>
+      <button class="nav-item" onclick="showPage('reposts',this)">
+        🔄 Repostados
+      </button>
 
-        </button>
-
-    </div>
-
-    <div id="feed"></div>
-
-    <div class="empty" id="emptyFeed">
-
-        <div class="empty-icon">✦</div>
-
-        <h2>Seu Vibra começa aqui</h2>
-
-        <p>
-            Publique algo ou siga pessoas para começar
-            a criar seu feed.
-        </p>
-
-        <button class="primary" onclick="openCreate('post')">
-            Criar publicação
-        </button>
-
-    </div>
-
-</section>
+    </aside>
 
 
-<!-- =======================================================
-     SEARCH
-======================================================== -->
+    <main>
 
-<section class="page" id="searchPage">
+      <section id="homePage">
 
-    <h1 class="section-title">Buscar</h1>
+        <div class="composer card">
 
-    <div class="search-box">
+          <textarea
+            id="quickCaption"
+            placeholder="No que você está pensando?"
+          ></textarea>
 
-        <span>⌕</span>
-
-        <input
-            id="searchInput"
-            type="search"
-            placeholder="Pesquisar no Vibra..."
-        >
-
-    </div>
-
-    <div class="search-filters">
-
-        <button class="search-filter active">Tudo</button>
-        <button class="search-filter">Pessoas</button>
-        <button class="search-filter">Posts</button>
-        <button class="search-filter">Hashtags</button>
-
-    </div>
-
-    <div class="empty">
-
-        <div class="empty-icon">⌕</div>
-
-        <h2>Pesquise no Vibra</h2>
-
-        <p>
-            Encontre pessoas, publicações e hashtags.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =======================================================
-     CREATE
-======================================================== -->
-
-<section class="page" id="createPage">
-
-    <h1 class="section-title">Criar</h1>
-
-    <div class="create-card">
-
-        <div class="create-tabs">
+          <div class="composer-bottom">
 
             <button
-                class="create-tab active"
-                data-create="post"
+              class="secondary"
+              onclick="openCreate()"
             >
-                📷 Post
+              📷 Foto / vídeo
             </button>
 
             <button
-                class="create-tab"
-                data-create="reel"
+              class="primary"
+              onclick="quickPost()"
             >
-                ▶ Reel
+              Publicar
             </button>
 
-            <button
-                class="create-tab"
-                data-create="story"
-            >
-                ○ Story
-            </button>
+          </div>
 
         </div>
 
-        <div class="upload">
+        <div id="feed"></div>
 
-            <label class="upload-label" for="mediaInput">
+      </section>
 
-                <div class="upload-icon">＋</div>
 
-                <strong>Selecionar fotos ou vídeos</strong>
+      <section id="searchPage" class="hidden">
 
-                <p>
-                    Escolha uma mídia para começar.
-                </p>
+        <div class="card" style="padding:18px">
 
-            </label>
+          <h2 style="margin-bottom:15px">
+            Buscar
+          </h2>
+
+          <div class="search-box">
 
             <input
-                id="mediaInput"
-                type="file"
-                accept="image/*,video/*"
-                multiple
-                hidden
+              id="searchInput"
+              placeholder="Pesquisar pessoas ou posts..."
+              oninput="searchEverything()"
             >
 
-        </div>
+          </div>
 
-        <div class="editor hidden" id="editor">
-
-            <div class="editor-header">
-
-                <button
-                    class="secondary"
-                    onclick="closeEditor()"
-                >
-                    Cancelar
-                </button>
-
-                <strong>Editar</strong>
-
-                <button
-                    class="primary"
-                    style="margin:0;padding:8px 13px"
-                    onclick="publishContent()"
-                >
-                    Publicar
-                </button>
-
-            </div>
-
-            <div class="editor-preview" id="editorPreview"></div>
-
-            <div class="editor-tools">
-
-                <button class="tool" onclick="editorAction('crop')">
-                    ▣
-                    <small>Cortar</small>
-                </button>
-
-                <button class="tool" onclick="editorAction('speed')">
-                    1×
-                    <small>Velocidade</small>
-                </button>
-
-                <button class="tool" onclick="editorAction('text')">
-                    T
-                    <small>Texto</small>
-                </button>
-
-                <button class="tool" onclick="editorAction('sticker')">
-                    ☺
-                    <small>Sticker</small>
-                </button>
-
-                <button class="tool" onclick="editorAction('filter')">
-                    ◐
-                    <small>Filtro</small>
-                </button>
-
-                <button class="tool" onclick="editorAction('music')">
-                    ♫
-                    <small>Música</small>
-                </button>
-
-            </div>
-
-            <div class="editor-fields">
-
-                <textarea
-                    id="captionInput"
-                    placeholder="Escreva uma legenda..."
-                    maxlength="2200"
-                ></textarea>
-
-            </div>
+          <div id="searchResults"></div>
 
         </div>
 
-    </div>
-
-</section>
+      </section>
 
 
-<!-- =======================================================
-     REELS
-======================================================== -->
+      <section id="profilePage" class="hidden">
 
-<section class="page" id="reelsPage">
+        <div class="profile card">
 
-    <div class="reels-container" id="reelsContainer"></div>
+          <div class="profile-head">
 
-    <div class="empty" id="emptyReels">
+            <div class="avatar" id="profileAvatar">
+              ?
+            </div>
 
-        <div class="empty-icon">▶</div>
+            <div>
 
-        <h2>Nenhum Reel ainda</h2>
+              <div
+                class="profile-name"
+                id="profileName"
+              >
+                Usuário
+              </div>
 
-        <p>
-            Quando você publicar um Reel, ele aparecerá aqui.
+              <div
+                class="date"
+                id="profileUsername"
+              >
+                @usuario
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            class="profile-bio"
+            id="profileBio"
+          >
+          </div>
+
+          <div class="tabs">
+
+            <button
+              class="tab active"
+              onclick="profileTab('posts',this)"
+            >
+              Posts
+            </button>
+
+            <button
+              class="tab"
+              onclick="profileTab('reposts',this)"
+            >
+              Repostados
+            </button>
+
+          </div>
+
+        </div>
+
+        <div id="profileContent"></div>
+
+      </section>
+
+
+      <section id="repostsPage" class="hidden">
+
+        <div class="card" style="padding:20px;margin-bottom:18px">
+
+          <h2>
+            🔄 Repostados
+          </h2>
+
+          <p style="color:var(--muted);margin-top:5px">
+            Aqui ficam somente os conteúdos que você repostou.
+          </p>
+
+        </div>
+
+        <div id="repostsContent"></div>
+
+      </section>
+
+    </main>
+
+
+    <aside class="right">
+
+      <div class="right-card card">
+
+        <div class="right-title">
+          Seu Vibra
+        </div>
+
+        <p style="color:var(--muted);line-height:1.5">
+          Compartilhe momentos, descubra pessoas e deixe sua vibração registrada.
         </p>
 
         <button
-            class="primary"
-            onclick="openCreate('reel')"
+          class="primary"
+          style="width:100%;margin-top:15px"
+          onclick="openCreate()"
         >
-            Criar Reel
+          Criar publicação
         </button>
 
-    </div>
+      </div>
 
-</section>
+    </aside>
 
+  </div>
 
-<!-- =======================================================
-     PROFILE
-======================================================== -->
 
-<section class="page" id="profilePage">
+  <nav class="mobile-nav">
 
-    <div class="profile-top">
+    <button onclick="showPage('home')">⌂</button>
 
-        <div class="profile-avatar">V</div>
+    <button onclick="showPage('search')">⌕</button>
 
-        <div class="stats">
+    <button onclick="openCreate()">＋</button>
 
-            <div class="stat">
-                <strong id="postCount">0</strong>
-                <span>Posts</span>
-            </div>
+    <button onclick="showPage('reposts')">↻</button>
 
-            <div class="stat">
-                <strong>0</strong>
-                <span>Seguidores</span>
-            </div>
+    <button onclick="showPage('profile')">◉</button>
 
-            <div class="stat">
-                <strong>0</strong>
-                <span>Seguindo</span>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="profile-info">
-
-        <h2>Seu perfil</h2>
-        <p>@usuario</p>
-        <p>Adicione uma bio ao seu perfil.</p>
-
-    </div>
-
-    <div class="profile-actions">
-
-        <button class="secondary">
-            Editar perfil
-        </button>
-
-        <button
-            class="secondary"
-            onclick="openSettings()"
-        >
-            ⚙ Configurações
-        </button>
-
-    </div>
-
-
-    <div class="profile-tabs">
-
-        <button
-            class="profile-tab active"
-            data-profile="posts"
-        >
-            ▦ Posts
-        </button>
-
-        <button
-            class="profile-tab"
-            data-profile="reels"
-        >
-            ▶ Reels
-        </button>
-
-        <button
-            class="profile-tab"
-            data-profile="reposts"
-        >
-            ↻ Repostados
-        </button>
-
-        <button
-            class="profile-tab"
-            data-profile="saved"
-        >
-            ☆ Salvos
-        </button>
-
-    </div>
-
-    <div class="profile-grid" id="profileGrid"></div>
-
-</section>
-
-
-<!-- =======================================================
-     CHAT
-======================================================== -->
-
-<section class="page chat-page" id="chatPage">
-
-    <div class="chat-layout">
-
-        <div class="chat-head">
-
-            <button
-                class="icon-btn"
-                onclick="navigate('home')"
-            >
-                ‹
-            </button>
-
-            <div class="avatar">V</div>
-
-            <div class="chat-head-info">
-
-                <strong>Mensagens</strong>
-                <span>conversas</span>
-
-            </div>
-
-            <button class="icon-btn">
-                ⋮
-            </button>
-
-        </div>
-
-        <div class="messages" id="messages">
-
-            <div class="empty" style="min-height:250px">
-
-                <div class="empty-icon">◌</div>
-
-                <h2>Suas mensagens</h2>
-
-                <p>
-                    As suas conversas aparecerão aqui.
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="chat-composer">
-
-            <button class="icon-btn" title="Mídia">
-                ＋
-            </button>
-
-            <input
-                class="chat-input"
-                id="chatInput"
-                placeholder="Mensagem..."
-            >
-
-            <button
-                class="icon-btn"
-                id="audioBtn"
-                title="Áudio"
-            >
-                🎤
-            </button>
-
-            <button
-                class="send"
-                id="sendBtn"
-            >
-                ➤
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =======================================================
-     NOTIFICATIONS
-======================================================== -->
-
-<section class="page" id="notificationsPage">
-
-    <h1 class="section-title">Notificações</h1>
-
-    <div id="notificationsList"></div>
-
-    <div class="empty" id="emptyNotifications">
-
-        <div class="empty-icon">♡</div>
-
-        <h2>Nenhuma notificação</h2>
-
-        <p>
-            Quando algo acontecer, você verá aqui.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =======================================================
-     SETTINGS
-======================================================== -->
-
-<section class="page" id="settingsPage">
-
-    <h1 class="section-title">Configurações</h1>
-
-    <div class="settings-section">
-
-        <h3>Aparência</h3>
-
-        <button class="setting" onclick="setTheme('light')">
-            <span>☀️ Tema claro</span>
-            <span>›</span>
-        </button>
-
-        <button class="setting" onclick="setTheme('dark')">
-            <span>🌙 Tema escuro</span>
-            <span>›</span>
-        </button>
-
-        <button class="setting" onclick="setTheme('system')">
-            <span>◐ Tema do sistema</span>
-            <span>›</span>
-        </button>
-
-    </div>
-
-    <div class="settings-section">
-
-        <h3>Privacidade</h3>
-
-        <button class="setting" onclick="togglePrivate()">
-
-            <span>
-                🔒 Conta privada
-            </span>
-
-            <span id="privateStatus">
-                Desativada
-            </span>
-
-        </button>
-
-    </div>
-
-    <div class="settings-section">
-
-        <h3>Mensagens</h3>
-
-        <button class="setting">
-            <span>🏷️ Apelidos</span>
-            <span>›</span>
-        </button>
-
-        <button class="setting">
-            <span>🎨 Tema dos chats</span>
-            <span>›</span>
-        </button>
-
-    </div>
-
-</section>
-
-</main>
-
-
-<!-- =======================================================
-     BOTTOM NAV
-======================================================== -->
-
-<nav class="bottom-nav">
-
-    <div class="nav-inner">
-
-        <button
-            class="nav-item active"
-            data-page="home"
-        >
-            <span>⌂</span>
-            <small>Início</small>
-        </button>
-
-        <button
-            class="nav-item"
-            data-page="search"
-        >
-            <span>⌕</span>
-            <small>Buscar</small>
-        </button>
-
-        <button
-            class="nav-item"
-            data-page="create"
-        >
-            <span>＋</span>
-            <small>Criar</small>
-        </button>
-
-        <button
-            class="nav-item"
-            data-page="reels"
-        >
-            <span>▶</span>
-            <small>Reels</small>
-        </button>
-
-        <button
-            class="nav-item"
-            data-page="profile"
-        >
-            <span>◉</span>
-            <small>Perfil</small>
-        </button>
-
-    </div>
-
-</nav>
-
-
-<!-- =======================================================
-     MODAL
-======================================================== -->
-
-<div class="modal hidden" id="modal">
-
-    <div class="modal-bg" onclick="closeModal()"></div>
-
-    <div class="modal-box">
-
-        <button
-            class="modal-close"
-            onclick="closeModal()"
-        >
-            ×
-        </button>
-
-        <div id="modalContent"></div>
-
-    </div>
+  </nav>
 
 </div>
 
+
+<div class="modal-bg" id="createModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <h2>Criar publicação</h2>
+
+      <button
+        class="icon-btn"
+        onclick="closeCreate()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <textarea
+      id="postCaption"
+      placeholder="Escreva uma legenda..."
+    ></textarea>
+
+    <div style="margin-top:12px">
+
+      <input
+        type="file"
+        id="mediaInput"
+        accept="image/*,video/*"
+      >
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="secondary"
+        onclick="closeCreate()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="primary"
+        onclick="createPost()"
+      >
+        Publicar
+      </button>
+
+    </div>
+
+  </div>
+
 </div>
+
+
+<div id="toast" class="toast"></div>
 
 
 <script>
-/* =========================================================
-   VIBRA JAVASCRIPT
-========================================================= */
 
-let currentCreateType = "post";
-let selectedFiles = [];
-let posts = JSON.parse(localStorage.getItem("vibra_posts") || "[]");
-let savedPosts = JSON.parse(localStorage.getItem("vibra_saved") || "[]");
-let isPrivate = localStorage.getItem("vibra_private") === "true";
+/* ==========================================
+   SUPABASE
+========================================== */
+
+const SUPABASE_URL =
+"https://dkkudlzpopmfhyqwjfsv.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
+
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
-/* =========================================================
-   NAVEGAÇÃO
-========================================================= */
+/* ==========================================
+   ESTADO
+========================================== */
 
-function navigate(page){
+let currentUser = null;
+let authMode = "login";
+let allPosts = [];
 
-    document.querySelectorAll(".page").forEach(p=>{
-        p.classList.remove("active");
-    });
 
-    document.querySelectorAll(".nav-item").forEach(item=>{
-        item.classList.remove("active");
-    });
+/* ==========================================
+   TOAST
+========================================== */
 
-    const target = document.getElementById(page + "Page");
+function toast(message){
 
-    if(target){
-        target.classList.add("active");
-    }
+  const el =
+  document.getElementById("toast");
 
-    const nav = document.querySelector(
-        `.nav-item[data-page="${page}"]`
-    );
+  el.textContent = message;
 
-    if(nav){
-        nav.classList.add("active");
-    }
+  el.classList.add("show");
 
-    window.scrollTo(0,0);
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+
 }
 
 
-document.querySelectorAll(".nav-item").forEach(button=>{
+/* ==========================================
+   AUTENTICAÇÃO
+========================================== */
 
-    button.addEventListener("click",()=>{
+function toggleAuthMode(){
 
-        navigate(button.dataset.page);
+  authMode =
+  authMode === "login"
+  ? "signup"
+  : "login";
 
+  const button =
+  document.getElementById("authButton");
+
+  const desc =
+  document.getElementById("loginDescription");
+
+  const text =
+  document.getElementById("switchText");
+
+  const switchButton =
+  document.getElementById("switchButton");
+
+  if(authMode === "signup"){
+
+    button.textContent = "Criar conta";
+
+    desc.textContent =
+    "Crie sua conta no Vibra.";
+
+    text.textContent =
+    "Já tem uma conta?";
+
+    switchButton.textContent =
+    "Entrar";
+
+  }else{
+
+    button.textContent = "Entrar";
+
+    desc.textContent =
+    "Entre na sua conta para continuar.";
+
+    text.textContent =
+    "Ainda não tem uma conta?";
+
+    switchButton.textContent =
+    "Criar conta";
+
+  }
+
+}
+
+
+async function handleAuth(){
+
+  const email =
+  document.getElementById("email").value.trim();
+
+  const password =
+  document.getElementById("password").value;
+
+  if(!email || !password){
+
+    toast("Preencha e-mail e senha.");
+
+    return;
+  }
+
+  let result;
+
+  if(authMode === "signup"){
+
+    result =
+    await db.auth.signUp({
+      email,
+      password
     });
 
-});
+  }else{
+
+    result =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  }
+
+  if(result.error){
+
+    toast(result.error.message);
+
+    return;
+  }
+
+  if(authMode === "signup"){
+
+    toast(
+      "Conta criada! Verifique seu e-mail se necessário."
+    );
+
+  }
+
+}
 
 
-/* =========================================================
-   TOPO
-========================================================= */
+async function logout(){
 
-document.getElementById("notificationsBtn").onclick=()=>{
-    navigate("notifications");
-};
+  await db.auth.signOut();
 
-document.getElementById("chatBtn").onclick=()=>{
-    navigate("chat");
-};
-
-document.getElementById("themeBtn").onclick=()=>{
-
-    const dark = document.body.classList.contains("dark");
-
-    setTheme(dark ? "light" : "dark");
-
-};
+}
 
 
-/* =========================================================
-   TEMA
-========================================================= */
+/* ==========================================
+   SESSÃO
+========================================== */
 
-function setTheme(theme){
+async function checkSession(){
 
-    if(theme==="dark"){
+  const {
+    data
+  } =
+  await db.auth.getSession();
 
-        document.body.classList.add("dark");
+  if(data.session){
 
-        localStorage.setItem("vibra_theme","dark");
+    currentUser =
+    data.session.user;
 
-    }else if(theme==="light"){
+    await enterApp();
 
-        document.body.classList.remove("dark");
+  }else{
 
-        localStorage.setItem("vibra_theme","light");
+    showLogin();
+
+  }
+
+}
+
+
+db.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    if(session){
+
+      currentUser =
+      session.user;
+
+      await enterApp();
 
     }else{
 
-        localStorage.setItem("vibra_theme","system");
+      currentUser = null;
 
-        const prefersDark =
-            window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-        document.body.classList.toggle("dark",prefersDark);
+      showLogin();
 
     }
 
+  }
+);
+
+
+function showLogin(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("app")
+  .classList.add("hidden");
+
 }
 
-const savedTheme = localStorage.getItem("vibra_theme") || "system";
 
-setTheme(savedTheme);
+async function enterApp(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("app")
+  .classList.remove("hidden");
+
+  await ensureProfile();
+
+  await loadProfile();
+
+  await loadFeed();
+
+}
 
 
-/* =========================================================
-   CRIAÇÃO
-========================================================= */
+/* ==========================================
+   PERFIL
+========================================== */
 
-document.querySelectorAll(".create-tab").forEach(tab=>{
+async function ensureProfile(){
 
-    tab.addEventListener("click",()=>{
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
 
-        document.querySelectorAll(".create-tab")
-            .forEach(t=>t.classList.remove("active"));
+  if(!data){
 
-        tab.classList.add("active");
+    const emailName =
+    currentUser.email
+    ?.split("@")[0]
+    || "usuario";
 
-        currentCreateType = tab.dataset.create;
+    const username =
+    emailName
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"")
+    .slice(0,25)
+    || "usuario";
 
+    await db
+    .from("profiles")
+    .insert({
+      id:currentUser.id,
+      username,
+      display_name:emailName
     });
 
-});
-
-
-function openCreate(type){
-
-    currentCreateType = type;
-
-    navigate("create");
-
-    document.querySelectorAll(".create-tab")
-        .forEach(t=>{
-            t.classList.toggle(
-                "active",
-                t.dataset.create===type
-            );
-        });
+  }
 
 }
 
 
-/* =========================================================
-   UPLOAD
-========================================================= */
+async function loadProfile(){
 
-document.getElementById("mediaInput")
-.addEventListener("change",function(){
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
 
-    selectedFiles = [...this.files];
+  if(!data) return;
 
-    if(!selectedFiles.length) return;
+  document
+  .getElementById("profileName")
+  .textContent =
+  data.display_name ||
+  data.username ||
+  "Usuário";
 
-    openEditor();
+  document
+  .getElementById("profileUsername")
+  .textContent =
+  data.username
+  ? "@" + data.username
+  : "";
 
-});
+  document
+  .getElementById("profileBio")
+  .textContent =
+  data.bio || "";
+
+  const avatar =
+  document.getElementById("profileAvatar");
+
+  if(data.avatar_url){
+
+    avatar.innerHTML =
+    `<img src="${escapeHtml(data.avatar_url)}">`;
+
+  }else{
+
+    avatar.textContent =
+    (data.display_name ||
+     data.username ||
+     "U")[0]
+    .toUpperCase();
+
+  }
+
+}
 
 
-function openEditor(){
+/* ==========================================
+   POSTS
+========================================== */
 
-    const editor = document.getElementById("editor");
-    const preview = document.getElementById("editorPreview");
+async function loadFeed(){
 
-    editor.classList.remove("hidden");
+  const {
+    data,
+    error
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .order("created_at",{ascending:false});
 
-    preview.innerHTML="";
+  if(error){
 
-    selectedFiles.forEach(file=>{
+    console.error(error);
 
-        const url = URL.createObjectURL(file);
+    toast("Não foi possível carregar os posts.");
 
-        let element;
+    return;
+  }
 
-        if(file.type.startsWith("video/")){
+  allPosts =
+  data || [];
 
-            element = document.createElement("video");
+  await renderPosts(
+    allPosts,
+    document.getElementById("feed")
+  );
 
-            element.src = url;
-            element.controls = true;
-            element.autoplay = true;
-            element.muted = true;
-            element.loop = true;
+}
 
-        }else{
 
-            element = document.createElement("img");
+async function renderPosts(posts,container){
 
-            element.src = url;
+  if(!posts.length){
 
+    container.innerHTML = `
+      <div class="empty card">
+        <div style="font-size:35px">✨</div>
+        <h3 style="margin:10px 0">
+          Seu Vibra começa aqui
+        </h3>
+        <p>
+          Publique alguma coisa para começar.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for(const post of posts){
+
+    const html =
+    await buildPost(post);
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      html
+    );
+
+  }
+
+}
+
+
+async function buildPost(post){
+
+  const {
+    data:like
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const {
+    count
+  } =
+  await db
+  .from("likes")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    count:commentCount
+  } =
+  await db
+  .from("comments")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    data:repost
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const profile =
+  post.profiles || {};
+
+  const name =
+  profile.display_name ||
+  profile.username ||
+  "Usuário";
+
+  const username =
+  profile.username
+  ? "@" + profile.username
+  : "";
+
+  const date =
+  new Date(post.created_at)
+  .toLocaleString("pt-BR",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+
+  let media = "";
+
+  if(post.media_url){
+
+    if(post.media_type === "video"){
+
+      media =
+      `<video
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        controls
+        playsinline
+      ></video>`;
+
+    }else{
+
+      media =
+      `<img
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        alt="Publicação"
+      >`;
+
+    }
+
+  }
+
+  return `
+
+  <article class="post card">
+
+    <div class="post-head">
+
+      <div class="avatar">
+
+        ${
+          profile.avatar_url
+          ? `<img src="${escapeHtml(profile.avatar_url)}">`
+          : name[0].toUpperCase()
         }
 
-        preview.appendChild(element);
+      </div>
 
-    });
+      <div class="user-info">
+
+        <div class="username">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="date">
+          ${escapeHtml(username)}
+          ${username ? " · " : ""}
+          ${date}
+        </div>
+
+      </div>
+
+    </div>
+
+    ${
+      post.caption
+      ? `
+      <div class="post-content">
+        ${escapeHtml(post.caption)}
+      </div>
+      `
+      : ""
+    }
+
+    ${media}
+
+    <div class="post-actions">
+
+      <button
+        class="action ${like ? "liked":""}"
+        onclick="toggleLike('${post.id}')"
+      >
+        ${like ? "♥" : "♡"}
+        ${count || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleComments('${post.id}')"
+      >
+        💬 ${commentCount || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleRepost('${post.id}')"
+      >
+        ${repost ? "↻ Repostado" : "↻ Repostar"}
+      </button>
+
+    </div>
+
+    <div
+      id="comments-${post.id}"
+      class="comments hidden"
+    ></div>
+
+  </article>
+
+  `;
 
 }
 
 
-function closeEditor(){
-
-    document.getElementById("editor")
-        .classList.add("hidden");
-
-    document.getElementById("mediaInput").value="";
-
-    selectedFiles=[];
-
-}
-
-
-/* =========================================================
-   EDITOR
-========================================================= */
-
-function editorAction(action){
-
-    if(action==="text"){
-
-        const text = prompt("Digite o texto para colocar na mídia:");
-
-        if(text){
-
-            const preview =
-                document.getElementById("editorPreview");
-
-            const overlay =
-                document.createElement("div");
-
-            overlay.textContent=text;
-
-            overlay.style.position="absolute";
-            overlay.style.bottom="20px";
-            overlay.style.left="20px";
-            overlay.style.right="20px";
-            overlay.style.color="white";
-            overlay.style.fontSize="28px";
-            overlay.style.fontWeight="800";
-            overlay.style.textAlign="center";
-            overlay.style.textShadow="0 2px 8px #000";
-
-            preview.appendChild(overlay);
-
-        }
-
-        return;
-    }
-
-    if(action==="music"){
-
-        const music = prompt(
-            "Digite o nome da música ou cole o link do YouTube:"
-        );
-
-        if(music){
-
-            showModal(`
-                <h2>🎵 Música</h2>
-                <p style="color:var(--muted);line-height:1.5">
-                    Música selecionada:
-                </p>
-                <br>
-                <strong>${escapeHTML(music)}</strong>
-                <br><br>
-                <button class="primary"
-                    style="margin:0"
-                    onclick="closeModal()">
-                    Usar música
-                </button>
-            `);
-
-        }
-
-        return;
-    }
-
-    if(action==="filter"){
-
-        showModal(`
-            <h2>Filtros</h2>
-
-            <button class="setting"
-                onclick="applyFilter('none')">
-                Original
-            </button>
-
-            <button class="setting"
-                onclick="applyFilter('grayscale(1)')">
-                Preto e branco
-            </button>
-
-            <button class="setting"
-                onclick="applyFilter('sepia(.45)')">
-                Retrô
-            </button>
-
-            <button class="setting"
-                onclick="applyFilter('contrast(1.2) saturate(1.3)')">
-                Vibrante
-            </button>
-        `);
-
-        return;
-    }
-
-    if(action==="crop"){
-
-        alert("O editor está preparado para receber o sistema de recorte.");
-
-        return;
-
-    }
-
-    if(action==="speed"){
-
-        alert("A velocidade pode ser ajustada quando o conteúdo for um vídeo.");
-
-        return;
-
-    }
-
-    if(action==="sticker"){
-
-        const sticker = prompt(
-            "Digite um emoji para adicionar:"
-        );
-
-        if(sticker){
-
-            const preview =
-                document.getElementById("editorPreview");
-
-            const element =
-                document.createElement("div");
-
-            element.textContent=sticker;
-
-            element.style.position="absolute";
-            element.style.top="20px";
-            element.style.right="20px";
-            element.style.fontSize="45px";
-
-            preview.appendChild(element);
-
-        }
-
-    }
-
-}
-
-
-function applyFilter(filter){
-
-    document.querySelectorAll(
-        "#editorPreview img,#editorPreview video"
-    ).forEach(el=>{
-        el.style.filter=filter;
-    });
-
-    closeModal();
-
-}
-
-
-/* =========================================================
+/* ==========================================
    PUBLICAR
-========================================================= */
+========================================== */
 
-function publishContent(){
+async function quickPost(){
 
-    if(!selectedFiles.length){
+  const textarea =
+  document.getElementById("quickCaption");
 
-        alert("Selecione uma mídia primeiro.");
+  const caption =
+  textarea.value.trim();
 
-        return;
+  if(!caption){
 
-    }
+    openCreate();
 
-    const caption =
-        document.getElementById("captionInput").value;
+    return;
+  }
 
-    const file = selectedFiles[0];
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_type:"text"
+  });
 
-    const url = URL.createObjectURL(file);
+  if(error){
 
-    const item = {
+    toast(error.message);
 
-        id:Date.now(),
+    return;
+  }
 
-        type:currentCreateType,
+  textarea.value = "";
 
-        url,
+  toast("Publicado! ✨");
 
-        mime:file.type,
+  await loadFeed();
 
-        caption,
+}
 
-        createdAt:new Date().toISOString(),
 
-        liked:false,
+function openCreate(){
 
-        reposted:false,
+  document
+  .getElementById("createModal")
+  .classList.add("open");
 
-        saved:false
+}
 
-    };
 
-    posts.unshift(item);
+function closeCreate(){
+
+  document
+  .getElementById("createModal")
+  .classList.remove("open");
+
+}
+
+
+async function createPost(){
+
+  const caption =
+  document
+  .getElementById("postCaption")
+  .value.trim();
+
+  const file =
+  document
+  .getElementById("mediaInput")
+  .files[0];
+
+  let media_url = null;
+  let media_type = "text";
+
+  if(file){
 
     /*
-       Salvamos somente informações locais.
-       Object URLs não são permanentes entre sessões.
-       O backend futuro deverá armazenar a mídia.
+      Para a primeira versão,
+      imagens pequenas podem ser
+      armazenadas como Data URL.
     */
 
-    try{
+    if(file.size > 2 * 1024 * 1024){
 
-        localStorage.setItem(
-            "vibra_posts",
-            JSON.stringify(
-                posts.map(p=>({
-                    ...p,
-                    url:""
-                }))
-            )
-        );
+      toast(
+        "Use uma imagem de até 2 MB nesta versão."
+      );
 
-    }catch(e){}
-
-    if(currentCreateType==="story"){
-
-        addStoryFromPost(item);
-
-    }else if(currentCreateType==="reel"){
-
-        renderReels();
-
+      return;
     }
 
-    renderFeed();
-    renderProfile();
+    media_url =
+    await fileToDataURL(file);
 
-    document.getElementById("postCount")
-        .textContent =
-        posts.filter(p=>p.type==="post").length;
+    media_type =
+    file.type.startsWith("video")
+    ? "video"
+    : "image";
 
-    closeEditor();
+  }
 
-    navigate("home");
+  if(!caption && !media_url){
 
-}
-
-
-/* =========================================================
-   FEED
-========================================================= */
-
-function renderFeed(){
-
-    const feed =
-        document.getElementById("feed");
-
-    const empty =
-        document.getElementById("emptyFeed");
-
-    const feedPosts =
-        posts.filter(p=>p.type==="post");
-
-    feed.innerHTML="";
-
-    if(!feedPosts.length){
-
-        empty.style.display="flex";
-
-        return;
-
-    }
-
-    empty.style.display="none";
-
-    feedPosts.forEach(post=>{
-
-        const article =
-            document.createElement("article");
-
-        article.className="post";
-
-        article.innerHTML=`
-
-            <div class="post-head">
-
-                <div class="avatar">V</div>
-
-                <div class="post-user">
-
-                    <strong>Você</strong>
-
-                    <span>agora</span>
-
-                </div>
-
-                <button class="icon-btn"
-                    onclick="postMenu(${post.id})">
-                    ⋮
-                </button>
-
-            </div>
-
-            <div class="post-media">
-
-                ${
-                    post.url
-                    ?
-                    (
-                        post.mime.startsWith("video/")
-                        ?
-                        `<video src="${post.url}"
-                            controls></video>`
-                        :
-                        `<img src="${post.url}" alt="Publicação">`
-                    )
-                    :
-                    `<span style="color:var(--muted)">
-                        Mídia
-                    </span>`
-                }
-
-            </div>
-
-            <div class="post-actions">
-
-                <button
-                    class="post-action"
-                    onclick="likePost(${post.id},this)">
-                    ♡
-                </button>
-
-                <button
-                    class="post-action"
-                    onclick="comments(${post.id})">
-                    ◯
-                </button>
-
-                <button
-                    class="post-action"
-                    onclick="repost(${post.id})">
-                    ↻
-                </button>
-
-                <button
-                    class="post-action"
-                    onclick="sharePost(${post.id})">
-                    ↑
-                </button>
-
-                <button
-                    class="post-action"
-                    style="margin-left:auto"
-                    onclick="savePost(${post.id},this)">
-                    ☆
-                </button>
-
-            </div>
-
-            ${
-                post.caption
-                ?
-                `
-                <div class="post-caption">
-                    <strong>Você</strong>
-                    ${escapeHTML(post.caption)}
-                </div>
-                `
-                :
-                ""
-            }
-
-        `;
-
-        feed.appendChild(article);
-
-    });
-
-}
-
-
-/* =========================================================
-   CURTIDA
-========================================================= */
-
-function likePost(id,button){
-
-    const post =
-        posts.find(p=>p.id===id);
-
-    if(!post) return;
-
-    post.liked=!post.liked;
-
-    button.textContent =
-        post.liked ? "♥" : "♡";
-
-    if(post.liked){
-
-        addNotification("Você curtiu sua publicação.");
-
-    }
-
-}
-
-
-/* =========================================================
-   SALVAR
-========================================================= */
-
-function savePost(id,button){
-
-    const post =
-        posts.find(p=>p.id===id);
-
-    if(!post) return;
-
-    post.saved=!post.saved;
-
-    button.textContent =
-        post.saved ? "★" : "☆";
-
-    if(post.saved){
-
-        if(!savedPosts.includes(id)){
-            savedPosts.push(id);
-        }
-
-    }else{
-
-        savedPosts =
-            savedPosts.filter(x=>x!==id);
-
-    }
-
-    localStorage.setItem(
-        "vibra_saved",
-        JSON.stringify(savedPosts)
+    toast(
+      "Adicione uma legenda ou mídia."
     );
 
-    renderProfile();
+    return;
+  }
+
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_url,
+    media_type
+  });
+
+  if(error){
+
+    console.error(error);
+
+    toast(error.message);
+
+    return;
+  }
+
+  document
+  .getElementById("postCaption")
+  .value = "";
+
+  document
+  .getElementById("mediaInput")
+  .value = "";
+
+  closeCreate();
+
+  toast("Publicação criada! 🎉");
+
+  await loadFeed();
 
 }
 
 
-/* =========================================================
+function fileToDataURL(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    () => resolve(reader.result);
+
+    reader.onerror =
+    reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+/* ==========================================
+   CURTIDAS
+========================================== */
+
+async function toggleLike(postId){
+
+  const {
+    data
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  if(data){
+
+    await db
+    .from("likes")
+    .delete()
+    .eq("id",data.id);
+
+  }else{
+
+    await db
+    .from("likes")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
+
+  }
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
    REPOST
-========================================================= */
+========================================== */
 
-function repost(id){
+async function toggleRepost(postId){
 
-    const post =
-        posts.find(p=>p.id===id);
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
 
-    if(!post) return;
+  if(data){
 
-    post.reposted=!post.reposted;
+    await db
+    .from("reposts")
+    .delete()
+    .eq("id",data.id);
 
-    if(post.reposted){
+    toast("Repost removido.");
 
-        addNotification(
-            "Publicação adicionada aos seus Repostados."
-        );
+  }else{
 
-    }
+    await db
+    .from("reposts")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
 
-    renderProfile();
+    toast("Repostado! 🔄");
+
+  }
+
+  await loadFeed();
 
 }
 
 
-/* =========================================================
-   PERFIL
-========================================================= */
+/* ==========================================
+   COMENTÁRIOS
+========================================== */
 
-function renderProfile(){
+async function toggleComments(postId){
 
-    const grid =
-        document.getElementById("profileGrid");
+  const box =
+  document
+  .getElementById("comments-"+postId);
 
-    const activeTab =
-        document.querySelector(
-            ".profile-tab.active"
-        )?.dataset.profile || "posts";
+  if(!box) return;
 
-    grid.innerHTML="";
+  if(!box.classList.contains("hidden")){
 
-    let data=[];
+    box.classList.add("hidden");
 
-    if(activeTab==="posts"){
+    return;
 
-        data=posts.filter(p=>p.type==="post");
+  }
 
-    }else if(activeTab==="reels"){
+  box.classList.remove("hidden");
 
-        data=posts.filter(p=>p.type==="reel");
-
-    }else if(activeTab==="reposts"){
-
-        data=posts.filter(p=>p.reposted);
-
-    }else if(activeTab==="saved"){
-
-        data=posts.filter(
-            p=>savedPosts.includes(p.id)
-        );
-
-    }
-
-    data.forEach(post=>{
-
-        const item =
-            document.createElement("div");
-
-        item.className="grid-item";
-
-        if(post.url){
-
-            if(post.mime.startsWith("video/")){
-
-                item.innerHTML=
-                    `<video src="${post.url}" muted></video>`;
-
-            }else{
-
-                item.innerHTML=
-                    `<img src="${post.url}" alt="">`;
-
-            }
-
-        }
-
-        grid.appendChild(item);
-
-    });
+  await loadComments(
+    postId,
+    box
+  );
 
 }
 
 
-document.querySelectorAll(".profile-tab")
-.forEach(tab=>{
+async function loadComments(postId,box){
 
-    tab.addEventListener("click",()=>{
+  const {
+    data
+  } =
+  await db
+  .from("comments")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name
+    )
+  `)
+  .eq("post_id",postId)
+  .order("created_at",{ascending:true});
 
-        document.querySelectorAll(".profile-tab")
-            .forEach(t=>t.classList.remove("active"));
+  let html = "";
 
-        tab.classList.add("active");
+  for(const comment of data || []){
 
-        renderProfile();
+    const name =
+    comment.profiles?.display_name ||
+    comment.profiles?.username ||
+    "Usuário";
 
-    });
+    html += `
+      <div class="comment">
+        <b>${escapeHtml(name)}</b>
+        ${escapeHtml(comment.content)}
+      </div>
+    `;
 
-});
+  }
 
+  html += `
 
-/* =========================================================
-   REELS
-========================================================= */
+    <form
+      class="comment-form"
+      onsubmit="addComment(event,'${postId}')"
+    >
 
-function renderReels(){
+      <input
+        id="comment-${postId}"
+        placeholder="Escreva um comentário..."
+      >
 
-    const container =
-        document.getElementById("reelsContainer");
+      <button class="primary">
+        Enviar
+      </button>
 
-    const empty =
-        document.getElementById("emptyReels");
+    </form>
 
-    const reels =
-        posts.filter(p=>p.type==="reel");
+  `;
 
-    container.innerHTML="";
-
-    if(!reels.length){
-
-        empty.style.display="flex";
-
-        return;
-
-    }
-
-    empty.style.display="none";
-
-    reels.forEach(reel=>{
-
-        const element =
-            document.createElement("div");
-
-        element.className="reel";
-
-        element.innerHTML=`
-
-            ${
-                reel.url
-                ?
-                (
-                    reel.mime.startsWith("video/")
-                    ?
-                    `<video class="reel-media"
-                        src="${reel.url}"
-                        autoplay
-                        muted
-                        loop
-                        playsinline
-                        controls></video>`
-                    :
-                    `<img class="reel-media"
-                        src="${reel.url}">`
-                )
-                :
-                ""
-            }
-
-            <div class="reel-overlay">
-
-                <div class="reel-info">
-
-                    <strong>Você</strong>
-
-                    <p style="margin-top:8px">
-                        ${escapeHTML(reel.caption || "")}
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="reel-actions">
-
-                <button class="reel-btn">
-                    ♡
-                </button>
-
-                <button
-                    class="reel-btn"
-                    onclick="comments(${reel.id})">
-                    ◯
-                </button>
-
-                <button
-                    class="reel-btn"
-                    onclick="repost(${reel.id})">
-                    ↻
-                </button>
-
-                <button class="reel-btn">
-                    ↑
-                </button>
-
-            </div>
-
-        `;
-
-        container.appendChild(element);
-
-    });
+  box.innerHTML = html;
 
 }
 
 
-/* =========================================================
-   STORIES
-========================================================= */
+async function addComment(event,postId){
 
-function addStoryFromPost(post){
+  event.preventDefault();
 
-    const stories =
-        document.getElementById("stories");
+  const input =
+  document
+  .getElementById("comment-"+postId);
 
-    const story =
-        document.createElement("button");
+  const content =
+  input.value.trim();
 
-    story.className="story";
+  if(!content) return;
 
-    story.innerHTML=`
+  const {
+    error
+  } =
+  await db
+  .from("comments")
+  .insert({
+    post_id:postId,
+    user_id:currentUser.id,
+    content
+  });
 
-        <div class="story-avatar">
+  if(error){
 
-            <div class="story-avatar-inner">
+    toast(error.message);
 
-                ${
-                    post.url
-                    ?
-                    `<img
-                        src="${post.url}"
-                        style="
-                            width:100%;
-                            height:100%;
-                            object-fit:cover;
-                            border-radius:50%;
-                        "
-                    >`
-                    :
-                    "V"
-                }
+    return;
+  }
 
-            </div>
+  input.value = "";
+
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  await loadComments(
+    postId,
+    box
+  );
+
+}
+
+
+/* ==========================================
+   PÁGINAS
+========================================== */
+
+function showPage(page,button){
+
+  const pages = [
+    "homePage",
+    "searchPage",
+    "profilePage",
+    "repostsPage"
+  ];
+
+  pages.forEach(id=>{
+
+    document
+    .getElementById(id)
+    .classList.add("hidden");
+
+  });
+
+  const map = {
+    home:"homePage",
+    search:"searchPage",
+    profile:"profilePage",
+    reposts:"repostsPage"
+  };
+
+  document
+  .getElementById(map[page])
+  .classList.remove("hidden");
+
+  if(page === "profile"){
+
+    profileTab("posts");
+
+  }
+
+  if(page === "reposts"){
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+function profileTab(tab,button){
+
+  document
+  .querySelectorAll(".tab")
+  .forEach(x=>x.classList.remove("active"));
+
+  if(button){
+
+    button.classList.add("active");
+
+  }
+
+  if(tab === "posts"){
+
+    loadMyPosts();
+
+  }else{
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+/* ==========================================
+   MEUS POSTS
+========================================== */
+
+async function loadMyPosts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  await renderPosts(
+    data || [],
+    document.getElementById("profileContent")
+  );
+
+}
+
+
+async function loadMyReposts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select(`
+    *,
+    posts(
+      *,
+      profiles:user_id(
+        username,
+        display_name,
+        avatar_url
+      )
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  const posts =
+  (data || [])
+  .map(x=>x.posts)
+  .filter(Boolean);
+
+  await renderPosts(
+    posts,
+    document.getElementById("repostsContent")
+  );
+
+}
+
+
+/* ==========================================
+   BUSCA
+========================================== */
+
+async function searchEverything(){
+
+  const q =
+  document
+  .getElementById("searchInput")
+  .value.trim();
+
+  const result =
+  document
+  .getElementById("searchResults");
+
+  if(!q){
+
+    result.innerHTML = `
+      <div class="empty">
+        Pesquise por pessoas ou publicações.
+      </div>
+    `;
+
+    return;
+  }
+
+  const {
+    data:profiles
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .or(
+    `username.ilike.%${q}%,display_name.ilike.%${q}%`
+  )
+  .limit(10);
+
+  let html = "";
+
+  for(const profile of profiles || []){
+
+    html += `
+
+      <div
+        class="card"
+        style="
+          padding:12px;
+          margin-bottom:8px;
+          display:flex;
+          align-items:center;
+          gap:10px
+        "
+      >
+
+        <div class="avatar">
+          ${
+            profile.avatar_url
+            ? `<img src="${escapeHtml(profile.avatar_url)}">`
+            : (
+              profile.display_name ||
+              profile.username ||
+              "U"
+            )[0].toUpperCase()
+          }
+        </div>
+
+        <div>
+
+          <b>
+            ${escapeHtml(
+              profile.display_name ||
+              profile.username
+            )}
+          </b>
+
+          <div class="date">
+            @${escapeHtml(profile.username || "")}
+          </div>
 
         </div>
 
-        <span class="story-name">
-            Você
-        </span>
+      </div>
 
     `;
 
-    story.onclick=()=>openStory(post);
+  }
 
-    stories.appendChild(story);
-
-}
-
-
-function openStory(post){
-
-    showModal(`
-
-        <div style="
-            background:#111;
-            border-radius:15px;
-            overflow:hidden;
-            text-align:center;
-        ">
-
-            ${
-                post.url
-                ?
-                (
-                    post.mime.startsWith("video/")
-                    ?
-                    `<video
-                        src="${post.url}"
-                        controls
-                        autoplay
-                        style="
-                            max-width:100%;
-                            max-height:60vh;
-                        ">
-                    </video>`
-                    :
-                    `<img
-                        src="${post.url}"
-                        style="
-                            max-width:100%;
-                            max-height:60vh;
-                            object-fit:contain;
-                        ">
-                    `
-                )
-                :
-                ""
-            }
-
-        </div>
-
-        <p style="
-            color:var(--muted);
-            margin-top:12px;
-        ">
-            Pressione e segure um Story para pausá-lo.
-        </p>
-
-    `);
+  result.innerHTML =
+  html ||
+  `<div class="empty">Nenhum resultado encontrado.</div>`;
 
 }
 
 
-/* =========================================================
-   ADD STORY
-========================================================= */
+/* ==========================================
+   TEMA
+========================================== */
 
-document.getElementById("addStory")
-.onclick=()=>{
+function toggleTheme(){
 
-    openCreate("story");
+  document
+  .body
+  .classList
+  .toggle("dark");
 
-};
-
-
-/* =========================================================
-   CHAT
-========================================================= */
-
-const chatInput =
-    document.getElementById("chatInput");
-
-const sendBtn =
-    document.getElementById("sendBtn");
-
-function sendMessage(){
-
-    const text =
-        chatInput.value.trim();
-
-    if(!text) return;
-
-    const messages =
-        document.getElementById("messages");
-
-    const empty =
-        messages.querySelector(".empty");
-
-    if(empty) empty.remove();
-
-    const message =
-        document.createElement("div");
-
-    message.className="message me";
-
-    message.textContent=text;
-
-    message.addEventListener("contextmenu",e=>{
-
-        e.preventDefault();
-
-        showMessageMenu(message);
-
-    });
-
-    messages.appendChild(message);
-
-    chatInput.value="";
-
-    messages.scrollTop=messages.scrollHeight;
+  localStorage.setItem(
+    "vibra-theme",
+    document.body.classList.contains("dark")
+    ? "dark"
+    : "light"
+  );
 
 }
 
 
-sendBtn.onclick=sendMessage;
+function loadTheme(){
 
-chatInput.addEventListener("keydown",e=>{
+  const theme =
+  localStorage.getItem("vibra-theme");
 
-    if(e.key==="Enter"){
+  if(theme === "dark"){
 
-        e.preventDefault();
+    document
+    .body
+    .classList
+    .add("dark");
 
-        sendMessage();
-
-    }
-
-});
-
-
-/* =========================================================
-   ÁUDIO
-========================================================= */
-
-document.getElementById("audioBtn")
-.onclick=()=>{
-
-    showModal(`
-
-        <h2>🎤 Mensagem de áudio</h2>
-
-        <p style="
-            color:var(--muted);
-            line-height:1.5;
-        ">
-            O botão está preparado para receber
-            gravação de áudio com MediaRecorder.
-        </p>
-
-        <button
-            class="primary"
-            style="margin-top:18px"
-            onclick="closeModal()"
-        >
-            Fechar
-        </button>
-
-    `);
-
-};
-
-
-/* =========================================================
-   MENU DE MENSAGEM
-========================================================= */
-
-function showMessageMenu(message){
-
-    showModal(`
-
-        <h2>Mensagem</h2>
-
-        <button class="setting"
-            onclick="replyMessage()">
-            <span>↩ Responder</span>
-        </button>
-
-        <button class="setting"
-            onclick="editMessageElement()">
-            <span>✏ Editar</span>
-        </button>
-
-        <button class="setting"
-            onclick="navigator.clipboard?.writeText(
-                ${JSON.stringify(message.textContent)}
-            );closeModal()">
-            <span>📋 Copiar</span>
-        </button>
-
-        <button class="setting"
-            onclick="message.remove();closeModal()">
-            <span>🗑 Excluir</span>
-        </button>
-
-    `);
-
-    window.selectedMessage=message;
+  }
 
 }
 
 
-function replyMessage(){
+/* ==========================================
+   SEGURANÇA HTML
+========================================== */
 
-    const msg=window.selectedMessage;
+function escapeHtml(value){
 
-    if(msg){
-
-        chatInput.value =
-            "↩ " + msg.textContent + " ";
-
-        chatInput.focus();
-
-    }
-
-    closeModal();
+  return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 
 }
 
 
-function editMessageElement(){
-
-    const msg=window.selectedMessage;
-
-    if(!msg) return;
-
-    const newText =
-        prompt(
-            "Editar mensagem:",
-            msg.textContent
-        );
-
-    if(newText!==null){
-
-        msg.textContent=newText;
-
-    }
-
-    closeModal();
-
-}
-
-
-/* =========================================================
-   COMENTÁRIOS
-========================================================= */
-
-function comments(id){
-
-    showModal(`
-
-        <h2>Comentários</h2>
-
-        <div style="
-            padding:20px 0;
-            color:var(--muted);
-            text-align:center;
-        ">
-            Ainda não há comentários.
-        </div>
-
-        <input
-            id="commentInput"
-            placeholder="Adicionar comentário..."
-            style="
-                width:100%;
-                height:44px;
-                border:1px solid var(--border);
-                border-radius:12px;
-                padding:0 12px;
-                background:var(--surface-2);
-                color:var(--text);
-                outline:0;
-            "
-        >
-
-        <button
-            class="primary"
-            style="width:100%"
-            onclick="addComment()"
-        >
-            Comentar
-        </button>
-
-    `);
-
-}
-
-
-function addComment(){
-
-    const input =
-        document.getElementById("commentInput");
-
-    if(input?.value.trim()){
-
-        addNotification(
-            "Seu comentário foi publicado."
-        );
-
-        closeModal();
-
-    }
-
-}
-
-
-/* =========================================================
-   COMPARTILHAR
-========================================================= */
-
-function sharePost(id){
-
-    const post =
-        posts.find(p=>p.id===id);
-
-    if(!post) return;
-
-    if(navigator.share){
-
-        navigator.share({
-            title:"Vibra",
-            text:"Confira esta publicação no Vibra."
-        });
-
-    }else{
-
-        showModal(`
-
-            <h2>Compartilhar</h2>
-
-            <p style="color:var(--muted)">
-                Link da publicação:
-            </p>
-
-            <input
-                value="${location.href}"
-                readonly
-                style="
-                    width:100%;
-                    margin-top:12px;
-                    padding:12px;
-                    border:1px solid var(--border);
-                    border-radius:10px;
-                    background:var(--surface-2);
-                    color:var(--text);
-                "
-            >
-
-        `);
-
-    }
-
-}
-
-
-/* =========================================================
-   POST MENU
-========================================================= */
-
-function postMenu(id){
-
-    showModal(`
-
-        <h2>Publicação</h2>
-
-        <button class="setting">
-            <span>✏ Editar publicação</span>
-        </button>
-
-        <button class="setting">
-            <span>⚙ Configurações</span>
-        </button>
-
-        <button
-            class="setting"
-            onclick="deletePost(${id})"
-        >
-            <span>🗑 Excluir publicação</span>
-        </button>
-
-    `);
-
-}
-
-
-function deletePost(id){
-
-    posts =
-        posts.filter(p=>p.id!==id);
-
-    localStorage.setItem(
-        "vibra_posts",
-        JSON.stringify(
-            posts.map(p=>({
-                ...p,
-                url:""
-            }))
-        )
-    );
-
-    renderFeed();
-    renderProfile();
-    renderReels();
-
-    closeModal();
-
-}
-
-
-/* =========================================================
-   NOTIFICAÇÕES
-========================================================= */
-
-let notifications=[];
-
-function addNotification(text){
-
-    notifications.unshift({
-        text,
-        time:"agora",
-        read:false
-    });
-
-    renderNotifications();
-
-}
-
-
-function renderNotifications(){
-
-    const list =
-        document.getElementById("notificationsList");
-
-    const empty =
-        document.getElementById("emptyNotifications");
-
-    const badge =
-        document.getElementById("notificationBadge");
-
-    list.innerHTML="";
-
-    const unread =
-        notifications.filter(n=>!n.read).length;
-
-    if(unread){
-
-        badge.classList.remove("hidden");
-
-        badge.textContent=unread;
-
-    }else{
-
-        badge.classList.add("hidden");
-
-    }
-
-    if(!notifications.length){
-
-        empty.style.display="flex";
-
-        return;
-
-    }
-
-    empty.style.display="none";
-
-    notifications.forEach(n=>{
-
-        const item =
-            document.createElement("div");
-
-        item.className="notification";
-
-        item.innerHTML=`
-
-            <div class="avatar">V</div>
-
-            <div style="flex:1">
-
-                <strong>${escapeHTML(n.text)}</strong>
-
-                <div style="
-                    color:var(--muted);
-                    font-size:11px;
-                    margin-top:3px;
-                ">
-                    ${n.time}
-                </div>
-
-            </div>
-
-            ${
-                !n.read
-                ?
-                `<div class="notification-dot"></div>`
-                :
-                ""
-            }
-
-        `;
-
-        list.appendChild(item);
-
-    });
-
-}
-
-
-renderNotifications();
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function openSettings(){
-
-    navigate("settings");
-
-    document.querySelectorAll(".nav-item")
-        .forEach(n=>n.classList.remove("active"));
-
-}
-
-
-function togglePrivate(){
-
-    isPrivate=!isPrivate;
-
-    localStorage.setItem(
-        "vibra_private",
-        isPrivate
-    );
-
-    document.getElementById(
-        "privateStatus"
-    ).textContent =
-        isPrivate
-        ? "Ativada"
-        : "Desativada";
-
-}
-
-
-document.getElementById(
-    "privateStatus"
-).textContent =
-    isPrivate
-    ? "Ativada"
-    : "Desativada";
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function showModal(html){
-
-    document.getElementById(
-        "modalContent"
-    ).innerHTML=html;
-
-    document.getElementById(
-        "modal"
-    ).classList.remove("hidden");
-
-}
-
-
-function closeModal(){
-
-    document.getElementById(
-        "modal"
-    ).classList.add("hidden");
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-document.getElementById("searchInput")
-.addEventListener("input",function(){
-
-    const value =
-        this.value.toLowerCase().trim();
-
-    if(!value){
-
-        return;
-
-    }
-
-});
-
-
-/* =========================================================
-   UTILITÁRIO
-========================================================= */
-
-function escapeHTML(text){
-
-    return String(text)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
-
-
-/* =========================================================
+/* ==========================================
    INICIALIZAÇÃO
-========================================================= */
+========================================== */
 
-renderFeed();
-renderProfile();
-renderReels();
+loadTheme();
+
+checkSession();
 
 </script>
-/* =========================================================
-   VIBRA V3 - UPGRADE
-   Não substitui a V2.
-   Adiciona melhorias à estrutura existente.
-========================================================= */
 
-/* ---------------------------------------------------------
-   1. ESTADO DA V3
---------------------------------------------------------- */
-
-let vibraV3 = {
-    replyTarget: null,
-    editingMessage: null,
-    recording: false,
-    recorder: null,
-    audioChunks: [],
-    chatTheme: localStorage.getItem("vibra_chat_theme") || "default",
-    nickname: localStorage.getItem("vibra_nickname") || "",
-    comments: JSON.parse(localStorage.getItem("vibra_comments") || "{}"),
-    reposts: JSON.parse(localStorage.getItem("vibra_reposts") || "[]"),
-    notifications: JSON.parse(
-        localStorage.getItem("vibra_notifications") || "[]"
-    )
-};
-
-
-/* ---------------------------------------------------------
-   2. MELHORIA VISUAL
---------------------------------------------------------- */
-
-const v3Style = document.createElement("style");
-
-v3Style.textContent = `
-    .v3-action-sheet{
-        display:flex;
-        flex-direction:column;
-        gap:4px;
-        margin-top:15px;
-    }
-
-    .v3-action{
-        width:100%;
-        padding:15px;
-        background:transparent;
-        color:var(--text);
-        border-radius:12px;
-        text-align:left;
-        transition:.18s;
-    }
-
-    .v3-action:hover{
-        background:var(--surface-2);
-    }
-
-    .v3-danger{
-        color:#ed4956;
-    }
-
-    .v3-reply-preview{
-        display:none;
-        align-items:center;
-        gap:10px;
-        padding:9px 12px;
-        background:var(--surface-2);
-        border-top:1px solid var(--border);
-        font-size:12px;
-    }
-
-    .v3-reply-preview.active{
-        display:flex;
-    }
-
-    .v3-reply-preview-content{
-        flex:1;
-        overflow:hidden;
-    }
-
-    .v3-reply-preview-content strong{
-        display:block;
-        margin-bottom:2px;
-    }
-
-    .v3-reply-close{
-        background:transparent;
-        color:var(--muted);
-        font-size:18px;
-    }
-
-    .v3-message-meta{
-        display:flex;
-        align-items:center;
-        justify-content:flex-end;
-        gap:5px;
-        margin-top:3px;
-        font-size:9px;
-        opacity:.6;
-    }
-
-    .v3-edited{
-        font-size:9px;
-        opacity:.65;
-    }
-
-    .v3-audio-message{
-        display:flex;
-        align-items:center;
-        gap:9px;
-        min-width:170px;
-    }
-
-    .v3-audio-message audio{
-        max-width:180px;
-        height:32px;
-    }
-
-    .v3-recording{
-        color:#ed4956;
-        font-weight:700;
-        animation:v3Pulse 1s infinite;
-    }
-
-    @keyframes v3Pulse{
-        50%{opacity:.4}
-    }
-
-    .v3-chat-theme-default{
-        background:var(--bg);
-    }
-
-    .v3-chat-theme-night{
-        background:#080808!important;
-    }
-
-    .v3-chat-theme-lavender{
-        background:#f4f0ff!important;
-    }
-
-    .v3-chat-theme-ocean{
-        background:#eef8ff!important;
-    }
-
-    body.dark .v3-chat-theme-lavender{
-        background:#171321!important;
-    }
-
-    body.dark .v3-chat-theme-ocean{
-        background:#0d171d!important;
-    }
-
-    .v3-comment{
-        padding:12px 0;
-        border-bottom:1px solid var(--border);
-    }
-
-    .v3-comment-head{
-        display:flex;
-        gap:9px;
-        align-items:center;
-    }
-
-    .v3-comment-body{
-        margin:7px 0 0 43px;
-        line-height:1.45;
-    }
-
-    .v3-comment-actions{
-        margin-left:43px;
-        display:flex;
-        gap:15px;
-        margin-top:6px;
-    }
-
-    .v3-comment-actions button{
-        background:transparent;
-        color:var(--muted);
-        font-size:12px;
-    }
-
-    .v3-story-viewer{
-        position:fixed;
-        inset:0;
-        z-index:500;
-        background:#000;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        touch-action:none;
-    }
-
-    .v3-story-media{
-        max-width:100%;
-        max-height:100%;
-        object-fit:contain;
-    }
-
-    .v3-story-progress{
-        position:absolute;
-        top:12px;
-        left:12px;
-        right:12px;
-        height:3px;
-        background:rgba(255,255,255,.3);
-        border-radius:10px;
-        overflow:hidden;
-        z-index:2;
-    }
-
-    .v3-story-progress-bar{
-        height:100%;
-        width:0;
-        background:white;
-    }
-
-    .v3-story-close{
-        position:absolute;
-        top:22px;
-        right:18px;
-        width:40px;
-        height:40px;
-        border-radius:50%;
-        background:rgba(0,0,0,.45);
-        color:white;
-        font-size:22px;
-        z-index:3;
-    }
-
-    .v3-story-hold{
-        position:absolute;
-        inset:0;
-        z-index:1;
-    }
-
-    .v3-profile-empty{
-        grid-column:1/-1;
-        padding:50px 20px;
-        text-align:center;
-        color:var(--muted);
-    }
-
-    @media(max-width:650px){
-        .v3-audio-message audio{
-            max-width:145px;
-        }
-    }
-`;
-
-document.head.appendChild(v3Style);
-
-
-/* ---------------------------------------------------------
-   3. CHAT: ÁREA DE RESPOSTA
---------------------------------------------------------- */
-
-const chatComposer = document.querySelector(".chat-composer");
-
-if(chatComposer && !document.getElementById("v3ReplyPreview")){
-
-    const replyPreview = document.createElement("div");
-
-    replyPreview.id = "v3ReplyPreview";
-    replyPreview.className = "v3-reply-preview";
-
-    replyPreview.innerHTML = `
-        <div class="v3-reply-preview-content">
-            <strong>Respondendo</strong>
-            <span id="v3ReplyText"></span>
-        </div>
-
-        <button
-            class="v3-reply-close"
-            onclick="cancelV3Reply()"
-        >
-            ×
-        </button>
-    `;
-
-    chatComposer.parentNode.insertBefore(
-        replyPreview,
-        chatComposer
-    );
-}
-
-
-/* ---------------------------------------------------------
-   4. RESPONDER MENSAGEM
---------------------------------------------------------- */
-
-function startV3Reply(message){
-
-    vibraV3.replyTarget = message;
-
-    const preview =
-        document.getElementById("v3ReplyPreview");
-
-    const text =
-        document.getElementById("v3ReplyText");
-
-    if(preview && text){
-
-        text.textContent =
-            message.dataset.messageText ||
-            message.textContent;
-
-        preview.classList.add("active");
-    }
-
-    chatInput.focus();
-}
-
-function cancelV3Reply(){
-
-    vibraV3.replyTarget = null;
-
-    const preview =
-        document.getElementById("v3ReplyPreview");
-
-    if(preview){
-        preview.classList.remove("active");
-    }
-}
-
-
-/* ---------------------------------------------------------
-   5. EDITAR MENSAGEM
---------------------------------------------------------- */
-
-function editV3Message(message){
-
-    const oldText =
-        message.dataset.messageText ||
-        message.textContent;
-
-    const newText =
-        prompt(
-            "Editar mensagem:",
-            oldText
-        );
-
-    if(newText === null) return;
-
-    const clean =
-        newText.trim();
-
-    if(!clean) return;
-
-    message.dataset.messageText = clean;
-
-    const textNode =
-        message.querySelector(".v3-message-text");
-
-    if(textNode){
-
-        textNode.textContent = clean;
-
-    }else{
-
-        message.textContent = clean;
-    }
-
-    message.dataset.edited = "true";
-
-    const meta =
-        message.querySelector(".v3-message-meta");
-
-    if(meta){
-
-        meta.innerHTML =
-            `<span class="v3-edited">editada</span>`;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   6. MENU DE MENSAGEM V3
---------------------------------------------------------- */
-
-function showV3MessageMenu(message){
-
-    window.selectedMessage = message;
-
-    showModal(`
-        <h2>Mensagem</h2>
-
-        <div class="v3-action-sheet">
-
-            <button
-                class="v3-action"
-                onclick="
-                    startV3Reply(window.selectedMessage);
-                    closeModal();
-                "
-            >
-                ↩️ Responder
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    editV3Message(window.selectedMessage);
-                    closeModal();
-                "
-            >
-                ✏️ Editar
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    navigator.clipboard?.writeText(
-                        window.selectedMessage.dataset.messageText ||
-                        window.selectedMessage.textContent
-                    );
-                    closeModal();
-                "
-            >
-                📋 Copiar
-            </button>
-
-            <button
-                class="v3-action v3-danger"
-                onclick="
-                    window.selectedMessage.remove();
-                    closeModal();
-                "
-            >
-                🗑️ Excluir
-            </button>
-
-        </div>
-    `);
-}
-
-
-/* ---------------------------------------------------------
-   7. SUBSTITUI MENU ANTIGO
---------------------------------------------------------- */
-
-window.showMessageMenu = showV3MessageMenu;
-
-
-/* ---------------------------------------------------------
-   8. ENVIO DE MENSAGEM MELHORADO
---------------------------------------------------------- */
-
-const oldSendMessage = sendMessage;
-
-window.sendMessage = function(){
-
-    const text =
-        chatInput.value.trim();
-
-    if(!text) return;
-
-    const messages =
-        document.getElementById("messages");
-
-    const empty =
-        messages.querySelector(".empty");
-
-    if(empty) empty.remove();
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message me";
-
-    message.dataset.messageText =
-        text;
-
-    let replyHTML = "";
-
-    if(vibraV3.replyTarget){
-
-        const replyText =
-            vibraV3.replyTarget.dataset.messageText ||
-            vibraV3.replyTarget.textContent;
-
-        replyHTML = `
-            <div class="message reply">
-                ↩ ${escapeHTML(replyText)}
-            </div>
-        `;
-    }
-
-    message.innerHTML = `
-        ${replyHTML}
-
-        <div class="v3-message-text">
-            ${escapeHTML(text)}
-        </div>
-
-        <div class="v3-message-meta">
-            agora
-        </div>
-    `;
-
-    message.addEventListener(
-        "contextmenu",
-        function(e){
-
-            e.preventDefault();
-
-            showV3MessageMenu(this);
-        }
-    );
-
-    messages.appendChild(message);
-
-    chatInput.value = "";
-
-    cancelV3Reply();
-
-    messages.scrollTop =
-        messages.scrollHeight;
-};
-
-
-/* ---------------------------------------------------------
-   9. GRAVAÇÃO DE ÁUDIO REAL
---------------------------------------------------------- */
-
-async function toggleV3Audio(){
-
-    if(vibraV3.recording){
-
-        if(vibraV3.recorder){
-            vibraV3.recorder.stop();
-        }
-
-        return;
-    }
-
-    if(!navigator.mediaDevices ||
-       !navigator.mediaDevices.getUserMedia){
-
-        alert(
-            "Seu navegador não permite gravação de áudio."
-        );
-
-        return;
-    }
-
-    try{
-
-        const stream =
-            await navigator.mediaDevices.getUserMedia({
-                audio:true
-            });
-
-        const recorder =
-            new MediaRecorder(stream);
-
-        vibraV3.recorder =
-            recorder;
-
-        vibraV3.audioChunks = [];
-
-        recorder.ondataavailable =
-            event => {
-
-                if(event.data.size > 0){
-                    vibraV3.audioChunks.push(
-                        event.data
-                    );
-                }
-            };
-
-        recorder.onstop = () => {
-
-            stream.getTracks().forEach(
-                track => track.stop()
-            );
-
-            const blob =
-                new Blob(
-                    vibraV3.audioChunks,
-                    {type:"audio/webm"}
-                );
-
-            const url =
-                URL.createObjectURL(blob);
-
-            addV3AudioMessage(url);
-
-            vibraV3.recording = false;
-
-            updateV3AudioButton();
-        };
-
-        recorder.start();
-
-        vibraV3.recording = true;
-
-        updateV3AudioButton();
-
-    }catch(error){
-
-        alert(
-            "Não foi possível acessar o microfone."
-        );
-
-        console.error(error);
-    }
-}
-
-
-function updateV3AudioButton(){
-
-    const button =
-        document.getElementById("audioBtn");
-
-    if(!button) return;
-
-    if(vibraV3.recording){
-
-        button.innerHTML =
-            `<span class="v3-recording">●</span>`;
-
-        button.title =
-            "Parar gravação";
-
-    }else{
-
-        button.textContent =
-            "🎤";
-
-        button.title =
-            "Áudio";
-    }
-}
-
-
-function addV3AudioMessage(url){
-
-    const messages =
-        document.getElementById("messages");
-
-    const empty =
-        messages.querySelector(".empty");
-
-    if(empty) empty.remove();
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message me";
-
-    message.innerHTML = `
-        <div class="v3-audio-message">
-            🎙️
-            <audio
-                src="${url}"
-                controls
-            ></audio>
-        </div>
-
-        <div class="v3-message-meta">
-            agora
-        </div>
-    `;
-
-    message.addEventListener(
-        "contextmenu",
-        e => {
-
-            e.preventDefault();
-
-            showV3MessageMenu(message);
-        }
-    );
-
-    messages.appendChild(message);
-
-    messages.scrollTop =
-        messages.scrollHeight;
-}
-
-
-const audioButton =
-    document.getElementById("audioBtn");
-
-if(audioButton){
-
-    audioButton.onclick =
-        toggleV3Audio;
-}
-
-
-/* ---------------------------------------------------------
-   10. VISUALIZAÇÃO ÚNICA
---------------------------------------------------------- */
-
-function sendV3ViewOnce(){
-
-    const messages =
-        document.getElementById("messages");
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message me";
-
-    message.dataset.viewOnce =
-        "true";
-
-    message.innerHTML = `
-        👁️ Mídia de visualização única
-    `;
-
-    message.onclick = function(){
-
-        if(this.dataset.opened === "true"){
-            return;
-        }
-
-        this.dataset.opened = "true";
-
-        showModal(`
-            <h2>👁️ Visualização única</h2>
-
-            <div style="
-                min-height:180px;
-                display:grid;
-                place-items:center;
-                text-align:center;
-            ">
-                <div>
-                    <div style="font-size:45px">
-                        👁️
-                    </div>
-
-                    <p style="
-                        color:var(--muted);
-                        margin-top:10px;
-                    ">
-                        Esta mídia foi visualizada.
-                    </p>
-                </div>
-            </div>
-        `);
-    };
-
-    messages.appendChild(message);
-
-    messages.scrollTop =
-        messages.scrollHeight;
-}
-
-
-/* ---------------------------------------------------------
-   11. TEMAS DOS CHATS
---------------------------------------------------------- */
-
-function setV3ChatTheme(theme){
-
-    const chat =
-        document.getElementById("chatPage");
-
-    if(!chat) return;
-
-    chat.classList.remove(
-        "v3-chat-theme-default",
-        "v3-chat-theme-night",
-        "v3-chat-theme-lavender",
-        "v3-chat-theme-ocean"
-    );
-
-    chat.classList.add(
-        "v3-chat-theme-" + theme
-    );
-
-    vibraV3.chatTheme =
-        theme;
-
-    localStorage.setItem(
-        "vibra_chat_theme",
-        theme
-    );
-}
-
-
-function openV3ChatThemes(){
-
-    showModal(`
-        <h2>🎨 Tema da conversa</h2>
-
-        <div class="v3-action-sheet">
-
-            <button
-                class="v3-action"
-                onclick="
-                    setV3ChatTheme('default');
-                    closeModal();
-                "
-            >
-                ◻️ Padrão
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    setV3ChatTheme('night');
-                    closeModal();
-                "
-            >
-                🌙 Noturno
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    setV3ChatTheme('lavender');
-                    closeModal();
-                "
-            >
-                💜 Lavanda
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    setV3ChatTheme('ocean');
-                    closeModal();
-                "
-            >
-                💙 Oceano
-            </button>
-
-        </div>
-    `);
-}
-
-
-/* ---------------------------------------------------------
-   12. APELIDO PERSONALIZÁVEL
---------------------------------------------------------- */
-
-function openV3Nickname(){
-
-    const current =
-        vibraV3.nickname;
-
-    const nickname =
-        prompt(
-            "Digite o apelido desta conversa:",
-            current
-        );
-
-    if(nickname === null) return;
-
-    vibraV3.nickname =
-        nickname.trim();
-
-    localStorage.setItem(
-        "vibra_nickname",
-        vibraV3.nickname
-    );
-
-    updateV3Nickname();
-}
-
-
-function updateV3Nickname(){
-
-    const info =
-        document.querySelector(".chat-head-info strong");
-
-    if(!info) return;
-
-    info.textContent =
-        vibraV3.nickname ||
-        "Mensagens";
-}
-
-
-/* ---------------------------------------------------------
-   13. CONFIGURAÇÕES DO CHAT
---------------------------------------------------------- */
-
-function openV3ChatSettings(){
-
-    showModal(`
-        <h2>⚙️ Configurações da conversa</h2>
-
-        <div class="v3-action-sheet">
-
-            <button
-                class="v3-action"
-                onclick="
-                    openV3Nickname();
-                    closeModal();
-                "
-            >
-                🏷️ Personalizar apelido
-            </button>
-
-            <button
-                class="v3-action"
-                onclick="
-                    openV3ChatThemes();
-                "
-            >
-                🎨 Personalizar tema
-            </button>
-
-        </div>
-    `);
-}
-
-
-/* ---------------------------------------------------------
-   14. BOTÃO ⋮ DO CHAT
---------------------------------------------------------- */
-
-const chatMenuButton =
-    document.querySelector(".chat-head .icon-btn:last-child");
-
-if(chatMenuButton){
-
-    chatMenuButton.onclick =
-        openV3ChatSettings;
-}
-
-
-/* ---------------------------------------------------------
-   15. COMENTÁRIOS REAIS LOCAIS
---------------------------------------------------------- */
-
-function getV3Comments(id){
-
-    return vibraV3.comments[id] || [];
-}
-
-
-function saveV3Comments(){
-
-    localStorage.setItem(
-        "vibra_comments",
-        JSON.stringify(
-            vibraV3.comments
-        )
-    );
-}
-
-
-function openV3Comments(id){
-
-    const comments =
-        getV3Comments(id);
-
-    let commentsHTML = "";
-
-    if(!comments.length){
-
-        commentsHTML = `
-            <div style="
-                padding:25px 0;
-                text-align:center;
-                color:var(--muted);
-            ">
-                Ainda não há comentários.
-            </div>
-        `;
-
-    }else{
-
-        commentsHTML =
-            comments.map(
-                (comment,index) => `
-                    <div class="v3-comment">
-
-                        <div class="v3-comment-head">
-
-                            <div class="avatar">
-                                V
-                            </div>
-
-                            <strong>
-                                Você
-                            </strong>
-
-                        </div>
-
-                        <div class="v3-comment-body">
-                            ${escapeHTML(comment.text)}
-                        </div>
-
-                        <div class="v3-comment-actions">
-
-                            <button
-                                onclick="
-                                    likeV3Comment(
-                                        ${id},
-                                        ${index}
-                                    )
-                                "
-                            >
-                                ♡ ${comment.likes || 0}
-                            </button>
-
-                            <button
-                                onclick="
-                                    replyV3Comment(
-                                        ${id},
-                                        ${index}
-                                    )
-                                "
-                            >
-                                ↩ Responder
-                            </button>
-
-                            <button
-                                onclick="
-                                    deleteV3Comment(
-                                        ${id},
-                                        ${index}
-                                    )
-                                "
-                            >
-                                Excluir
-                            </button>
-
-                        </div>
-
-                    </div>
-                `
-            ).join("");
-    }
-
-    showModal(`
-        <h2>💬 Comentários</h2>
-
-        <div id="v3CommentsList">
-            ${commentsHTML}
-        </div>
-
-        <div style="
-            display:flex;
-            gap:8px;
-            margin-top:15px;
-        ">
-
-            <input
-                id="v3CommentInput"
-                placeholder="Adicionar comentário..."
-                style="
-                    flex:1;
-                    height:44px;
-                    border:1px solid var(--border);
-                    border-radius:12px;
-                    padding:0 12px;
-                    background:var(--surface-2);
-                    color:var(--text);
-                    outline:0;
-                "
-            >
-
-            <button
-                class="primary"
-                style="margin:0"
-                onclick="
-                    addV3Comment(${id})
-                "
-            >
-                Enviar
-            </button>
-
-        </div>
-    `);
-}
-
-
-function addV3Comment(id){
-
-    const input =
-        document.getElementById(
-            "v3CommentInput"
-        );
-
-    if(!input) return;
-
-    const text =
-        input.value.trim();
-
-    if(!text) return;
-
-    if(!vibraV3.comments[id]){
-        vibraV3.comments[id] = [];
-    }
-
-    vibraV3.comments[id].push({
-        id:Date.now(),
-        text,
-        likes:0
-    });
-
-    saveV3Comments();
-
-    addNotification(
-        "Seu comentário foi publicado."
-    );
-
-    openV3Comments(id);
-}
-
-
-function likeV3Comment(id,index){
-
-    const list =
-        getV3Comments(id);
-
-    if(!list[index]) return;
-
-    list[index].likes =
-        (list[index].likes || 0) + 1;
-
-    saveV3Comments();
-
-    openV3Comments(id);
-}
-
-
-function deleteV3Comment(id,index){
-
-    const list =
-        getV3Comments(id);
-
-    list.splice(index,1);
-
-    saveV3Comments();
-
-    openV3Comments(id);
-}
-
-
-function replyV3Comment(id,index){
-
-    const comment =
-        getV3Comments(id)[index];
-
-    if(!comment) return;
-
-    showModal(`
-        <h2>↩️ Responder comentário</h2>
-
-        <p style="
-            color:var(--muted);
-            margin:10px 0;
-        ">
-            ${escapeHTML(comment.text)}
-        </p>
-
-        <input
-            id="v3ReplyCommentInput"
-            placeholder="Escreva sua resposta..."
-            style="
-                width:100%;
-                height:44px;
-                border:1px solid var(--border);
-                border-radius:12px;
-                padding:0 12px;
-                background:var(--surface-2);
-                color:var(--text);
-            "
-        >
-
-        <button
-            class="primary"
-            style="width:100%"
-            onclick="
-                addV3CommentReply(
-                    ${id},
-                    ${index}
-                )
-            "
-        >
-            Responder
-        </button>
-    `);
-}
-
-
-function addV3CommentReply(id,index){
-
-    const input =
-        document.getElementById(
-            "v3ReplyCommentInput"
-        );
-
-    const text =
-        input?.value.trim();
-
-    if(!text) return;
-
-    if(!vibraV3.comments[id][index].replies){
-        vibraV3.comments[id][index].replies=[];
-    }
-
-    vibraV3.comments[id][index].replies.push({
-        text
-    });
-
-    saveV3Comments();
-
-    openV3Comments(id);
-}
-
-
-/* ---------------------------------------------------------
-   16. SUBSTITUI COMENTÁRIOS ANTIGOS
---------------------------------------------------------- */
-
-window.comments =
-    openV3Comments;
-
-
-/* ---------------------------------------------------------
-   17. REPOSTS SEPARADOS
---------------------------------------------------------- */
-
-function repostV3(id){
-
-    const post =
-        posts.find(p => p.id === id);
-
-    if(!post) return;
-
-    const index =
-        vibraV3.reposts.indexOf(id);
-
-    if(index === -1){
-
-        vibraV3.reposts.push(id);
-
-        addNotification(
-            "Publicação adicionada aos seus Repostados."
-        );
-
-    }else{
-
-        vibraV3.reposts.splice(
-            index,
-            1
-        );
-    }
-
-    localStorage.setItem(
-        "vibra_reposts",
-        JSON.stringify(
-            vibraV3.reposts
-        )
-    );
-
-    renderV3Profile();
-}
-
-
-/* ---------------------------------------------------------
-   18. PERFIL V3
---------------------------------------------------------- */
-
-function renderV3Profile(){
-
-    const grid =
-        document.getElementById(
-            "profileGrid"
-        );
-
-    if(!grid) return;
-
-    const activeTab =
-        document.querySelector(
-            ".profile-tab.active"
-        )?.dataset.profile || "posts";
-
-    let data = [];
-
-    if(activeTab === "posts"){
-
-        data =
-            posts.filter(
-                p => p.type === "post"
-            );
-
-    }else if(activeTab === "reels"){
-
-        data =
-            posts.filter(
-                p => p.type === "reel"
-            );
-
-    }else if(activeTab === "reposts"){
-
-        data =
-            posts.filter(
-                p =>
-                    vibraV3.reposts.includes(
-                        p.id
-                    )
-            );
-
-    }else if(activeTab === "saved"){
-
-        data =
-            posts.filter(
-                p =>
-                    savedPosts.includes(
-                        p.id
-                    )
-            );
-    }
-
-    grid.innerHTML = "";
-
-    if(!data.length){
-
-        grid.innerHTML = `
-            <div class="v3-profile-empty">
-                <div style="
-                    font-size:35px;
-                    margin-bottom:10px;
-                ">
-                    ${activeTab === "reposts" ? "↻" : "○"}
-                </div>
-
-                <strong>
-                    ${
-                        activeTab === "reposts"
-                        ? "Nenhum repost ainda"
-                        : "Nenhum conteúdo aqui"
-                    }
-                </strong>
-
-                <p style="margin-top:5px">
-                    ${
-                        activeTab === "reposts"
-                        ? "Os conteúdos que você repostar aparecerão nesta aba."
-                        : "Seu conteúdo aparecerá aqui."
-                    }
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-    data.forEach(post => {
-
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "grid-item";
-
-        if(post.url){
-
-            if(post.mime?.startsWith("video/")){
-
-                item.innerHTML =
-                    `<video
-                        src="${post.url}"
-                        muted
-                        playsinline
-                    ></video>`;
-
-            }else{
-
-                item.innerHTML =
-                    `<img
-                        src="${post.url}"
-                        alt=""
-                    >`;
-            }
-
-        }else{
-
-            item.innerHTML =
-                `<div style="
-                    width:100%;
-                    height:100%;
-                    display:grid;
-                    place-items:center;
-                    color:var(--muted);
-                ">
-                    Mídia
-                </div>`;
-        }
-
-        grid.appendChild(item);
-    });
-}
-
-
-/* ---------------------------------------------------------
-   19. STORY COM PRESSIONAR PARA PAUSAR
---------------------------------------------------------- */
-
-function openV3Story(post){
-
-    const viewer =
-        document.createElement("div");
-
-    viewer.className =
-        "v3-story-viewer";
-
-    let media;
-
-    if(post.mime?.startsWith("video/")){
-
-        media =
-            document.createElement("video");
-
-        media.src =
-            post.url;
-
-        media.autoplay =
-            true;
-
-        media.muted =
-            false;
-
-        media.playsInline =
-            true;
-
-        media.className =
-            "v3-story-media";
-
-    }else{
-
-        media =
-            document.createElement("img");
-
-        media.src =
-            post.url;
-
-        media.className =
-            "v3-story-media";
-    }
-
-    const progress =
-        document.createElement("div");
-
-    progress.className =
-        "v3-story-progress";
-
-    const progressBar =
-        document.createElement("div");
-
-    progressBar.className =
-        "v3-story-progress-bar";
-
-    progress.appendChild(
-        progressBar
-    );
-
-    const close =
-        document.createElement("button");
-
-    close.className =
-        "v3-story-close";
-
-    close.textContent =
-        "×";
-
-    const hold =
-        document.createElement("div");
-
-    hold.className =
-        "v3-story-hold";
-
-    viewer.appendChild(media);
-    viewer.appendChild(progress);
-    viewer.appendChild(close);
-    viewer.appendChild(hold);
-
-    document.body.appendChild(viewer);
-
-    let paused =
-        false;
-
-    let start =
-        Date.now();
-
-    const duration =
-        post.mime?.startsWith("video/")
-        && media.duration
-        ? media.duration * 1000
-        : 5000;
-
-    function pauseStory(){
-
-        paused = true;
-
-        if(media.tagName === "VIDEO"){
-            media.pause();
-        }
-    }
-
-    function resumeStory(){
-
-        paused = false;
-
-        if(media.tagName === "VIDEO"){
-            media.play().catch(()=>{});
-        }
-
-        start =
-            Date.now();
-    }
-
-    function updateProgress(){
-
-        if(paused) return;
-
-        const elapsed =
-            Date.now() - start;
-
-        const percentage =
-            Math.min(
-                100,
-                (elapsed / duration) * 100
-            );
-
-        progressBar.style.width =
-            percentage + "%";
-
-        if(percentage >= 100){
-
-            closeViewer();
-
-        }else{
-
-            requestAnimationFrame(
-                updateProgress
-            );
-        }
-    }
-
-    function closeViewer(){
-
-        viewer.remove();
-
-        if(media.tagName === "VIDEO"){
-            media.pause();
-        }
-    }
-
-    close.onclick =
-        closeViewer;
-
-    hold.addEventListener(
-        "pointerdown",
-        pauseStory
-    );
-
-    hold.addEventListener(
-        "pointerup",
-        resumeStory
-    );
-
-    hold.addEventListener(
-        "pointercancel",
-        resumeStory
-    );
-
-    hold.addEventListener(
-        "pointerleave",
-        resumeStory
-    );
-
-    viewer.addEventListener(
-        "contextmenu",
-        e => e.preventDefault()
-    );
-
-    requestAnimationFrame(
-        updateProgress
-    );
-}
-
-
-/* ---------------------------------------------------------
-   20. INICIALIZAÇÃO V3
---------------------------------------------------------- */
-
-setV3ChatTheme(
-    vibraV3.chatTheme
-);
-
-updateV3Nickname();
-
-const oldOpenStory =
-    window.openStory;
-
-window.openStory =
-    openV3Story;
-
-window.repost =
-    repostV3;
-
-window.renderProfile =
-    renderV3Profile;
-
-renderV3Profile();
-
-console.log(
-    "Vibra V3 carregado com sucesso."
-);
 </body>
 </html>
