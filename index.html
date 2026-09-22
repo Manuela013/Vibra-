@@ -1,1293 +1,3232 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  >
+<title>Vibra</title>
 
-  <meta name="theme-color" content="#000000">
+<style>
+/* =========================================================
+   VIBRA V2
+========================================================= */
 
-  <title>Vibra</title>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-  <link rel="stylesheet" href="style.css">
+:root{
+    --bg:#fafafa;
+    --surface:#fff;
+    --surface-2:#f4f4f5;
+    --text:#111;
+    --muted:#777;
+    --border:#e5e5e5;
+    --accent:#111;
+    --danger:#ed4956;
+    --shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+body.dark{
+    --bg:#000;
+    --surface:#0d0d0d;
+    --surface-2:#181818;
+    --text:#fff;
+    --muted:#999;
+    --border:#272727;
+    --accent:#fff;
+    --shadow:0 8px 30px rgba(0,0,0,.35);
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    transition:.25s;
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#app{
+    min-height:100vh;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+    border:0;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+    height:64px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+    background:rgba(255,255,255,.88);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+}
+
+body.dark .topbar{
+    background:rgba(0,0,0,.88);
+}
+
+.logo{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-1.5px;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:transparent;
+    color:var(--text);
+    font-size:22px;
+    display:grid;
+    place-items:center;
+    transition:.2s;
+    position:relative;
+}
+
+.icon-btn:hover{
+    background:var(--surface-2);
+    transform:scale(1.05);
+}
+
+.badge{
+    position:absolute;
+    top:3px;
+    right:2px;
+    min-width:17px;
+    height:17px;
+    padding:0 4px;
+    border-radius:20px;
+    background:#ed4956;
+    color:#fff;
+    font-size:10px;
+    display:grid;
+    place-items:center;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+main{
+    width:100%;
+    max-width:630px;
+    margin:0 auto;
+    padding:88px 16px 100px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* =========================================================
+   STORIES
+========================================================= */
+
+.stories{
+    display:flex;
+    gap:15px;
+    overflow-x:auto;
+    padding:4px 2px 20px;
+    scrollbar-width:none;
+}
+
+.stories::-webkit-scrollbar{
+    display:none;
+}
+
+.story{
+    flex:0 0 70px;
+    text-align:center;
+    color:var(--text);
+}
+
+.story-avatar{
+    width:68px;
+    height:68px;
+    border-radius:50%;
+    padding:3px;
+    background:linear-gradient(135deg,#ff006e,#8338ec,#3a86ff);
+    margin:auto;
+}
+
+.story-avatar-inner{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:var(--surface);
+    display:grid;
+    place-items:center;
+    font-size:25px;
+}
+
+.story-name{
+    display:block;
+    font-size:11px;
+    margin-top:6px;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.add-story .story-avatar{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+}
+
+.add-story .story-avatar-inner{
+    color:var(--text);
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty{
+    min-height:380px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+}
+
+.empty-icon{
+    width:76px;
+    height:76px;
+    border:1px solid var(--border);
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:32px;
+    margin-bottom:20px;
+}
+
+.empty h2{
+    font-size:23px;
+    margin-bottom:8px;
+}
+
+.empty p{
+    color:var(--muted);
+    max-width:340px;
+    line-height:1.5;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary{
+    margin-top:22px;
+    background:var(--text);
+    color:var(--bg);
+    padding:12px 20px;
+    border-radius:12px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.primary:hover{
+    transform:translateY(-2px);
+    opacity:.9;
+}
+
+.secondary{
+    background:var(--surface-2);
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:10px 16px;
+    border-radius:10px;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.section-title{
+    font-size:26px;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.search-box{
+    width:100%;
+    height:48px;
+    border-radius:14px;
+    background:var(--surface-2);
+    display:flex;
+    align-items:center;
+    padding:0 15px;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.search-box span{
+    color:var(--muted);
+    font-size:20px;
+}
+
+.search-box input{
+    width:100%;
+    background:transparent;
+    border:0;
+    outline:0;
+    color:var(--text);
+}
+
+.search-filters{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    margin-bottom:20px;
+}
+
+.search-filter{
+    padding:8px 15px;
+    border-radius:20px;
+    background:var(--surface-2);
+    color:var(--text);
+    white-space:nowrap;
+}
+
+.search-filter.active{
+    background:var(--text);
+    color:var(--bg);
+}
+
+/* =========================================================
+   CREATE
+========================================================= */
+
+.create-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+}
+
+.create-tabs{
+    display:flex;
+    border-bottom:1px solid var(--border);
+}
+
+.create-tab{
+    flex:1;
+    padding:15px;
+    background:transparent;
+    color:var(--muted);
+    font-weight:700;
+}
+
+.create-tab.active{
+    color:var(--text);
+    border-bottom:2px solid var(--text);
+}
+
+.upload{
+    min-height:280px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+}
+
+.upload-label{
+    border:2px dashed var(--border);
+    border-radius:18px;
+    width:100%;
+    min-height:230px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.upload-label:hover{
+    border-color:var(--text);
+    background:var(--surface-2);
+}
+
+.upload-icon{
+    font-size:45px;
+    margin-bottom:12px;
+}
+
+.upload-label p{
+    color:var(--muted);
+    margin-top:5px;
+    font-size:14px;
+}
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.editor{
+    border-top:1px solid var(--border);
+}
+
+.editor-header{
+    height:55px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    border-bottom:1px solid var(--border);
+}
+
+.editor-preview{
+    width:100%;
+    aspect-ratio:1/1;
+    background:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.editor-preview img,
+.editor-preview video{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+.editor-tools{
+    display:flex;
+    overflow-x:auto;
+    gap:5px;
+    padding:12px;
+    border-bottom:1px solid var(--border);
+}
+
+.tool{
+    min-width:75px;
+    padding:9px;
+    background:var(--surface-2);
+    color:var(--text);
+    border-radius:10px;
+}
+
+.tool small{
+    display:block;
+    margin-top:3px;
+}
+
+.editor-fields{
+    padding:15px;
+}
+
+.editor-fields textarea{
+    width:100%;
+    min-height:90px;
+    resize:none;
+    border:0;
+    outline:0;
+    background:var(--surface-2);
+    color:var(--text);
+    padding:13px;
+    border-radius:12px;
+}
+
+/* =========================================================
+   FEED POST
+========================================================= */
+
+.post{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    margin-bottom:18px;
+    overflow:hidden;
+}
+
+.post-head{
+    display:flex;
+    align-items:center;
+    padding:12px;
+    gap:10px;
+}
+
+.avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--surface-2);
+    display:grid;
+    place-items:center;
+    font-weight:700;
+}
+
+.post-user{
+    flex:1;
+}
+
+.post-user strong{
+    display:block;
+    font-size:14px;
+}
+
+.post-user span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.post-media{
+    width:100%;
+    aspect-ratio:1/1;
+    background:var(--surface-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.post-media img,
+.post-media video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.post-actions{
+    display:flex;
+    gap:4px;
+    padding:8px 10px;
+}
+
+.post-action{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:transparent;
+    color:var(--text);
+    font-size:21px;
+}
+
+.post-action:hover{
+    background:var(--surface-2);
+}
+
+.post-action.saved{
+    font-weight:bold;
+}
+
+.post-caption{
+    padding:0 13px 15px;
+    font-size:14px;
+    line-height:1.45;
+}
+
+.post-caption strong{
+    margin-right:5px;
+}
+
+/* =========================================================
+   REELS
+========================================================= */
+
+.reels-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.reel{
+    position:relative;
+    width:100%;
+    height:calc(100vh - 110px);
+    max-height:820px;
+    background:#111;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.reel-media{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.reel-overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:20px;
+    background:linear-gradient(transparent 55%,rgba(0,0,0,.8));
+    color:#fff;
+}
+
+.reel-info{
+    max-width:80%;
+}
+
+.reel-actions{
+    position:absolute;
+    right:12px;
+    bottom:25px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.reel-btn{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:rgba(0,0,0,.5);
+    color:#fff;
+    font-size:21px;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-top{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.profile-avatar{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    display:grid;
+    place-items:center;
+    font-size:34px;
+    font-weight:700;
+}
+
+.stats{
+    display:flex;
+    gap:22px;
+}
+
+.stat{
+    text-align:center;
+}
+
+.stat strong{
+    display:block;
+    font-size:18px;
+}
+
+.stat span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.profile-info{
+    margin-top:20px;
+}
+
+.profile-info h2{
+    font-size:18px;
+}
+
+.profile-info p{
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.profile-actions{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.profile-tabs{
+    display:flex;
+    border-bottom:1px solid var(--border);
+    margin-top:25px;
+}
+
+.profile-tab{
+    flex:1;
+    padding:14px 5px;
+    background:transparent;
+    color:var(--muted);
+}
+
+.profile-tab.active{
+    color:var(--text);
+    border-bottom:2px solid var(--text);
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:3px;
+    margin-top:3px;
+}
+
+.grid-item{
+    aspect-ratio:1;
+    background:var(--surface-2);
+    overflow:hidden;
+}
+
+.grid-item img,
+.grid-item video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+.chat-page{
+    position:fixed;
+    inset:64px 0 0;
+    background:var(--bg);
+    max-width:none;
+    padding:0;
+}
+
+.chat-layout{
+    max-width:630px;
+    height:100%;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat-head{
+    height:65px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 15px;
+}
+
+.chat-head-info{
+    flex:1;
+}
+
+.chat-head-info strong{
+    display:block;
+}
+
+.chat-head-info span{
+    font-size:11px;
+    color:#2eb85c;
+}
+
+.messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 15px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.message{
+    max-width:75%;
+    padding:10px 13px;
+    border-radius:18px;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.message.me{
+    align-self:flex-end;
+    background:var(--text);
+    color:var(--bg);
+    border-bottom-right-radius:5px;
+}
+
+.message.them{
+    align-self:flex-start;
+    background:var(--surface-2);
+    border-bottom-left-radius:5px;
+}
+
+.message.reply{
+    opacity:.7;
+    font-size:12px;
+    border-left:3px solid currentColor;
+    margin-bottom:5px;
+    padding-left:8px;
+}
+
+.chat-composer{
+    min-height:65px;
+    padding:10px;
+    border-top:1px solid var(--border);
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.chat-input{
+    flex:1;
+    height:43px;
+    border-radius:22px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    padding:0 15px;
+    outline:0;
+}
+
+.send{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    background:var(--text);
+    color:var(--bg);
+}
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+.notification{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:15px;
+    border-bottom:1px solid var(--border);
+}
+
+.notification-dot{
+    width:8px;
+    height:8px;
+    background:#ed4956;
+    border-radius:50%;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-section{
+    margin-bottom:28px;
+}
+
+.settings-section h3{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+}
+
+.setting{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 0;
+    background:transparent;
+    color:var(--text);
+    border-bottom:1px solid var(--border);
+    text-align:left;
+}
+
+.setting span{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:66px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(18px);
+    border-top:1px solid var(--border);
+    z-index:100;
+    display:flex;
+    justify-content:center;
+}
+
+body.dark .bottom-nav{
+    background:rgba(0,0,0,.92);
+}
+
+.nav-inner{
+    width:100%;
+    max-width:630px;
+    display:flex;
+    justify-content:space-around;
+}
+
+.nav-item{
+    flex:1;
+    background:transparent;
+    color:var(--muted);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+}
+
+.nav-item span{
+    font-size:22px;
+}
+
+.nav-item small{
+    font-size:9px;
+}
+
+.nav-item.active{
+    color:var(--text);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:300;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-bg{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.6);
+}
+
+.modal-box{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:430px;
+    max-height:85vh;
+    overflow:auto;
+    background:var(--surface);
+    border-radius:20px;
+    padding:22px;
+    box-shadow:var(--shadow);
+}
+
+.modal-box h2{
+    margin-bottom:15px;
+}
+
+.modal-close{
+    position:absolute;
+    right:15px;
+    top:15px;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:var(--surface-2);
+    color:var(--text);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:650px){
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    main{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .post{
+        border-left:0;
+        border-right:0;
+        border-radius:0;
+    }
+
+    .reel{
+        border-radius:0;
+        height:calc(100vh - 130px);
+    }
+
+    .profile-top{
+        gap:18px;
+    }
+
+    .profile-avatar{
+        width:80px;
+        height:80px;
+    }
+
+    .stats{
+        gap:15px;
+    }
+
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(5px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.page.active{
+    animation:fade .2s ease;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- =====================================================
-       APP
-  ====================================================== -->
+<div id="app">
 
-  <div id="app">
+<header class="topbar">
 
-    <!-- ===================================================
-         HEADER
-    ==================================================== -->
+    <div class="logo">Vibra</div>
 
-    <header class="brand-header">
+    <div class="top-actions">
 
-      <div class="brand-logo">
-        Vibra
-      </div>
-
-      <div class="header-actions">
-
-        <button
-          id="notificationsButton"
-          class="header-button"
-          aria-label="Notificações"
-        >
-          ♡
-          <span
-            id="notificationBadge"
-            class="notification-badge hidden"
-          >
-            0
-          </span>
+        <button class="icon-btn" id="themeBtn" title="Tema">
+            ◐
         </button>
 
-        <button
-          id="headerMessagesButton"
-          class="header-button"
-          aria-label="Mensagens"
-        >
-          ◌
-        </button>
-
-      </div>
-
-    </header>
-
-
-    <!-- ===================================================
-         MAIN CONTENT
-    ==================================================== -->
-
-    <main id="mainContent">
-
-
-      <!-- =================================================
-           HOME / FEED
-      ================================================== -->
-
-      <section
-        id="homePage"
-        class="page active"
-        data-page="home"
-      >
-
-        <!-- STORIES -->
-
-        <div class="stories-wrapper">
-
-          <div
-            id="storiesContainer"
-            class="stories-container"
-          >
-
-            <!-- Stories serão adicionados pelo JavaScript -->
-
-          </div>
-
-        </div>
-
-
-        <!-- FEED -->
-
-        <div
-          id="feedContainer"
-          class="feed-container"
-        >
-
-          <!--
-
-          IMPORTANTE:
-          Não colocar usuários, posts ou conteúdos fictícios aqui.
-
-          O feed começa vazio e recebe apenas conteúdo real
-          criado/carregado pelo usuário ou pelo backend.
-
-          -->
-
-        </div>
-
-
-        <!-- EMPTY FEED -->
-
-        <div
-          id="emptyFeed"
-          class="empty-state"
-        >
-
-          <div class="empty-icon">
-            ✦
-          </div>
-
-          <h2>Seu Vibra começa aqui</h2>
-
-          <p>
-            Publique algo ou siga pessoas para começar
-            a ver conteúdo.
-          </p>
-
-          <button
-            id="emptyFeedCreateButton"
-            class="primary-button"
-          >
-            Criar publicação
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           BUSCA
-      ================================================== -->
-
-      <section
-        id="searchPage"
-        class="page"
-        data-page="search"
-      >
-
-        <div class="page-header">
-
-          <h1>Buscar</h1>
-
-        </div>
-
-        <div class="search-area">
-
-          <div class="search-input-wrapper">
-
-            <span>⌕</span>
-
-            <input
-              id="globalSearchInput"
-              type="search"
-              placeholder="Pesquisar"
-              autocomplete="off"
-            >
-
-          </div>
-
-        </div>
-
-
-        <!-- CATEGORIAS DE BUSCA -->
-
-        <div class="search-tabs">
-
-          <button
-            class="search-tab active"
-            data-search-type="all"
-          >
-            Tudo
-          </button>
-
-          <button
-            class="search-tab"
-            data-search-type="users"
-          >
-            Pessoas
-          </button>
-
-          <button
-            class="search-tab"
-            data-search-type="posts"
-          >
-            Posts
-          </button>
-
-          <button
-            class="search-tab"
-            data-search-type="hashtags"
-          >
-            Hashtags
-          </button>
-
-        </div>
-
-
-        <div
-          id="searchResults"
-          class="search-results"
-        >
-
-          <div class="empty-state">
-            <div class="empty-icon">⌕</div>
-            <p>Pesquise por pessoas, posts ou hashtags.</p>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           CRIAR
-      ================================================== -->
-
-      <section
-        id="createPage"
-        class="page"
-        data-page="create"
-      >
-
-        <div class="page-header">
-
-          <h1>Criar</h1>
-
-        </div>
-
-
-        <!-- ESCOLHER TIPO -->
-
-        <div class="create-type-selector">
-
-          <button
-            class="create-type active"
-            data-create-type="post"
-          >
-            📷
-            <span>Post</span>
-          </button>
-
-          <button
-            class="create-type"
-            data-create-type="reel"
-          >
-            🎬
-            <span>Reel</span>
-          </button>
-
-          <button
-            class="create-type"
-            data-create-type="story"
-          >
-            ⭕
-            <span>Story</span>
-          </button>
-
-        </div>
-
-
-        <!-- SELEÇÃO DE MÍDIA -->
-
-        <div
-          id="mediaSelection"
-          class="media-selection"
-        >
-
-          <label
-            for="mediaInput"
-            class="media-upload-area"
-          >
-
-            <div class="upload-icon">
-              ＋
-            </div>
-
-            <strong>
-              Selecionar fotos ou vídeos
-            </strong>
-
-            <span>
-              Escolha uma mídia da sua galeria
-            </span>
-
-          </label>
-
-          <input
-            id="mediaInput"
-            type="file"
-            accept="image/*,video/*"
-            multiple
-            hidden
-          >
-
-        </div>
-
-
-        <!-- =================================================
-             EDITOR INTEGRADO
-             
-             IMPORTANTE:
-             NÃO é uma página separada.
-
-             Ele aparece dentro do processo de criação
-             assim que o usuário seleciona a mídia.
-        ================================================== -->
-
-        <div
-          id="integratedEditor"
-          class="integrated-editor hidden"
-        >
-
-          <!-- EDITOR HEADER -->
-
-          <div class="editor-header">
-
-            <button
-              id="closeEditorButton"
-              class="editor-close"
-            >
-              ×
-            </button>
-
-            <strong>Editar</strong>
-
-            <button
-              id="nextEditorButton"
-              class="editor-next"
-            >
-              Avançar
-            </button>
-
-          </div>
-
-
-          <!-- PREVIEW -->
-
-          <div
-            id="editorPreview"
-            class="editor-preview"
-          >
-
-            <!-- Mídia será inserida aqui -->
-
-            <div
-              id="editorTextOverlay"
-              class="editor-text-overlay"
-            ></div>
-
-          </div>
-
-
-          <!-- FERRAMENTAS -->
-
-          <div class="editor-tools">
-
-            <button
-              class="editor-tool"
-              data-editor-tool="crop"
-            >
-              <span>▣</span>
-              <small>Cortar</small>
-            </button>
-
-            <button
-              class="editor-tool"
-              data-editor-tool="speed"
-            >
-              <span>1×</span>
-              <small>Velocidade</small>
-            </button>
-
-            <button
-              class="editor-tool"
-              data-editor-tool="text"
-            >
-              <span>T</span>
-              <small>Texto</small>
-            </button>
-
-            <button
-              class="editor-tool"
-              data-editor-tool="sticker"
-            >
-              <span>☺</span>
-              <small>Stickers</small>
-            </button>
-
-            <button
-              class="editor-tool"
-              data-editor-tool="filter"
-            >
-              <span>◐</span>
-              <small>Filtros</small>
-            </button>
-
-            <button
-              class="editor-tool"
-              data-editor-tool="music"
-            >
-              <span>♫</span>
-              <small>Música</small>
-            </button>
-
-          </div>
-
-
-          <!-- FILTROS -->
-
-          <div
-            id="filterPanel"
-            class="editor-panel hidden"
-          >
-
-            <button data-filter="original">
-              Original
-            </button>
-
-            <button data-filter="mono">
-              P&B
-            </button>
-
-            <button data-filter="warm">
-              Quente
-            </button>
-
-            <button data-filter="cool">
-              Frio
-            </button>
-
-          </div>
-
-
-          <!-- MÚSICA -->
-
-          <div
-            id="musicPanel"
-            class="editor-panel hidden"
-          >
-
-            <div class="panel-title">
-              Música
-            </div>
-
-            <input
-              id="musicSearchInput"
-              type="search"
-              placeholder="Pesquisar música"
-            >
-
-            <div
-              id="musicResults"
-              class="music-results"
-            ></div>
-
-            <button
-              id="youtubeMusicButton"
-              class="secondary-button"
-            >
-              Adicionar música do YouTube
-            </button>
-
-          </div>
-
-
-          <!-- LEGENDA -->
-
-          <div class="editor-caption">
-
-            <textarea
-              id="postCaption"
-              placeholder="Escreva uma legenda..."
-              maxlength="2200"
-            ></textarea>
-
-          </div>
-
-
-          <!-- CONFIGURAÇÕES -->
-
-          <div class="publish-options">
-
-            <label>
-              <span>Comentários</span>
-
-              <input
-                id="commentsEnabled"
-                type="checkbox"
-                checked
-              >
-
-            </label>
-
-            <label>
-              <span>Compartilhamento</span>
-
-              <input
-                id="sharingEnabled"
-                type="checkbox"
-                checked
-              >
-
-            </label>
-
-          </div>
-
-
-          <!-- PUBLICAR -->
-
-          <button
-            id="publishButton"
-            class="primary-button full-width"
-          >
-            Publicar
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           REELS
-      ================================================== -->
-
-      <section
-        id="reelsPage"
-        class="page reels-page"
-        data-page="reels"
-      >
-
-        <div
-          id="reelsContainer"
-          class="reels-container"
-        >
-
-          <!-- Reels reais serão carregados aqui -->
-
-        </div>
-
-
-        <div
-          id="emptyReels"
-          class="empty-state"
-        >
-
-          <div class="empty-icon">
-            ▶
-          </div>
-
-          <h2>Nenhum Reel ainda</h2>
-
-          <p>
-            Crie seu primeiro Reel para vê-lo aqui.
-          </p>
-
-          <button
-            class="primary-button"
-            data-open-create="reel"
-          >
-            Criar Reel
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           PERFIL
-      ================================================== -->
-
-      <section
-        id="profilePage"
-        class="page"
-        data-page="profile"
-      >
-
-        <div
-          id="profileContent"
-          class="profile-content"
-        >
-
-          <!-- PERFIL -->
-
-          <div class="profile-header">
-
-            <div class="profile-top">
-
-              <div
-                id="profileAvatar"
-                class="profile-avatar"
-              >
-                <span>V</span>
-              </div>
-
-
-              <div class="profile-statistics">
-
-                <div>
-                  <strong id="profilePostsCount">
-                    0
-                  </strong>
-
-                  <span>Posts</span>
-                </div>
-
-                <div>
-                  <strong id="profileFollowersCount">
-                    0
-                  </strong>
-
-                  <span>Seguidores</span>
-                </div>
-
-                <div>
-                  <strong id="profileFollowingCount">
-                    0
-                  </strong>
-
-                  <span>Seguindo</span>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="profile-info">
-
-              <h2 id="profileName">
-                Seu perfil
-              </h2>
-
-              <p id="profileUsername">
-                @usuario
-              </p>
-
-              <p id="profileBio">
-                Adicione uma bio ao seu perfil.
-              </p>
-
-            </div>
-
-
-            <div class="profile-buttons">
-
-              <button
-                id="editProfileButton"
-                class="secondary-button"
-              >
-                Editar perfil
-              </button>
-
-              <button
-                id="profileSettingsButton"
-                class="secondary-button"
-              >
-                ⚙
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- ABAS DO PERFIL -->
-
-          <div class="profile-tabs">
-
-            <button
-              class="profile-tab active"
-              data-profile-tab="posts"
-            >
-              ▦
-              <span>Posts</span>
-            </button>
-
-            <button
-              class="profile-tab"
-              data-profile-tab="reels"
-            >
-              ▶
-              <span>Reels</span>
-            </button>
-
-            <button
-              class="profile-tab"
-              data-profile-tab="reposts"
-            >
-              ↻
-              <span>Repostados</span>
-            </button>
-
-            <button
-              class="profile-tab"
-              data-profile-tab="saved"
-            >
-              ☆
-              <span>Salvos</span>
-            </button>
-
-          </div>
-
-
-          <!-- CONTEÚDO DA ABA -->
-
-          <div
-            id="profileGrid"
-            class="profile-grid"
-          ></div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           MENSAGENS
-      ================================================== -->
-
-      <section
-        id="messagesPage"
-        class="page"
-        data-page="messages"
-      >
-
-        <div class="page-header">
-
-          <h1>Mensagens</h1>
-
-          <button
-            id="newChatButton"
-            class="header-button"
-          >
-            ＋
-          </button>
-
-        </div>
-
-
-        <!-- NOTAS -->
-
-        <div
-          id="notesContainer"
-          class="notes-container"
-        >
-
-          <!-- Notas de follows mútuos -->
-
-        </div>
-
-
-        <!-- LISTA DE CHATS -->
-
-        <div
-          id="chatList"
-          class="chat-list"
-        >
-
-          <!-- Conversas reais -->
-
-        </div>
-
-
-        <div
-          id="emptyChats"
-          class="empty-state"
-        >
-
-          <div class="empty-icon">
-            ◌
-          </div>
-
-          <p>
-            Suas conversas aparecerão aqui.
-          </p>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           CHAT
-      ================================================== -->
-
-      <section
-        id="chatPage"
-        class="page chat-page"
-        data-page="chat"
-      >
-
-        <div class="chat-header">
-
-          <button
-            id="backFromChat"
-            class="chat-header-button"
-          >
-            ‹
-          </button>
-
-
-          <div
-            id="chatAvatar"
-            class="chat-avatar"
-          >
-            V
-          </div>
-
-
-          <div class="chat-user-info">
-
-            <strong id="chatUserName">
-              Conversa
-            </strong>
-
-            <span id="chatUserStatus">
-              offline
-            </span>
-
-          </div>
-
-
-          <button
-            id="chatSettingsButton"
-            class="chat-header-button"
-          >
-            ⋮
-          </button>
-
-        </div>
-
-
-        <!-- MENSAGENS -->
-
-        <div
-          id="chatMessages"
-          class="chat-messages"
-        ></div>
-
-
-        <!-- RESPOSTA -->
-
-        <div
-          id="replyPreview"
-          class="reply-preview hidden"
-        >
-
-          <div>
-            <small>Respondendo a</small>
-            <strong id="replyPreviewText"></strong>
-          </div>
-
-          <button id="cancelReply">
-            ×
-          </button>
-
-        </div>
-
-
-        <!-- COMPOSER -->
-
-        <div class="chat-composer">
-
-          <button
-            id="chatMediaButton"
-            class="composer-button"
-          >
-            ＋
-          </button>
-
-          <input
-            id="chatMediaInput"
-            type="file"
-            accept="image/*,video/*"
-            hidden
-          >
-
-
-          <input
-            id="chatInput"
-            class="chat-input"
-            type="text"
-            placeholder="Mensagem..."
-            autocomplete="off"
-          >
-
-
-          <button
-            id="audioRecordButton"
-            class="composer-button"
-            aria-label="Gravar áudio"
-          >
-            🎤
-          </button>
-
-
-          <button
-            id="sendMessageButton"
-            class="send-button"
-            aria-label="Enviar"
-          >
-            ➤
-          </button>
-
-        </div>
-
-
-        <!-- MENU DE MENSAGEM -->
-
-        <div
-          id="messageContextMenu"
-          class="message-context-menu hidden"
-        >
-
-          <button data-message-action="reply">
-            ↩ Responder
-          </button>
-
-          <button data-message-action="copy">
-            📋 Copiar
-          </button>
-
-          <button data-message-action="favorite">
-            ☆ Favoritar
-          </button>
-
-          <button data-message-action="pin">
-            📌 Fixar
-          </button>
-
-          <button data-message-action="edit">
-            ✏ Editar
-          </button>
-
-          <button data-message-action="delete">
-            🗑 Excluir
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           NOTIFICAÇÕES
-      ================================================== -->
-
-      <section
-        id="notificationsPage"
-        class="page"
-        data-page="notifications"
-      >
-
-        <div class="page-header">
-
-          <h1>Notificações</h1>
-
-          <button
-            id="markNotificationsRead"
-            class="text-button"
-          >
-            Marcar como lidas
-          </button>
-
-        </div>
-
-
-        <div
-          id="notificationsList"
-          class="notifications-list"
-        ></div>
-
-
-        <div
-          id="emptyNotifications"
-          class="empty-state"
-        >
-
-          <div class="empty-icon">
+        <button class="icon-btn" id="notificationsBtn" title="Notificações">
             ♡
-          </div>
+            <span class="badge hidden" id="notificationBadge">0</span>
+        </button>
 
-          <p>
-            Você ainda não tem notificações.
-          </p>
+        <button class="icon-btn" id="chatBtn" title="Mensagens">
+            ◌
+        </button>
+
+    </div>
+
+</header>
+
+
+<main>
+
+<!-- =======================================================
+     HOME
+======================================================== -->
+
+<section class="page active" id="homePage">
+
+    <div class="stories" id="stories">
+
+        <button class="story add-story" id="addStory">
+
+            <div class="story-avatar">
+                <div class="story-avatar-inner">＋</div>
+            </div>
+
+            <span class="story-name">Seu story</span>
+
+        </button>
+
+    </div>
+
+    <div id="feed"></div>
+
+    <div class="empty" id="emptyFeed">
+
+        <div class="empty-icon">✦</div>
+
+        <h2>Seu Vibra começa aqui</h2>
+
+        <p>
+            Publique algo ou siga pessoas para começar
+            a criar seu feed.
+        </p>
+
+        <button class="primary" onclick="openCreate('post')">
+            Criar publicação
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     SEARCH
+======================================================== -->
+
+<section class="page" id="searchPage">
+
+    <h1 class="section-title">Buscar</h1>
+
+    <div class="search-box">
+
+        <span>⌕</span>
+
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Pesquisar no Vibra..."
+        >
+
+    </div>
+
+    <div class="search-filters">
+
+        <button class="search-filter active">Tudo</button>
+        <button class="search-filter">Pessoas</button>
+        <button class="search-filter">Posts</button>
+        <button class="search-filter">Hashtags</button>
+
+    </div>
+
+    <div class="empty">
+
+        <div class="empty-icon">⌕</div>
+
+        <h2>Pesquise no Vibra</h2>
+
+        <p>
+            Encontre pessoas, publicações e hashtags.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     CREATE
+======================================================== -->
+
+<section class="page" id="createPage">
+
+    <h1 class="section-title">Criar</h1>
+
+    <div class="create-card">
+
+        <div class="create-tabs">
+
+            <button
+                class="create-tab active"
+                data-create="post"
+            >
+                📷 Post
+            </button>
+
+            <button
+                class="create-tab"
+                data-create="reel"
+            >
+                ▶ Reel
+            </button>
+
+            <button
+                class="create-tab"
+                data-create="story"
+            >
+                ○ Story
+            </button>
 
         </div>
 
-      </section>
+        <div class="upload">
 
+            <label class="upload-label" for="mediaInput">
 
-      <!-- =================================================
-           CONFIGURAÇÕES
-      ================================================== -->
+                <div class="upload-icon">＋</div>
 
-      <section
-        id="settingsPage"
-        class="page"
-        data-page="settings"
-      >
+                <strong>Selecionar fotos ou vídeos</strong>
 
-        <div class="page-header">
+                <p>
+                    Escolha uma mídia para começar.
+                </p>
 
-          <button
-            id="backFromSettings"
-            class="back-button"
-          >
-            ‹
-          </button>
+            </label>
 
-          <h1>Configurações</h1>
+            <input
+                id="mediaInput"
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                hidden
+            >
 
         </div>
 
+        <div class="editor hidden" id="editor">
 
-        <div class="settings-list">
+            <div class="editor-header">
 
+                <button
+                    class="secondary"
+                    onclick="closeEditor()"
+                >
+                    Cancelar
+                </button>
 
-          <!-- PRIVACIDADE -->
+                <strong>Editar</strong>
 
-          <div class="settings-section">
+                <button
+                    class="primary"
+                    style="margin:0;padding:8px 13px"
+                    onclick="publishContent()"
+                >
+                    Publicar
+                </button>
 
-            <h3>Privacidade</h3>
+            </div>
 
-            <button
-              class="settings-item"
-              id="privacySettingsButton"
-            >
+            <div class="editor-preview" id="editorPreview"></div>
 
-              <span>
-                🔒
-                <strong>Conta privada</strong>
-              </span>
+            <div class="editor-tools">
 
-              <input
-                id="privateAccountToggle"
-                type="checkbox"
-              >
+                <button class="tool" onclick="editorAction('crop')">
+                    ▣
+                    <small>Cortar</small>
+                </button>
 
-            </button>
+                <button class="tool" onclick="editorAction('speed')">
+                    1×
+                    <small>Velocidade</small>
+                </button>
 
-          </div>
+                <button class="tool" onclick="editorAction('text')">
+                    T
+                    <small>Texto</small>
+                </button>
 
+                <button class="tool" onclick="editorAction('sticker')">
+                    ☺
+                    <small>Sticker</small>
+                </button>
 
-          <!-- APARÊNCIA -->
+                <button class="tool" onclick="editorAction('filter')">
+                    ◐
+                    <small>Filtro</small>
+                </button>
 
-          <div class="settings-section">
+                <button class="tool" onclick="editorAction('music')">
+                    ♫
+                    <small>Música</small>
+                </button>
 
-            <h3>Aparência</h3>
+            </div>
 
-            <button
-              class="settings-item"
-              data-theme="light"
-            >
-              ☀️
-              <span>Tema claro</span>
-            </button>
+            <div class="editor-fields">
 
-            <button
-              class="settings-item"
-              data-theme="dark"
-            >
-              🌙
-              <span>Tema escuro</span>
-            </button>
+                <textarea
+                    id="captionInput"
+                    placeholder="Escreva uma legenda..."
+                    maxlength="2200"
+                ></textarea>
 
-            <button
-              class="settings-item"
-              data-theme="system"
-            >
-              ⚙️
-              <span>Usar tema do sistema</span>
-            </button>
-
-          </div>
-
-
-          <!-- CONTA -->
-
-          <div class="settings-section">
-
-            <h3>Conta</h3>
-
-            <button class="settings-item">
-              👤
-              <span>Editar perfil</span>
-            </button>
-
-            <button class="settings-item">
-              🔐
-              <span>Segurança</span>
-            </button>
-
-            <button class="settings-item">
-              🚫
-              <span>Contas bloqueadas</span>
-            </button>
-
-          </div>
-
-
-          <!-- NOTIFICAÇÕES -->
-
-          <div class="settings-section">
-
-            <h3>Notificações</h3>
-
-            <button class="settings-item">
-              ♡
-              <span>Notificações de curtidas</span>
-            </button>
-
-            <button class="settings-item">
-              💬
-              <span>Notificações de comentários</span>
-            </button>
-
-            <button class="settings-item">
-              ◌
-              <span>Notificações de mensagens</span>
-            </button>
-
-          </div>
-
+            </div>
 
         </div>
 
-      </section>
+    </div>
 
-    </main>
-
-
-    <!-- ===================================================
-         BOTTOM NAVIGATION
-    ==================================================== -->
-
-    <nav
-      id="bottomNavigation"
-      class="bottom-navigation"
-    >
-
-      <button
-        class="bottom-nav-item active"
-        data-page="home"
-        aria-label="Início"
-      >
-
-        <span class="nav-icon">
-          ⌂
-        </span>
-
-        <small>
-          Início
-        </small>
-
-      </button>
+</section>
 
 
-      <button
-        class="bottom-nav-item"
-        data-page="search"
-        aria-label="Buscar"
-      >
+<!-- =======================================================
+     REELS
+======================================================== -->
 
-        <span class="nav-icon">
-          ⌕
-        </span>
+<section class="page" id="reelsPage">
 
-        <small>
-          Buscar
-        </small>
+    <div class="reels-container" id="reelsContainer"></div>
 
-      </button>
+    <div class="empty" id="emptyReels">
 
+        <div class="empty-icon">▶</div>
 
-      <button
-        class="bottom-nav-item create-nav-button"
-        data-page="create"
-        aria-label="Criar"
-      >
+        <h2>Nenhum Reel ainda</h2>
 
-        <span class="nav-icon">
-          ＋
-        </span>
+        <p>
+            Quando você publicar um Reel, ele aparecerá aqui.
+        </p>
 
-        <small>
-          Criar
-        </small>
+        <button
+            class="primary"
+            onclick="openCreate('reel')"
+        >
+            Criar Reel
+        </button>
 
-      </button>
+    </div>
+
+</section>
 
 
-      <button
-        class="bottom-nav-item"
-        data-page="reels"
-        aria-label="Reels"
-      >
+<!-- =======================================================
+     PROFILE
+======================================================== -->
 
-        <span class="nav-icon">
-          ▶
-        </span>
+<section class="page" id="profilePage">
 
-        <small>
-          Reels
-        </small>
+    <div class="profile-top">
 
-      </button>
+        <div class="profile-avatar">V</div>
 
+        <div class="stats">
 
-      <button
-        class="bottom-nav-item"
-        data-page="profile"
-        aria-label="Perfil"
-      >
+            <div class="stat">
+                <strong id="postCount">0</strong>
+                <span>Posts</span>
+            </div>
 
-        <span class="nav-icon">
-          ◉
-        </span>
+            <div class="stat">
+                <strong>0</strong>
+                <span>Seguidores</span>
+            </div>
 
-        <small>
-          Perfil
-        </small>
+            <div class="stat">
+                <strong>0</strong>
+                <span>Seguindo</span>
+            </div>
 
-      </button>
+        </div>
 
-    </nav>
+    </div>
 
+    <div class="profile-info">
 
-    <!-- ===================================================
-         GLOBAL MODAL
-    ==================================================== -->
+        <h2>Seu perfil</h2>
+        <p>@usuario</p>
+        <p>Adicione uma bio ao seu perfil.</p>
 
-    <div
-      id="globalModal"
-      class="modal hidden"
-    >
+    </div>
 
-      <div
-        id="modalBackdrop"
-        class="modal-backdrop"
-      ></div>
+    <div class="profile-actions">
 
-      <div
-        id="modalContent"
-        class="modal-content"
-      ></div>
+        <button class="secondary">
+            Editar perfil
+        </button>
+
+        <button
+            class="secondary"
+            onclick="openSettings()"
+        >
+            ⚙ Configurações
+        </button>
 
     </div>
 
 
-    <!-- ===================================================
-         TOAST
-    ==================================================== -->
+    <div class="profile-tabs">
 
-    <div
-      id="toast"
-      class="toast"
-      role="status"
-      aria-live="polite"
-    ></div>
+        <button
+            class="profile-tab active"
+            data-profile="posts"
+        >
+            ▦ Posts
+        </button>
 
-  </div>
+        <button
+            class="profile-tab"
+            data-profile="reels"
+        >
+            ▶ Reels
+        </button>
+
+        <button
+            class="profile-tab"
+            data-profile="reposts"
+        >
+            ↻ Repostados
+        </button>
+
+        <button
+            class="profile-tab"
+            data-profile="saved"
+        >
+            ☆ Salvos
+        </button>
+
+    </div>
+
+    <div class="profile-grid" id="profileGrid"></div>
+
+</section>
 
 
-  <!-- =====================================================
-       JAVASCRIPT
-  ====================================================== -->
+<!-- =======================================================
+     CHAT
+======================================================== -->
 
-  <script src="script.js"></script>
+<section class="page chat-page" id="chatPage">
+
+    <div class="chat-layout">
+
+        <div class="chat-head">
+
+            <button
+                class="icon-btn"
+                onclick="navigate('home')"
+            >
+                ‹
+            </button>
+
+            <div class="avatar">V</div>
+
+            <div class="chat-head-info">
+
+                <strong>Mensagens</strong>
+                <span>conversas</span>
+
+            </div>
+
+            <button class="icon-btn">
+                ⋮
+            </button>
+
+        </div>
+
+        <div class="messages" id="messages">
+
+            <div class="empty" style="min-height:250px">
+
+                <div class="empty-icon">◌</div>
+
+                <h2>Suas mensagens</h2>
+
+                <p>
+                    As suas conversas aparecerão aqui.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="chat-composer">
+
+            <button class="icon-btn" title="Mídia">
+                ＋
+            </button>
+
+            <input
+                class="chat-input"
+                id="chatInput"
+                placeholder="Mensagem..."
+            >
+
+            <button
+                class="icon-btn"
+                id="audioBtn"
+                title="Áudio"
+            >
+                🎤
+            </button>
+
+            <button
+                class="send"
+                id="sendBtn"
+            >
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     NOTIFICATIONS
+======================================================== -->
+
+<section class="page" id="notificationsPage">
+
+    <h1 class="section-title">Notificações</h1>
+
+    <div id="notificationsList"></div>
+
+    <div class="empty" id="emptyNotifications">
+
+        <div class="empty-icon">♡</div>
+
+        <h2>Nenhuma notificação</h2>
+
+        <p>
+            Quando algo acontecer, você verá aqui.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     SETTINGS
+======================================================== -->
+
+<section class="page" id="settingsPage">
+
+    <h1 class="section-title">Configurações</h1>
+
+    <div class="settings-section">
+
+        <h3>Aparência</h3>
+
+        <button class="setting" onclick="setTheme('light')">
+            <span>☀️ Tema claro</span>
+            <span>›</span>
+        </button>
+
+        <button class="setting" onclick="setTheme('dark')">
+            <span>🌙 Tema escuro</span>
+            <span>›</span>
+        </button>
+
+        <button class="setting" onclick="setTheme('system')">
+            <span>◐ Tema do sistema</span>
+            <span>›</span>
+        </button>
+
+    </div>
+
+    <div class="settings-section">
+
+        <h3>Privacidade</h3>
+
+        <button class="setting" onclick="togglePrivate()">
+
+            <span>
+                🔒 Conta privada
+            </span>
+
+            <span id="privateStatus">
+                Desativada
+            </span>
+
+        </button>
+
+    </div>
+
+    <div class="settings-section">
+
+        <h3>Mensagens</h3>
+
+        <button class="setting">
+            <span>🏷️ Apelidos</span>
+            <span>›</span>
+        </button>
+
+        <button class="setting">
+            <span>🎨 Tema dos chats</span>
+            <span>›</span>
+        </button>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =======================================================
+     BOTTOM NAV
+======================================================== -->
+
+<nav class="bottom-nav">
+
+    <div class="nav-inner">
+
+        <button
+            class="nav-item active"
+            data-page="home"
+        >
+            <span>⌂</span>
+            <small>Início</small>
+        </button>
+
+        <button
+            class="nav-item"
+            data-page="search"
+        >
+            <span>⌕</span>
+            <small>Buscar</small>
+        </button>
+
+        <button
+            class="nav-item"
+            data-page="create"
+        >
+            <span>＋</span>
+            <small>Criar</small>
+        </button>
+
+        <button
+            class="nav-item"
+            data-page="reels"
+        >
+            <span>▶</span>
+            <small>Reels</small>
+        </button>
+
+        <button
+            class="nav-item"
+            data-page="profile"
+        >
+            <span>◉</span>
+            <small>Perfil</small>
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- =======================================================
+     MODAL
+======================================================== -->
+
+<div class="modal hidden" id="modal">
+
+    <div class="modal-bg" onclick="closeModal()"></div>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal()"
+        >
+            ×
+        </button>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+/* =========================================================
+   VIBRA JAVASCRIPT
+========================================================= */
+
+let currentCreateType = "post";
+let selectedFiles = [];
+let posts = JSON.parse(localStorage.getItem("vibra_posts") || "[]");
+let savedPosts = JSON.parse(localStorage.getItem("vibra_saved") || "[]");
+let isPrivate = localStorage.getItem("vibra_private") === "true";
+
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function navigate(page){
+
+    document.querySelectorAll(".page").forEach(p=>{
+        p.classList.remove("active");
+    });
+
+    document.querySelectorAll(".nav-item").forEach(item=>{
+        item.classList.remove("active");
+    });
+
+    const target = document.getElementById(page + "Page");
+
+    if(target){
+        target.classList.add("active");
+    }
+
+    const nav = document.querySelector(
+        `.nav-item[data-page="${page}"]`
+    );
+
+    if(nav){
+        nav.classList.add("active");
+    }
+
+    window.scrollTo(0,0);
+}
+
+
+document.querySelectorAll(".nav-item").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        navigate(button.dataset.page);
+
+    });
+
+});
+
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+document.getElementById("notificationsBtn").onclick=()=>{
+    navigate("notifications");
+};
+
+document.getElementById("chatBtn").onclick=()=>{
+    navigate("chat");
+};
+
+document.getElementById("themeBtn").onclick=()=>{
+
+    const dark = document.body.classList.contains("dark");
+
+    setTheme(dark ? "light" : "dark");
+
+};
+
+
+/* =========================================================
+   TEMA
+========================================================= */
+
+function setTheme(theme){
+
+    if(theme==="dark"){
+
+        document.body.classList.add("dark");
+
+        localStorage.setItem("vibra_theme","dark");
+
+    }else if(theme==="light"){
+
+        document.body.classList.remove("dark");
+
+        localStorage.setItem("vibra_theme","light");
+
+    }else{
+
+        localStorage.setItem("vibra_theme","system");
+
+        const prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        document.body.classList.toggle("dark",prefersDark);
+
+    }
+
+}
+
+const savedTheme = localStorage.getItem("vibra_theme") || "system";
+
+setTheme(savedTheme);
+
+
+/* =========================================================
+   CRIAÇÃO
+========================================================= */
+
+document.querySelectorAll(".create-tab").forEach(tab=>{
+
+    tab.addEventListener("click",()=>{
+
+        document.querySelectorAll(".create-tab")
+            .forEach(t=>t.classList.remove("active"));
+
+        tab.classList.add("active");
+
+        currentCreateType = tab.dataset.create;
+
+    });
+
+});
+
+
+function openCreate(type){
+
+    currentCreateType = type;
+
+    navigate("create");
+
+    document.querySelectorAll(".create-tab")
+        .forEach(t=>{
+            t.classList.toggle(
+                "active",
+                t.dataset.create===type
+            );
+        });
+
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+document.getElementById("mediaInput")
+.addEventListener("change",function(){
+
+    selectedFiles = [...this.files];
+
+    if(!selectedFiles.length) return;
+
+    openEditor();
+
+});
+
+
+function openEditor(){
+
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("editorPreview");
+
+    editor.classList.remove("hidden");
+
+    preview.innerHTML="";
+
+    selectedFiles.forEach(file=>{
+
+        const url = URL.createObjectURL(file);
+
+        let element;
+
+        if(file.type.startsWith("video/")){
+
+            element = document.createElement("video");
+
+            element.src = url;
+            element.controls = true;
+            element.autoplay = true;
+            element.muted = true;
+            element.loop = true;
+
+        }else{
+
+            element = document.createElement("img");
+
+            element.src = url;
+
+        }
+
+        preview.appendChild(element);
+
+    });
+
+}
+
+
+function closeEditor(){
+
+    document.getElementById("editor")
+        .classList.add("hidden");
+
+    document.getElementById("mediaInput").value="";
+
+    selectedFiles=[];
+
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+function editorAction(action){
+
+    if(action==="text"){
+
+        const text = prompt("Digite o texto para colocar na mídia:");
+
+        if(text){
+
+            const preview =
+                document.getElementById("editorPreview");
+
+            const overlay =
+                document.createElement("div");
+
+            overlay.textContent=text;
+
+            overlay.style.position="absolute";
+            overlay.style.bottom="20px";
+            overlay.style.left="20px";
+            overlay.style.right="20px";
+            overlay.style.color="white";
+            overlay.style.fontSize="28px";
+            overlay.style.fontWeight="800";
+            overlay.style.textAlign="center";
+            overlay.style.textShadow="0 2px 8px #000";
+
+            preview.appendChild(overlay);
+
+        }
+
+        return;
+    }
+
+    if(action==="music"){
+
+        const music = prompt(
+            "Digite o nome da música ou cole o link do YouTube:"
+        );
+
+        if(music){
+
+            showModal(`
+                <h2>🎵 Música</h2>
+                <p style="color:var(--muted);line-height:1.5">
+                    Música selecionada:
+                </p>
+                <br>
+                <strong>${escapeHTML(music)}</strong>
+                <br><br>
+                <button class="primary"
+                    style="margin:0"
+                    onclick="closeModal()">
+                    Usar música
+                </button>
+            `);
+
+        }
+
+        return;
+    }
+
+    if(action==="filter"){
+
+        showModal(`
+            <h2>Filtros</h2>
+
+            <button class="setting"
+                onclick="applyFilter('none')">
+                Original
+            </button>
+
+            <button class="setting"
+                onclick="applyFilter('grayscale(1)')">
+                Preto e branco
+            </button>
+
+            <button class="setting"
+                onclick="applyFilter('sepia(.45)')">
+                Retrô
+            </button>
+
+            <button class="setting"
+                onclick="applyFilter('contrast(1.2) saturate(1.3)')">
+                Vibrante
+            </button>
+        `);
+
+        return;
+    }
+
+    if(action==="crop"){
+
+        alert("O editor está preparado para receber o sistema de recorte.");
+
+        return;
+
+    }
+
+    if(action==="speed"){
+
+        alert("A velocidade pode ser ajustada quando o conteúdo for um vídeo.");
+
+        return;
+
+    }
+
+    if(action==="sticker"){
+
+        const sticker = prompt(
+            "Digite um emoji para adicionar:"
+        );
+
+        if(sticker){
+
+            const preview =
+                document.getElementById("editorPreview");
+
+            const element =
+                document.createElement("div");
+
+            element.textContent=sticker;
+
+            element.style.position="absolute";
+            element.style.top="20px";
+            element.style.right="20px";
+            element.style.fontSize="45px";
+
+            preview.appendChild(element);
+
+        }
+
+    }
+
+}
+
+
+function applyFilter(filter){
+
+    document.querySelectorAll(
+        "#editorPreview img,#editorPreview video"
+    ).forEach(el=>{
+        el.style.filter=filter;
+    });
+
+    closeModal();
+
+}
+
+
+/* =========================================================
+   PUBLICAR
+========================================================= */
+
+function publishContent(){
+
+    if(!selectedFiles.length){
+
+        alert("Selecione uma mídia primeiro.");
+
+        return;
+
+    }
+
+    const caption =
+        document.getElementById("captionInput").value;
+
+    const file = selectedFiles[0];
+
+    const url = URL.createObjectURL(file);
+
+    const item = {
+
+        id:Date.now(),
+
+        type:currentCreateType,
+
+        url,
+
+        mime:file.type,
+
+        caption,
+
+        createdAt:new Date().toISOString(),
+
+        liked:false,
+
+        reposted:false,
+
+        saved:false
+
+    };
+
+    posts.unshift(item);
+
+    /*
+       Salvamos somente informações locais.
+       Object URLs não são permanentes entre sessões.
+       O backend futuro deverá armazenar a mídia.
+    */
+
+    try{
+
+        localStorage.setItem(
+            "vibra_posts",
+            JSON.stringify(
+                posts.map(p=>({
+                    ...p,
+                    url:""
+                }))
+            )
+        );
+
+    }catch(e){}
+
+    if(currentCreateType==="story"){
+
+        addStoryFromPost(item);
+
+    }else if(currentCreateType==="reel"){
+
+        renderReels();
+
+    }
+
+    renderFeed();
+    renderProfile();
+
+    document.getElementById("postCount")
+        .textContent =
+        posts.filter(p=>p.type==="post").length;
+
+    closeEditor();
+
+    navigate("home");
+
+}
+
+
+/* =========================================================
+   FEED
+========================================================= */
+
+function renderFeed(){
+
+    const feed =
+        document.getElementById("feed");
+
+    const empty =
+        document.getElementById("emptyFeed");
+
+    const feedPosts =
+        posts.filter(p=>p.type==="post");
+
+    feed.innerHTML="";
+
+    if(!feedPosts.length){
+
+        empty.style.display="flex";
+
+        return;
+
+    }
+
+    empty.style.display="none";
+
+    feedPosts.forEach(post=>{
+
+        const article =
+            document.createElement("article");
+
+        article.className="post";
+
+        article.innerHTML=`
+
+            <div class="post-head">
+
+                <div class="avatar">V</div>
+
+                <div class="post-user">
+
+                    <strong>Você</strong>
+
+                    <span>agora</span>
+
+                </div>
+
+                <button class="icon-btn"
+                    onclick="postMenu(${post.id})">
+                    ⋮
+                </button>
+
+            </div>
+
+            <div class="post-media">
+
+                ${
+                    post.url
+                    ?
+                    (
+                        post.mime.startsWith("video/")
+                        ?
+                        `<video src="${post.url}"
+                            controls></video>`
+                        :
+                        `<img src="${post.url}" alt="Publicação">`
+                    )
+                    :
+                    `<span style="color:var(--muted)">
+                        Mídia
+                    </span>`
+                }
+
+            </div>
+
+            <div class="post-actions">
+
+                <button
+                    class="post-action"
+                    onclick="likePost(${post.id},this)">
+                    ♡
+                </button>
+
+                <button
+                    class="post-action"
+                    onclick="comments(${post.id})">
+                    ◯
+                </button>
+
+                <button
+                    class="post-action"
+                    onclick="repost(${post.id})">
+                    ↻
+                </button>
+
+                <button
+                    class="post-action"
+                    onclick="sharePost(${post.id})">
+                    ↑
+                </button>
+
+                <button
+                    class="post-action"
+                    style="margin-left:auto"
+                    onclick="savePost(${post.id},this)">
+                    ☆
+                </button>
+
+            </div>
+
+            ${
+                post.caption
+                ?
+                `
+                <div class="post-caption">
+                    <strong>Você</strong>
+                    ${escapeHTML(post.caption)}
+                </div>
+                `
+                :
+                ""
+            }
+
+        `;
+
+        feed.appendChild(article);
+
+    });
+
+}
+
+
+/* =========================================================
+   CURTIDA
+========================================================= */
+
+function likePost(id,button){
+
+    const post =
+        posts.find(p=>p.id===id);
+
+    if(!post) return;
+
+    post.liked=!post.liked;
+
+    button.textContent =
+        post.liked ? "♥" : "♡";
+
+    if(post.liked){
+
+        addNotification("Você curtiu sua publicação.");
+
+    }
+
+}
+
+
+/* =========================================================
+   SALVAR
+========================================================= */
+
+function savePost(id,button){
+
+    const post =
+        posts.find(p=>p.id===id);
+
+    if(!post) return;
+
+    post.saved=!post.saved;
+
+    button.textContent =
+        post.saved ? "★" : "☆";
+
+    if(post.saved){
+
+        if(!savedPosts.includes(id)){
+            savedPosts.push(id);
+        }
+
+    }else{
+
+        savedPosts =
+            savedPosts.filter(x=>x!==id);
+
+    }
+
+    localStorage.setItem(
+        "vibra_saved",
+        JSON.stringify(savedPosts)
+    );
+
+    renderProfile();
+
+}
+
+
+/* =========================================================
+   REPOST
+========================================================= */
+
+function repost(id){
+
+    const post =
+        posts.find(p=>p.id===id);
+
+    if(!post) return;
+
+    post.reposted=!post.reposted;
+
+    if(post.reposted){
+
+        addNotification(
+            "Publicação adicionada aos seus Repostados."
+        );
+
+    }
+
+    renderProfile();
+
+}
+
+
+/* =========================================================
+   PERFIL
+========================================================= */
+
+function renderProfile(){
+
+    const grid =
+        document.getElementById("profileGrid");
+
+    const activeTab =
+        document.querySelector(
+            ".profile-tab.active"
+        )?.dataset.profile || "posts";
+
+    grid.innerHTML="";
+
+    let data=[];
+
+    if(activeTab==="posts"){
+
+        data=posts.filter(p=>p.type==="post");
+
+    }else if(activeTab==="reels"){
+
+        data=posts.filter(p=>p.type==="reel");
+
+    }else if(activeTab==="reposts"){
+
+        data=posts.filter(p=>p.reposted);
+
+    }else if(activeTab==="saved"){
+
+        data=posts.filter(
+            p=>savedPosts.includes(p.id)
+        );
+
+    }
+
+    data.forEach(post=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className="grid-item";
+
+        if(post.url){
+
+            if(post.mime.startsWith("video/")){
+
+                item.innerHTML=
+                    `<video src="${post.url}" muted></video>`;
+
+            }else{
+
+                item.innerHTML=
+                    `<img src="${post.url}" alt="">`;
+
+            }
+
+        }
+
+        grid.appendChild(item);
+
+    });
+
+}
+
+
+document.querySelectorAll(".profile-tab")
+.forEach(tab=>{
+
+    tab.addEventListener("click",()=>{
+
+        document.querySelectorAll(".profile-tab")
+            .forEach(t=>t.classList.remove("active"));
+
+        tab.classList.add("active");
+
+        renderProfile();
+
+    });
+
+});
+
+
+/* =========================================================
+   REELS
+========================================================= */
+
+function renderReels(){
+
+    const container =
+        document.getElementById("reelsContainer");
+
+    const empty =
+        document.getElementById("emptyReels");
+
+    const reels =
+        posts.filter(p=>p.type==="reel");
+
+    container.innerHTML="";
+
+    if(!reels.length){
+
+        empty.style.display="flex";
+
+        return;
+
+    }
+
+    empty.style.display="none";
+
+    reels.forEach(reel=>{
+
+        const element =
+            document.createElement("div");
+
+        element.className="reel";
+
+        element.innerHTML=`
+
+            ${
+                reel.url
+                ?
+                (
+                    reel.mime.startsWith("video/")
+                    ?
+                    `<video class="reel-media"
+                        src="${reel.url}"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        controls></video>`
+                    :
+                    `<img class="reel-media"
+                        src="${reel.url}">`
+                )
+                :
+                ""
+            }
+
+            <div class="reel-overlay">
+
+                <div class="reel-info">
+
+                    <strong>Você</strong>
+
+                    <p style="margin-top:8px">
+                        ${escapeHTML(reel.caption || "")}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="reel-actions">
+
+                <button class="reel-btn">
+                    ♡
+                </button>
+
+                <button
+                    class="reel-btn"
+                    onclick="comments(${reel.id})">
+                    ◯
+                </button>
+
+                <button
+                    class="reel-btn"
+                    onclick="repost(${reel.id})">
+                    ↻
+                </button>
+
+                <button class="reel-btn">
+                    ↑
+                </button>
+
+            </div>
+
+        `;
+
+        container.appendChild(element);
+
+    });
+
+}
+
+
+/* =========================================================
+   STORIES
+========================================================= */
+
+function addStoryFromPost(post){
+
+    const stories =
+        document.getElementById("stories");
+
+    const story =
+        document.createElement("button");
+
+    story.className="story";
+
+    story.innerHTML=`
+
+        <div class="story-avatar">
+
+            <div class="story-avatar-inner">
+
+                ${
+                    post.url
+                    ?
+                    `<img
+                        src="${post.url}"
+                        style="
+                            width:100%;
+                            height:100%;
+                            object-fit:cover;
+                            border-radius:50%;
+                        "
+                    >`
+                    :
+                    "V"
+                }
+
+            </div>
+
+        </div>
+
+        <span class="story-name">
+            Você
+        </span>
+
+    `;
+
+    story.onclick=()=>openStory(post);
+
+    stories.appendChild(story);
+
+}
+
+
+function openStory(post){
+
+    showModal(`
+
+        <div style="
+            background:#111;
+            border-radius:15px;
+            overflow:hidden;
+            text-align:center;
+        ">
+
+            ${
+                post.url
+                ?
+                (
+                    post.mime.startsWith("video/")
+                    ?
+                    `<video
+                        src="${post.url}"
+                        controls
+                        autoplay
+                        style="
+                            max-width:100%;
+                            max-height:60vh;
+                        ">
+                    </video>`
+                    :
+                    `<img
+                        src="${post.url}"
+                        style="
+                            max-width:100%;
+                            max-height:60vh;
+                            object-fit:contain;
+                        ">
+                    `
+                )
+                :
+                ""
+            }
+
+        </div>
+
+        <p style="
+            color:var(--muted);
+            margin-top:12px;
+        ">
+            Pressione e segure um Story para pausá-lo.
+        </p>
+
+    `);
+
+}
+
+
+/* =========================================================
+   ADD STORY
+========================================================= */
+
+document.getElementById("addStory")
+.onclick=()=>{
+
+    openCreate("story");
+
+};
+
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+const chatInput =
+    document.getElementById("chatInput");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+function sendMessage(){
+
+    const text =
+        chatInput.value.trim();
+
+    if(!text) return;
+
+    const messages =
+        document.getElementById("messages");
+
+    const empty =
+        messages.querySelector(".empty");
+
+    if(empty) empty.remove();
+
+    const message =
+        document.createElement("div");
+
+    message.className="message me";
+
+    message.textContent=text;
+
+    message.addEventListener("contextmenu",e=>{
+
+        e.preventDefault();
+
+        showMessageMenu(message);
+
+    });
+
+    messages.appendChild(message);
+
+    chatInput.value="";
+
+    messages.scrollTop=messages.scrollHeight;
+
+}
+
+
+sendBtn.onclick=sendMessage;
+
+chatInput.addEventListener("keydown",e=>{
+
+    if(e.key==="Enter"){
+
+        e.preventDefault();
+
+        sendMessage();
+
+    }
+
+});
+
+
+/* =========================================================
+   ÁUDIO
+========================================================= */
+
+document.getElementById("audioBtn")
+.onclick=()=>{
+
+    showModal(`
+
+        <h2>🎤 Mensagem de áudio</h2>
+
+        <p style="
+            color:var(--muted);
+            line-height:1.5;
+        ">
+            O botão está preparado para receber
+            gravação de áudio com MediaRecorder.
+        </p>
+
+        <button
+            class="primary"
+            style="margin-top:18px"
+            onclick="closeModal()"
+        >
+            Fechar
+        </button>
+
+    `);
+
+};
+
+
+/* =========================================================
+   MENU DE MENSAGEM
+========================================================= */
+
+function showMessageMenu(message){
+
+    showModal(`
+
+        <h2>Mensagem</h2>
+
+        <button class="setting"
+            onclick="replyMessage()">
+            <span>↩ Responder</span>
+        </button>
+
+        <button class="setting"
+            onclick="editMessageElement()">
+            <span>✏ Editar</span>
+        </button>
+
+        <button class="setting"
+            onclick="navigator.clipboard?.writeText(
+                ${JSON.stringify(message.textContent)}
+            );closeModal()">
+            <span>📋 Copiar</span>
+        </button>
+
+        <button class="setting"
+            onclick="message.remove();closeModal()">
+            <span>🗑 Excluir</span>
+        </button>
+
+    `);
+
+    window.selectedMessage=message;
+
+}
+
+
+function replyMessage(){
+
+    const msg=window.selectedMessage;
+
+    if(msg){
+
+        chatInput.value =
+            "↩ " + msg.textContent + " ";
+
+        chatInput.focus();
+
+    }
+
+    closeModal();
+
+}
+
+
+function editMessageElement(){
+
+    const msg=window.selectedMessage;
+
+    if(!msg) return;
+
+    const newText =
+        prompt(
+            "Editar mensagem:",
+            msg.textContent
+        );
+
+    if(newText!==null){
+
+        msg.textContent=newText;
+
+    }
+
+    closeModal();
+
+}
+
+
+/* =========================================================
+   COMENTÁRIOS
+========================================================= */
+
+function comments(id){
+
+    showModal(`
+
+        <h2>Comentários</h2>
+
+        <div style="
+            padding:20px 0;
+            color:var(--muted);
+            text-align:center;
+        ">
+            Ainda não há comentários.
+        </div>
+
+        <input
+            id="commentInput"
+            placeholder="Adicionar comentário..."
+            style="
+                width:100%;
+                height:44px;
+                border:1px solid var(--border);
+                border-radius:12px;
+                padding:0 12px;
+                background:var(--surface-2);
+                color:var(--text);
+                outline:0;
+            "
+        >
+
+        <button
+            class="primary"
+            style="width:100%"
+            onclick="addComment()"
+        >
+            Comentar
+        </button>
+
+    `);
+
+}
+
+
+function addComment(){
+
+    const input =
+        document.getElementById("commentInput");
+
+    if(input?.value.trim()){
+
+        addNotification(
+            "Seu comentário foi publicado."
+        );
+
+        closeModal();
+
+    }
+
+}
+
+
+/* =========================================================
+   COMPARTILHAR
+========================================================= */
+
+function sharePost(id){
+
+    const post =
+        posts.find(p=>p.id===id);
+
+    if(!post) return;
+
+    if(navigator.share){
+
+        navigator.share({
+            title:"Vibra",
+            text:"Confira esta publicação no Vibra."
+        });
+
+    }else{
+
+        showModal(`
+
+            <h2>Compartilhar</h2>
+
+            <p style="color:var(--muted)">
+                Link da publicação:
+            </p>
+
+            <input
+                value="${location.href}"
+                readonly
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    padding:12px;
+                    border:1px solid var(--border);
+                    border-radius:10px;
+                    background:var(--surface-2);
+                    color:var(--text);
+                "
+            >
+
+        `);
+
+    }
+
+}
+
+
+/* =========================================================
+   POST MENU
+========================================================= */
+
+function postMenu(id){
+
+    showModal(`
+
+        <h2>Publicação</h2>
+
+        <button class="setting">
+            <span>✏ Editar publicação</span>
+        </button>
+
+        <button class="setting">
+            <span>⚙ Configurações</span>
+        </button>
+
+        <button
+            class="setting"
+            onclick="deletePost(${id})"
+        >
+            <span>🗑 Excluir publicação</span>
+        </button>
+
+    `);
+
+}
+
+
+function deletePost(id){
+
+    posts =
+        posts.filter(p=>p.id!==id);
+
+    localStorage.setItem(
+        "vibra_posts",
+        JSON.stringify(
+            posts.map(p=>({
+                ...p,
+                url:""
+            }))
+        )
+    );
+
+    renderFeed();
+    renderProfile();
+    renderReels();
+
+    closeModal();
+
+}
+
+
+/* =========================================================
+   NOTIFICAÇÕES
+========================================================= */
+
+let notifications=[];
+
+function addNotification(text){
+
+    notifications.unshift({
+        text,
+        time:"agora",
+        read:false
+    });
+
+    renderNotifications();
+
+}
+
+
+function renderNotifications(){
+
+    const list =
+        document.getElementById("notificationsList");
+
+    const empty =
+        document.getElementById("emptyNotifications");
+
+    const badge =
+        document.getElementById("notificationBadge");
+
+    list.innerHTML="";
+
+    const unread =
+        notifications.filter(n=>!n.read).length;
+
+    if(unread){
+
+        badge.classList.remove("hidden");
+
+        badge.textContent=unread;
+
+    }else{
+
+        badge.classList.add("hidden");
+
+    }
+
+    if(!notifications.length){
+
+        empty.style.display="flex";
+
+        return;
+
+    }
+
+    empty.style.display="none";
+
+    notifications.forEach(n=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className="notification";
+
+        item.innerHTML=`
+
+            <div class="avatar">V</div>
+
+            <div style="flex:1">
+
+                <strong>${escapeHTML(n.text)}</strong>
+
+                <div style="
+                    color:var(--muted);
+                    font-size:11px;
+                    margin-top:3px;
+                ">
+                    ${n.time}
+                </div>
+
+            </div>
+
+            ${
+                !n.read
+                ?
+                `<div class="notification-dot"></div>`
+                :
+                ""
+            }
+
+        `;
+
+        list.appendChild(item);
+
+    });
+
+}
+
+
+renderNotifications();
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function openSettings(){
+
+    navigate("settings");
+
+    document.querySelectorAll(".nav-item")
+        .forEach(n=>n.classList.remove("active"));
+
+}
+
+
+function togglePrivate(){
+
+    isPrivate=!isPrivate;
+
+    localStorage.setItem(
+        "vibra_private",
+        isPrivate
+    );
+
+    document.getElementById(
+        "privateStatus"
+    ).textContent =
+        isPrivate
+        ? "Ativada"
+        : "Desativada";
+
+}
+
+
+document.getElementById(
+    "privateStatus"
+).textContent =
+    isPrivate
+    ? "Ativada"
+    : "Desativada";
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function showModal(html){
+
+    document.getElementById(
+        "modalContent"
+    ).innerHTML=html;
+
+    document.getElementById(
+        "modal"
+    ).classList.remove("hidden");
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "modal"
+    ).classList.add("hidden");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document.getElementById("searchInput")
+.addEventListener("input",function(){
+
+    const value =
+        this.value.toLowerCase().trim();
+
+    if(!value){
+
+        return;
+
+    }
+
+});
+
+
+/* =========================================================
+   UTILITÁRIO
+========================================================= */
+
+function escapeHTML(text){
+
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+renderFeed();
+renderProfile();
+renderReels();
+
+</script>
 
 </body>
 </html>
