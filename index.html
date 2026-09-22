@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta name="theme-color" content="#000000">
+
+  <title>Vibra</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- =====================================================
+       APP
+  ====================================================== -->
+
+  <div id="app">
+
+    <!-- ===================================================
+         HEADER
+    ==================================================== -->
+
+    <header class="brand-header">
+
+      <div class="brand-logo">
+        Vibra
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          id="notificationsButton"
+          class="header-button"
+          aria-label="Notificações"
+        >
+          ♡
+          <span
+            id="notificationBadge"
+            class="notification-badge hidden"
+          >
+            0
+          </span>
+        </button>
+
+        <button
+          id="headerMessagesButton"
+          class="header-button"
+          aria-label="Mensagens"
+        >
+          ◌
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         MAIN CONTENT
+    ==================================================== -->
+
+    <main id="mainContent">
+
+
+      <!-- =================================================
+           HOME / FEED
+      ================================================== -->
+
+      <section
+        id="homePage"
+        class="page active"
+        data-page="home"
+      >
+
+        <!-- STORIES -->
+
+        <div class="stories-wrapper">
+
+          <div
+            id="storiesContainer"
+            class="stories-container"
+          >
+
+            <!-- Stories serão adicionados pelo JavaScript -->
+
+          </div>
+
+        </div>
+
+
+        <!-- FEED -->
+
+        <div
+          id="feedContainer"
+          class="feed-container"
+        >
+
+          <!--
+
+          IMPORTANTE:
+          Não colocar usuários, posts ou conteúdos fictícios aqui.
+
+          O feed começa vazio e recebe apenas conteúdo real
+          criado/carregado pelo usuário ou pelo backend.
+
+          -->
+
+        </div>
+
+
+        <!-- EMPTY FEED -->
+
+        <div
+          id="emptyFeed"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+            ✦
+          </div>
+
+          <h2>Seu Vibra começa aqui</h2>
+
+          <p>
+            Publique algo ou siga pessoas para começar
+            a ver conteúdo.
+          </p>
+
+          <button
+            id="emptyFeedCreateButton"
+            class="primary-button"
+          >
+            Criar publicação
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           BUSCA
+      ================================================== -->
+
+      <section
+        id="searchPage"
+        class="page"
+        data-page="search"
+      >
+
+        <div class="page-header">
+
+          <h1>Buscar</h1>
+
+        </div>
+
+        <div class="search-area">
+
+          <div class="search-input-wrapper">
+
+            <span>⌕</span>
+
+            <input
+              id="globalSearchInput"
+              type="search"
+              placeholder="Pesquisar"
+              autocomplete="off"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- CATEGORIAS DE BUSCA -->
+
+        <div class="search-tabs">
+
+          <button
+            class="search-tab active"
+            data-search-type="all"
+          >
+            Tudo
+          </button>
+
+          <button
+            class="search-tab"
+            data-search-type="users"
+          >
+            Pessoas
+          </button>
+
+          <button
+            class="search-tab"
+            data-search-type="posts"
+          >
+            Posts
+          </button>
+
+          <button
+            class="search-tab"
+            data-search-type="hashtags"
+          >
+            Hashtags
+          </button>
+
+        </div>
+
+
+        <div
+          id="searchResults"
+          class="search-results"
+        >
+
+          <div class="empty-state">
+            <div class="empty-icon">⌕</div>
+            <p>Pesquise por pessoas, posts ou hashtags.</p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           CRIAR
+      ================================================== -->
+
+      <section
+        id="createPage"
+        class="page"
+        data-page="create"
+      >
+
+        <div class="page-header">
+
+          <h1>Criar</h1>
+
+        </div>
+
+
+        <!-- ESCOLHER TIPO -->
+
+        <div class="create-type-selector">
+
+          <button
+            class="create-type active"
+            data-create-type="post"
+          >
+            📷
+            <span>Post</span>
+          </button>
+
+          <button
+            class="create-type"
+            data-create-type="reel"
+          >
+            🎬
+            <span>Reel</span>
+          </button>
+
+          <button
+            class="create-type"
+            data-create-type="story"
+          >
+            ⭕
+            <span>Story</span>
+          </button>
+
+        </div>
+
+
+        <!-- SELEÇÃO DE MÍDIA -->
+
+        <div
+          id="mediaSelection"
+          class="media-selection"
+        >
+
+          <label
+            for="mediaInput"
+            class="media-upload-area"
+          >
+
+            <div class="upload-icon">
+              ＋
+            </div>
+
+            <strong>
+              Selecionar fotos ou vídeos
+            </strong>
+
+            <span>
+              Escolha uma mídia da sua galeria
+            </span>
+
+          </label>
+
+          <input
+            id="mediaInput"
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            hidden
+          >
+
+        </div>
+
+
+        <!-- =================================================
+             EDITOR INTEGRADO
+             
+             IMPORTANTE:
+             NÃO é uma página separada.
+
+             Ele aparece dentro do processo de criação
+             assim que o usuário seleciona a mídia.
+        ================================================== -->
+
+        <div
+          id="integratedEditor"
+          class="integrated-editor hidden"
+        >
+
+          <!-- EDITOR HEADER -->
+
+          <div class="editor-header">
+
+            <button
+              id="closeEditorButton"
+              class="editor-close"
+            >
+              ×
+            </button>
+
+            <strong>Editar</strong>
+
+            <button
+              id="nextEditorButton"
+              class="editor-next"
+            >
+              Avançar
+            </button>
+
+          </div>
+
+
+          <!-- PREVIEW -->
+
+          <div
+            id="editorPreview"
+            class="editor-preview"
+          >
+
+            <!-- Mídia será inserida aqui -->
+
+            <div
+              id="editorTextOverlay"
+              class="editor-text-overlay"
+            ></div>
+
+          </div>
+
+
+          <!-- FERRAMENTAS -->
+
+          <div class="editor-tools">
+
+            <button
+              class="editor-tool"
+              data-editor-tool="crop"
+            >
+              <span>▣</span>
+              <small>Cortar</small>
+            </button>
+
+            <button
+              class="editor-tool"
+              data-editor-tool="speed"
+            >
+              <span>1×</span>
+              <small>Velocidade</small>
+            </button>
+
+            <button
+              class="editor-tool"
+              data-editor-tool="text"
+            >
+              <span>T</span>
+              <small>Texto</small>
+            </button>
+
+            <button
+              class="editor-tool"
+              data-editor-tool="sticker"
+            >
+              <span>☺</span>
+              <small>Stickers</small>
+            </button>
+
+            <button
+              class="editor-tool"
+              data-editor-tool="filter"
+            >
+              <span>◐</span>
+              <small>Filtros</small>
+            </button>
+
+            <button
+              class="editor-tool"
+              data-editor-tool="music"
+            >
+              <span>♫</span>
+              <small>Música</small>
+            </button>
+
+          </div>
+
+
+          <!-- FILTROS -->
+
+          <div
+            id="filterPanel"
+            class="editor-panel hidden"
+          >
+
+            <button data-filter="original">
+              Original
+            </button>
+
+            <button data-filter="mono">
+              P&B
+            </button>
+
+            <button data-filter="warm">
+              Quente
+            </button>
+
+            <button data-filter="cool">
+              Frio
+            </button>
+
+          </div>
+
+
+          <!-- MÚSICA -->
+
+          <div
+            id="musicPanel"
+            class="editor-panel hidden"
+          >
+
+            <div class="panel-title">
+              Música
+            </div>
+
+            <input
+              id="musicSearchInput"
+              type="search"
+              placeholder="Pesquisar música"
+            >
+
+            <div
+              id="musicResults"
+              class="music-results"
+            ></div>
+
+            <button
+              id="youtubeMusicButton"
+              class="secondary-button"
+            >
+              Adicionar música do YouTube
+            </button>
+
+          </div>
+
+
+          <!-- LEGENDA -->
+
+          <div class="editor-caption">
+
+            <textarea
+              id="postCaption"
+              placeholder="Escreva uma legenda..."
+              maxlength="2200"
+            ></textarea>
+
+          </div>
+
+
+          <!-- CONFIGURAÇÕES -->
+
+          <div class="publish-options">
+
+            <label>
+              <span>Comentários</span>
+
+              <input
+                id="commentsEnabled"
+                type="checkbox"
+                checked
+              >
+
+            </label>
+
+            <label>
+              <span>Compartilhamento</span>
+
+              <input
+                id="sharingEnabled"
+                type="checkbox"
+                checked
+              >
+
+            </label>
+
+          </div>
+
+
+          <!-- PUBLICAR -->
+
+          <button
+            id="publishButton"
+            class="primary-button full-width"
+          >
+            Publicar
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           REELS
+      ================================================== -->
+
+      <section
+        id="reelsPage"
+        class="page reels-page"
+        data-page="reels"
+      >
+
+        <div
+          id="reelsContainer"
+          class="reels-container"
+        >
+
+          <!-- Reels reais serão carregados aqui -->
+
+        </div>
+
+
+        <div
+          id="emptyReels"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+            ▶
+          </div>
+
+          <h2>Nenhum Reel ainda</h2>
+
+          <p>
+            Crie seu primeiro Reel para vê-lo aqui.
+          </p>
+
+          <button
+            class="primary-button"
+            data-open-create="reel"
+          >
+            Criar Reel
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           PERFIL
+      ================================================== -->
+
+      <section
+        id="profilePage"
+        class="page"
+        data-page="profile"
+      >
+
+        <div
+          id="profileContent"
+          class="profile-content"
+        >
+
+          <!-- PERFIL -->
+
+          <div class="profile-header">
+
+            <div class="profile-top">
+
+              <div
+                id="profileAvatar"
+                class="profile-avatar"
+              >
+                <span>V</span>
+              </div>
+
+
+              <div class="profile-statistics">
+
+                <div>
+                  <strong id="profilePostsCount">
+                    0
+                  </strong>
+
+                  <span>Posts</span>
+                </div>
+
+                <div>
+                  <strong id="profileFollowersCount">
+                    0
+                  </strong>
+
+                  <span>Seguidores</span>
+                </div>
+
+                <div>
+                  <strong id="profileFollowingCount">
+                    0
+                  </strong>
+
+                  <span>Seguindo</span>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-info">
+
+              <h2 id="profileName">
+                Seu perfil
+              </h2>
+
+              <p id="profileUsername">
+                @usuario
+              </p>
+
+              <p id="profileBio">
+                Adicione uma bio ao seu perfil.
+              </p>
+
+            </div>
+
+
+            <div class="profile-buttons">
+
+              <button
+                id="editProfileButton"
+                class="secondary-button"
+              >
+                Editar perfil
+              </button>
+
+              <button
+                id="profileSettingsButton"
+                class="secondary-button"
+              >
+                ⚙
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ABAS DO PERFIL -->
+
+          <div class="profile-tabs">
+
+            <button
+              class="profile-tab active"
+              data-profile-tab="posts"
+            >
+              ▦
+              <span>Posts</span>
+            </button>
+
+            <button
+              class="profile-tab"
+              data-profile-tab="reels"
+            >
+              ▶
+              <span>Reels</span>
+            </button>
+
+            <button
+              class="profile-tab"
+              data-profile-tab="reposts"
+            >
+              ↻
+              <span>Repostados</span>
+            </button>
+
+            <button
+              class="profile-tab"
+              data-profile-tab="saved"
+            >
+              ☆
+              <span>Salvos</span>
+            </button>
+
+          </div>
+
+
+          <!-- CONTEÚDO DA ABA -->
+
+          <div
+            id="profileGrid"
+            class="profile-grid"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           MENSAGENS
+      ================================================== -->
+
+      <section
+        id="messagesPage"
+        class="page"
+        data-page="messages"
+      >
+
+        <div class="page-header">
+
+          <h1>Mensagens</h1>
+
+          <button
+            id="newChatButton"
+            class="header-button"
+          >
+            ＋
+          </button>
+
+        </div>
+
+
+        <!-- NOTAS -->
+
+        <div
+          id="notesContainer"
+          class="notes-container"
+        >
+
+          <!-- Notas de follows mútuos -->
+
+        </div>
+
+
+        <!-- LISTA DE CHATS -->
+
+        <div
+          id="chatList"
+          class="chat-list"
+        >
+
+          <!-- Conversas reais -->
+
+        </div>
+
+
+        <div
+          id="emptyChats"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+            ◌
+          </div>
+
+          <p>
+            Suas conversas aparecerão aqui.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           CHAT
+      ================================================== -->
+
+      <section
+        id="chatPage"
+        class="page chat-page"
+        data-page="chat"
+      >
+
+        <div class="chat-header">
+
+          <button
+            id="backFromChat"
+            class="chat-header-button"
+          >
+            ‹
+          </button>
+
+
+          <div
+            id="chatAvatar"
+            class="chat-avatar"
+          >
+            V
+          </div>
+
+
+          <div class="chat-user-info">
+
+            <strong id="chatUserName">
+              Conversa
+            </strong>
+
+            <span id="chatUserStatus">
+              offline
+            </span>
+
+          </div>
+
+
+          <button
+            id="chatSettingsButton"
+            class="chat-header-button"
+          >
+            ⋮
+          </button>
+
+        </div>
+
+
+        <!-- MENSAGENS -->
+
+        <div
+          id="chatMessages"
+          class="chat-messages"
+        ></div>
+
+
+        <!-- RESPOSTA -->
+
+        <div
+          id="replyPreview"
+          class="reply-preview hidden"
+        >
+
+          <div>
+            <small>Respondendo a</small>
+            <strong id="replyPreviewText"></strong>
+          </div>
+
+          <button id="cancelReply">
+            ×
+          </button>
+
+        </div>
+
+
+        <!-- COMPOSER -->
+
+        <div class="chat-composer">
+
+          <button
+            id="chatMediaButton"
+            class="composer-button"
+          >
+            ＋
+          </button>
+
+          <input
+            id="chatMediaInput"
+            type="file"
+            accept="image/*,video/*"
+            hidden
+          >
+
+
+          <input
+            id="chatInput"
+            class="chat-input"
+            type="text"
+            placeholder="Mensagem..."
+            autocomplete="off"
+          >
+
+
+          <button
+            id="audioRecordButton"
+            class="composer-button"
+            aria-label="Gravar áudio"
+          >
+            🎤
+          </button>
+
+
+          <button
+            id="sendMessageButton"
+            class="send-button"
+            aria-label="Enviar"
+          >
+            ➤
+          </button>
+
+        </div>
+
+
+        <!-- MENU DE MENSAGEM -->
+
+        <div
+          id="messageContextMenu"
+          class="message-context-menu hidden"
+        >
+
+          <button data-message-action="reply">
+            ↩ Responder
+          </button>
+
+          <button data-message-action="copy">
+            📋 Copiar
+          </button>
+
+          <button data-message-action="favorite">
+            ☆ Favoritar
+          </button>
+
+          <button data-message-action="pin">
+            📌 Fixar
+          </button>
+
+          <button data-message-action="edit">
+            ✏ Editar
+          </button>
+
+          <button data-message-action="delete">
+            🗑 Excluir
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           NOTIFICAÇÕES
+      ================================================== -->
+
+      <section
+        id="notificationsPage"
+        class="page"
+        data-page="notifications"
+      >
+
+        <div class="page-header">
+
+          <h1>Notificações</h1>
+
+          <button
+            id="markNotificationsRead"
+            class="text-button"
+          >
+            Marcar como lidas
+          </button>
+
+        </div>
+
+
+        <div
+          id="notificationsList"
+          class="notifications-list"
+        ></div>
+
+
+        <div
+          id="emptyNotifications"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+            ♡
+          </div>
+
+          <p>
+            Você ainda não tem notificações.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           CONFIGURAÇÕES
+      ================================================== -->
+
+      <section
+        id="settingsPage"
+        class="page"
+        data-page="settings"
+      >
+
+        <div class="page-header">
+
+          <button
+            id="backFromSettings"
+            class="back-button"
+          >
+            ‹
+          </button>
+
+          <h1>Configurações</h1>
+
+        </div>
+
+
+        <div class="settings-list">
+
+
+          <!-- PRIVACIDADE -->
+
+          <div class="settings-section">
+
+            <h3>Privacidade</h3>
+
+            <button
+              class="settings-item"
+              id="privacySettingsButton"
+            >
+
+              <span>
+                🔒
+                <strong>Conta privada</strong>
+              </span>
+
+              <input
+                id="privateAccountToggle"
+                type="checkbox"
+              >
+
+            </button>
+
+          </div>
+
+
+          <!-- APARÊNCIA -->
+
+          <div class="settings-section">
+
+            <h3>Aparência</h3>
+
+            <button
+              class="settings-item"
+              data-theme="light"
+            >
+              ☀️
+              <span>Tema claro</span>
+            </button>
+
+            <button
+              class="settings-item"
+              data-theme="dark"
+            >
+              🌙
+              <span>Tema escuro</span>
+            </button>
+
+            <button
+              class="settings-item"
+              data-theme="system"
+            >
+              ⚙️
+              <span>Usar tema do sistema</span>
+            </button>
+
+          </div>
+
+
+          <!-- CONTA -->
+
+          <div class="settings-section">
+
+            <h3>Conta</h3>
+
+            <button class="settings-item">
+              👤
+              <span>Editar perfil</span>
+            </button>
+
+            <button class="settings-item">
+              🔐
+              <span>Segurança</span>
+            </button>
+
+            <button class="settings-item">
+              🚫
+              <span>Contas bloqueadas</span>
+            </button>
+
+          </div>
+
+
+          <!-- NOTIFICAÇÕES -->
+
+          <div class="settings-section">
+
+            <h3>Notificações</h3>
+
+            <button class="settings-item">
+              ♡
+              <span>Notificações de curtidas</span>
+            </button>
+
+            <button class="settings-item">
+              💬
+              <span>Notificações de comentários</span>
+            </button>
+
+            <button class="settings-item">
+              ◌
+              <span>Notificações de mensagens</span>
+            </button>
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- ===================================================
+         BOTTOM NAVIGATION
+    ==================================================== -->
+
+    <nav
+      id="bottomNavigation"
+      class="bottom-navigation"
+    >
+
+      <button
+        class="bottom-nav-item active"
+        data-page="home"
+        aria-label="Início"
+      >
+
+        <span class="nav-icon">
+          ⌂
+        </span>
+
+        <small>
+          Início
+        </small>
+
+      </button>
+
+
+      <button
+        class="bottom-nav-item"
+        data-page="search"
+        aria-label="Buscar"
+      >
+
+        <span class="nav-icon">
+          ⌕
+        </span>
+
+        <small>
+          Buscar
+        </small>
+
+      </button>
+
+
+      <button
+        class="bottom-nav-item create-nav-button"
+        data-page="create"
+        aria-label="Criar"
+      >
+
+        <span class="nav-icon">
+          ＋
+        </span>
+
+        <small>
+          Criar
+        </small>
+
+      </button>
+
+
+      <button
+        class="bottom-nav-item"
+        data-page="reels"
+        aria-label="Reels"
+      >
+
+        <span class="nav-icon">
+          ▶
+        </span>
+
+        <small>
+          Reels
+        </small>
+
+      </button>
+
+
+      <button
+        class="bottom-nav-item"
+        data-page="profile"
+        aria-label="Perfil"
+      >
+
+        <span class="nav-icon">
+          ◉
+        </span>
+
+        <small>
+          Perfil
+        </small>
+
+      </button>
+
+    </nav>
+
+
+    <!-- ===================================================
+         GLOBAL MODAL
+    ==================================================== -->
+
+    <div
+      id="globalModal"
+      class="modal hidden"
+    >
+
+      <div
+        id="modalBackdrop"
+        class="modal-backdrop"
+      ></div>
+
+      <div
+        id="modalContent"
+        class="modal-content"
+      ></div>
+
+    </div>
+
+
+    <!-- ===================================================
+         TOAST
+    ==================================================== -->
+
+    <div
+      id="toast"
+      class="toast"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+  <script src="script.js"></script>
+
+</body>
+</html>
