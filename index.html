@@ -2,1060 +2,2380 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Vibra</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
-  --bg:#fff;
-  --surface:#fff;
-  --text:#111;
-  --muted:#737373;
-  --line:#e9e9e9;
-  --soft:#f6f6f6;
-  --accent:#111;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-body.dark{
-  --bg:#000;
-  --surface:#000;
-  --text:#fff;
-  --muted:#9b9b9b;
-  --line:#252525;
-  --soft:#111;
-  --accent:#fff;
-}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
 
-/* AUTH */
-.auth{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:20px;
-  background:var(--bg);
-}
-.auth-box{
-  width:min(390px,100%);
-  border:1px solid var(--line);
-  padding:32px 24px;
-  border-radius:20px;
-  background:var(--surface);
-}
-.auth-logo{
-  text-align:center;
-  font-size:34px;
-  font-weight:800;
-  letter-spacing:-1.8px;
-  margin-bottom:8px;
-}
-.auth-sub{
-  text-align:center;
-  color:var(--muted);
-  font-size:14px;
-  margin-bottom:25px;
-}
-.auth input{
-  width:100%;
-  height:46px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:var(--soft);
-  color:var(--text);
-  padding:0 13px;
-  margin-bottom:10px;
-  outline:none;
-}
-.auth-main{
-  width:100%;
-  height:46px;
-  border:0;
-  border-radius:10px;
-  background:var(--accent);
-  color:var(--bg);
-  font-weight:700;
-}
-.auth-switch{
-  margin-top:18px;
-  text-align:center;
-  font-size:14px;
-  color:var(--muted);
-}
-.auth-switch button{
-  border:0;background:none;color:var(--text);font-weight:700;
-}
-
-/* APP SHELL */
-.app{min-height:100vh;background:var(--bg)}
-.mobile-shell{
-  width:100%;
-  max-width:620px;
-  min-height:100vh;
-  margin:auto;
-  background:var(--surface);
-  border-left:1px solid var(--line);
-  border-right:1px solid var(--line);
-}
-.header{
-  position:sticky;
-  top:0;
-  z-index:30;
-  height:53px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 13px;
-  background:rgba(255,255,255,.96);
-  border-bottom:1px solid var(--line);
-}
-.dark .header{background:rgba(0,0,0,.96)}
-.brand{
-  font-size:23px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:-1.3px;
-}
-.header-actions{display:flex;gap:5px}
-.header-btn{
-  width:35px;height:35px;border:0;background:none;color:var(--text);
-  display:grid;place-items:center;font-size:22px;
-}
-
-/* STORIES */
-.stories-wrap{
-  border-bottom:1px solid var(--line);
-  background:var(--surface);
-}
-.stories{
-  display:flex;
-  gap:13px;
-  overflow-x:auto;
-  padding:10px 11px 9px;
-  scrollbar-width:none;
-}
-.stories::-webkit-scrollbar{display:none}
-.story{
-  width:61px;
-  flex:0 0 61px;
-  text-align:center;
-  font-size:10px;
-  color:var(--text);
-}
-.story-ring{
-  width:56px;height:56px;
-  margin:0 auto 4px;
-  padding:2px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#ff6a00,#ff1875,#8c42ff);
-}
-.story-ring.me{
-  background:var(--line);
-}
-.story-inner{
-  width:100%;height:100%;
-  border-radius:50%;
-  padding:2px;
-  background:var(--surface);
-}
-.story-inner img{
-  width:100%;height:100%;
-  border-radius:50%;
-  object-fit:cover;
-}
-.story-plus{
-  position:relative;
-}
-.story-plus::after{
-  content:"+";
-  position:absolute;
-  right:1px;
-  bottom:0;
-  width:17px;height:17px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#1677ff;
-  color:#fff;
-  border:2px solid var(--surface);
-  font-size:13px;
-  font-weight:bold;
-}
-
-/* FEED */
-.feed{background:var(--surface)}
-.post{
-  border-bottom:1px solid var(--line);
-  background:var(--surface);
-}
-.post-head{
-  height:53px;
-  padding:7px 11px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.post-user{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  min-width:0;
-}
-.post-avatar{
-  width:36px;height:36px;border-radius:50%;
-  object-fit:cover;background:var(--soft);
-  flex:0 0 36px;
-}
-.post-user-text{min-width:0}
-.post-name{
-  font-size:13px;
-  font-weight:700;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.post-meta{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:2px;
-}
-.more{
-  border:0;background:none;color:var(--text);font-size:19px;padding:5px;
-}
-.media{
-  width:100%;
-  display:block;
-  background:#ededed;
-  object-fit:cover;
-  max-height:720px;
-}
-.post-body{padding:8px 11px 12px}
-.actions{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  margin-bottom:6px;
-}
-.action{
-  border:0;background:none;color:var(--text);
-  width:31px;height:31px;
-  display:grid;place-items:center;
-  font-size:22px;
+*{
+  box-sizing:border-box;
+  margin:0;
   padding:0;
 }
-.action.repost{font-size:20px}
-.action.share{font-size:21px}
-.action.active{font-weight:700}
-.likes{
-  font-size:12px;
-  font-weight:700;
-  margin-bottom:5px;
-}
-.caption{
-  font-size:12px;
-  line-height:1.4;
-  word-break:break-word;
-}
-.caption strong{margin-right:4px}
-.view-comments{
-  border:0;background:none;color:var(--muted);
-  font-size:12px;padding:5px 0;
-}
-.comment-box{
-  display:flex;
-  gap:7px;
-  padding-top:7px;
-}
-.comment-box input{
-  flex:1;height:33px;
-  border:1px solid var(--line);
-  background:var(--soft);
-  color:var(--text);
-  border-radius:17px;
-  padding:0 12px;
-  outline:none;
-  font-size:12px;
-}
-.comment-box button{
-  border:0;background:var(--accent);color:var(--bg);
-  border-radius:17px;padding:0 11px;font-size:11px;font-weight:700;
-}
-.comments-list{padding-top:6px}
-.comment{
-  display:flex;gap:7px;margin:6px 0;
-}
-.comment img{width:26px;height:26px;border-radius:50%;object-fit:cover}
-.comment-content{
-  background:var(--soft);
-  border-radius:10px;
-  padding:6px 9px;
-  font-size:11px;
-}
-.comment-content strong{display:block;margin-bottom:2px}
 
-/* PAGES */
-.page{min-height:calc(100vh - 53px);padding-bottom:66px}
-.page-title{
-  height:48px;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  font-size:18px;
-  font-weight:800;
-  border-bottom:1px solid var(--line);
+:root{
+  --bg:#f7f7f8;
+  --surface:#ffffff;
+  --surface2:#f0f0f3;
+  --text:#111111;
+  --muted:#777;
+  --border:#e5e5e8;
+  --accent:#111111;
+  --danger:#ed4956;
+  --shadow:0 8px 30px rgba(0,0,0,.07);
 }
-.search-page{padding:10px 11px 70px}
-.search-input{
-  width:100%;height:38px;
-  border:0;border-radius:9px;
-  background:var(--soft);
-  color:var(--text);
-  padding:0 13px;
-  outline:none;
-  font-size:13px;
-}
-.search-title{font-size:12px;font-weight:700;margin:17px 3px 8px}
-.search-person{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 2px;
-}
-.search-person img{width:42px;height:42px;border-radius:50%;object-fit:cover}
-.search-person-name{font-size:13px;font-weight:700}
-.search-person-user{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* PROFILE */
-.profile-top{
-  padding:20px 15px 13px;
+body.dark{
+  --bg:#090909;
+  --surface:#151515;
+  --surface2:#202020;
+  --text:#ffffff;
+  --muted:#aaa;
+  --border:#2d2d2d;
+  --accent:#ffffff;
+  --shadow:0 8px 30px rgba(0,0,0,.25);
 }
-.profile-main{
-  display:flex;
-  align-items:center;
-  gap:18px;
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
 }
-.profile-avatar{
-  width:84px;height:84px;border-radius:50%;
-  object-fit:cover;background:var(--soft);
+
+button,
+input,
+textarea{
+  font:inherit;
 }
-.profile-data{flex:1}
-.profile-name{font-size:18px;font-weight:800}
-.profile-user{font-size:12px;color:var(--muted);margin-top:3px}
-.profile-bio{font-size:12px;line-height:1.4;margin-top:8px}
-.profile-buttons{display:flex;gap:7px;margin-top:11px}
-.profile-button{
-  height:32px;padding:0 14px;
-  border:1px solid var(--line);
-  border-radius:8px;
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  min-height:100vh;
+}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  height:64px;
   background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+}
+
+.icon-btn{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:var(--surface2);
   color:var(--text);
-  font-size:11px;font-weight:700;
-}
-.profile-tabs{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  height:45px;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-}
-.profile-tab{
-  border:0;background:none;color:var(--muted);
-  font-size:18px;
-}
-.profile-tab.active{
-  color:var(--text);
-  border-bottom:2px solid var(--text);
-}
-.profile-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:2px;
-}
-.grid-item{
-  aspect-ratio:1;
-  background:var(--soft);
-  overflow:hidden;
-}
-.grid-item img,.grid-item video{
-  width:100%;height:100%;object-fit:cover;display:block;
-}
-.grid-text{
-  height:100%;
-  padding:12px;
   display:flex;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  font-size:11px;
+  font-size:18px;
 }
 
-/* CREATE */
-.create{
-  padding:15px 12px 80px;
+.layout{
+  width:min(1100px,100%);
+  margin:auto;
+  display:grid;
+  grid-template-columns:220px minmax(0,620px) 220px;
+  gap:22px;
+  padding:25px 15px 100px;
 }
-.create-user{
-  display:flex;align-items:center;gap:9px;margin-bottom:12px;
+
+.sidebar{
+  position:sticky;
+  top:90px;
+  height:max-content;
 }
-.create-user img{width:38px;height:38px;border-radius:50%;object-fit:cover}
-.create textarea{
+
+.nav-item{
   width:100%;
-  min-height:125px;
-  resize:none;
+  padding:13px 15px;
   border:0;
-  outline:none;
   background:transparent;
   color:var(--text);
-  font-size:16px;
-  padding:5px 0;
-}
-.create-preview{margin-top:10px}
-.create-preview img,.create-preview video{
-  width:100%;max-height:520px;object-fit:contain;background:#000;border-radius:8px;
-}
-.create-tools{
-  border-top:1px solid var(--line);
-  margin-top:12px;padding-top:12px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.file-button{
-  border:0;background:none;color:var(--text);font-size:20px;
-}
-.publish-button{
-  border:0;background:var(--accent);color:var(--bg);
-  border-radius:8px;padding:8px 16px;font-weight:700;font-size:12px;
+  text-align:left;
+  border-radius:13px;
+  margin-bottom:5px;
+  font-size:15px;
 }
 
-/* BOTTOM NAV */
-.bottom{
+.nav-item:hover,
+.nav-item.active{
+  background:var(--surface2);
+  font-weight:700;
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+
+.composer{
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.composer textarea{
+  width:100%;
+  border:0;
+  outline:0;
+  resize:none;
+  background:transparent;
+  color:var(--text);
+  min-height:70px;
+  font-size:16px;
+}
+
+.composer-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:10px;
+}
+
+.primary{
+  border:0;
+  background:var(--accent);
+  color:var(--bg);
+  padding:10px 17px;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.secondary{
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  padding:9px 13px;
+  border-radius:10px;
+}
+
+.post{
+  overflow:hidden;
+  margin-bottom:18px;
+}
+
+.post-head{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:15px;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--surface2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+  font-weight:700;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.user-info{
+  flex:1;
+}
+
+.username{
+  font-weight:700;
+}
+
+.date{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.post-content{
+  padding:0 15px 15px;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+
+.post-media{
+  width:100%;
+  max-height:700px;
+  display:block;
+  object-fit:contain;
+  background:#000;
+}
+
+.post-actions{
+  display:flex;
+  gap:5px;
+  padding:10px 12px;
+  border-top:1px solid var(--border);
+}
+
+.action{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  padding:9px 10px;
+  border-radius:9px;
+}
+
+.action:hover{
+  background:var(--surface2);
+}
+
+.action.liked{
+  color:var(--danger);
+}
+
+.comments{
+  padding:0 15px 15px;
+}
+
+.comment{
+  padding:7px 0;
+  font-size:14px;
+}
+
+.comment b{
+  margin-right:5px;
+}
+
+.comment-form{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+
+.comment-form input{
+  flex:1;
+  background:var(--surface2);
+  color:var(--text);
+  border:0;
+  outline:0;
+  border-radius:9px;
+  padding:9px 11px;
+}
+
+.right-card{
+  padding:18px;
+}
+
+.right-title{
+  font-weight:800;
+  margin-bottom:13px;
+}
+
+.search-box{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+}
+
+.search-box input{
+  width:100%;
+  padding:11px 13px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  outline:none;
+}
+
+.profile{
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.profile .avatar{
+  width:75px;
+  height:75px;
+  font-size:25px;
+}
+
+.profile-name{
+  font-size:22px;
+  font-weight:800;
+}
+
+.profile-bio{
+  margin-top:13px;
+  color:var(--muted);
+}
+
+.tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  margin-top:20px;
+}
+
+.tab{
+  flex:1;
+  padding:12px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+}
+
+.tab.active{
+  color:var(--text);
+  font-weight:700;
+  border-bottom:2px solid var(--text);
+}
+
+.empty{
+  text-align:center;
+  padding:55px 20px;
+  color:var(--muted);
+}
+
+.login{
+  width:min(420px,calc(100% - 30px));
+  margin:80px auto;
+  padding:30px;
+}
+
+.login h1{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.login p{
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface);
+  color:var(--text);
+  outline:none;
+}
+
+.login .primary{
+  width:100%;
+  margin-top:5px;
+}
+
+.switch{
+  text-align:center;
+  margin-top:16px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.switch button{
+  border:0;
+  background:none;
+  color:var(--text);
+  font-weight:700;
+}
+
+.modal-bg{
   position:fixed;
-  z-index:40;
-  bottom:0;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:15px;
+}
+
+.modal-bg.open{
+  display:flex;
+}
+
+.modal{
+  width:min(520px,100%);
+  background:var(--surface);
+  color:var(--text);
+  border-radius:20px;
+  padding:22px;
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.modal textarea{
+  width:100%;
+  min-height:130px;
+  resize:vertical;
+  padding:12px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:11px;
+  outline:none;
+}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:12px;
+}
+
+.toast{
+  position:fixed;
+  bottom:25px;
   left:50%;
   transform:translateX(-50%);
-  width:min(620px,100%);
-  height:56px;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  background:rgba(255,255,255,.98);
-  border-top:1px solid var(--line);
-}
-.dark .bottom{background:rgba(0,0,0,.98)}
-.bottom button{
-  border:0;background:none;color:var(--text);
-  display:grid;place-items:center;
-  font-size:22px;
-}
-.bottom button.active{font-weight:800}
-
-/* MODAL EDIT */
-.modal{
-  position:fixed;inset:0;z-index:100;
-  background:rgba(0,0,0,.55);
-  display:grid;place-items:center;padding:15px;
-}
-.modal-box{
-  width:min(420px,100%);
-  background:var(--surface);
-  border-radius:15px;
-  overflow:hidden;
-}
-.modal-head{
-  height:50px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 14px;font-weight:800;
-}
-.modal-head button{
-  border:0;background:none;color:var(--text);font-size:22px;
-}
-.modal-body{padding:15px}
-.modal-body input,.modal-body textarea{
-  width:100%;border:1px solid var(--line);background:var(--soft);
-  color:var(--text);border-radius:9px;padding:11px;margin-bottom:9px;outline:none;
-}
-.modal-body textarea{min-height:90px;resize:none}
-.modal-foot{padding:12px 15px;border-top:1px solid var(--line);display:flex;justify-content:flex-end}
-.save{
-  border:0;background:var(--accent);color:var(--bg);
-  border-radius:8px;padding:9px 17px;font-weight:700;
-}
-.toast{
-  position:fixed;z-index:200;bottom:70px;left:50%;
-  transform:translateX(-50%);
-  background:var(--text);color:var(--bg);
-  padding:9px 14px;border-radius:9px;font-size:12px;
+  background:#111;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:12px;
+  display:none;
+  z-index:200;
 }
 
-/* DESKTOP: keep app narrow like the mobile reference */
-@media(min-width:800px){
-  body{background:#f1f1f1}
-  body.dark{background:#050505}
-  .mobile-shell{box-shadow:0 0 0 1px var(--line)}
+.toast.show{
+  display:block;
 }
+
+.mobile-nav{
+  display:none;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    grid-template-columns:1fr;
+    width:min(650px,100%);
+  }
+
+  .sidebar,
+  .right{
+    display:none;
+  }
+
+  .mobile-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:64px;
+    background:var(--surface);
+    border-top:1px solid var(--border);
+    z-index:60;
+    justify-content:space-around;
+  }
+
+  .mobile-nav button{
+    flex:1;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    font-size:20px;
+  }
+
+}
+
+
+/* ===== PERFIL COMPLETO V8 ===== */
+.profile-cover{
+  height:150px;background:var(--surface2);background-size:cover;background-position:center;
+  border-radius:16px 16px 0 0;position:relative;
+}
+.profile-cover-edit{
+  position:absolute;right:12px;top:12px;border:1px solid rgba(255,255,255,.7);
+  background:rgba(0,0,0,.45);color:#fff;padding:7px 10px;border-radius:10px;cursor:pointer;
+}
+.profile-head-v2{display:flex;align-items:flex-end;gap:18px;padding:0 20px 18px;margin-top:-42px;position:relative}
+.profile-avatar-v2{width:96px;height:96px;border-radius:50%;object-fit:cover;background:var(--surface2);border:4px solid var(--surface)}
+.profile-main-info{flex:1;min-width:0;padding-top:42px}
+.profile-name-v2{font-size:22px;font-weight:800}
+.profile-handle-v2{color:var(--muted);margin-top:3px}
+.profile-bio-v2{margin-top:10px;line-height:1.45;white-space:pre-wrap}
+.profile-meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px;margin-top:10px}
+.profile-music{margin:0 20px 18px;padding:12px 14px;border:1px solid var(--border);background:var(--surface2);border-radius:14px;display:flex;align-items:center;gap:12px}
+.profile-music-icon{font-size:24px}.profile-music-info{flex:1;min-width:0}
+.profile-music-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-music-artist{font-size:12px;color:var(--muted);margin-top:3px}
+.profile-music-link{font-size:12px;text-decoration:none;color:var(--text)}
+.profile-status{margin:0 20px 18px;color:var(--muted);font-size:13px}
+.edit-profile-grid{display:grid;gap:12px}.edit-label{font-size:13px;font-weight:700;margin-bottom:5px;display:block}
+.edit-file{width:100%;margin-top:4px}.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.profile-edit-preview{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:12px}
+.profile-edit-preview img{width:58px;height:58px;border-radius:50%;object-fit:cover}
+@media(max-width:600px){.profile-cover{height:125px}.profile-head-v2{padding:0 14px 16px;gap:12px}.profile-avatar-v2{width:84px;height:84px}.profile-main-info{padding-top:36px}.profile-name-v2{font-size:19px}.edit-row{grid-template-columns:1fr}}
+
 </style>
 </head>
 
 <body>
 
-<div id="auth" class="auth">
-  <div class="auth-box">
-    <div class="auth-logo">Vibra</div>
-    <div id="authSub" class="auth-sub">Entre na sua conta</div>
-    <input id="email" type="email" placeholder="E-mail">
-    <input id="password" type="password" placeholder="Senha">
-    <button id="authBtn" class="auth-main" onclick="authAction()">Entrar</button>
-    <div class="auth-switch">
-      <span id="switchText">Ainda não tem conta?</span>
-      <button onclick="toggleAuth()">Criar conta</button>
-    </div>
+<div id="loginScreen" class="login card">
+
+  <h1>Vibra</h1>
+
+  <p id="loginDescription">
+    Entre na sua conta para continuar.
+  </p>
+
+  <div class="field">
+    <input id="email" type="email" placeholder="Seu e-mail">
   </div>
+
+  <div class="field">
+    <input id="password" type="password" placeholder="Sua senha">
+  </div>
+
+  <button class="primary" id="authButton" onclick="handleAuth()">
+    Entrar
+  </button>
+
+  <div class="switch">
+    <span id="switchText">Ainda não tem uma conta?</span>
+    <button onclick="toggleAuthMode()" id="switchButton">
+      Criar conta
+    </button>
+  </div>
+
 </div>
+
 
 <div id="app" class="app hidden">
-  <div class="mobile-shell">
 
-    <header class="header">
-      <div class="brand">Vibra</div>
-      <div class="header-actions">
-        <button class="header-btn" onclick="showPage('home')" aria-label="Notificações">♡</button>
-        <button class="header-btn" onclick="showPage('messages')" aria-label="Mensagens">♧</button>
-      </div>
-    </header>
+  <header class="topbar">
+
+    <div class="logo">Vibra</div>
+
+    <div class="top-actions">
+
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        ◐
+      </button>
+
+      <button class="icon-btn" onclick="logout()" title="Sair">
+        ↪
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <div class="layout">
+
+    <aside class="sidebar">
+
+      <button class="nav-item active" onclick="showPage('home',this)">
+        🏠 Início
+      </button>
+
+      <button class="nav-item" onclick="showPage('search',this)">
+        🔎 Buscar
+      </button>
+
+      <button class="nav-item" onclick="openCreate()">
+        ➕ Criar
+      </button>
+
+      <button class="nav-item" onclick="showPage('profile',this)">
+        👤 Perfil
+      </button>
+
+      <button class="nav-item" onclick="showPage('reposts',this)">
+        🔄 Repostados
+      </button>
+
+    </aside>
+
 
     <main>
-      <!-- HOME -->
-      <section id="homePage" class="page">
-        <div class="stories-wrap">
-          <div id="stories" class="stories"></div>
+
+      <section id="homePage">
+
+        <div class="composer card">
+
+          <textarea
+            id="quickCaption"
+            placeholder="No que você está pensando?"
+          ></textarea>
+
+          <div class="composer-bottom">
+
+            <button
+              class="secondary"
+              onclick="openCreate()"
+            >
+              📷 Foto / vídeo
+            </button>
+
+            <button
+              class="primary"
+              onclick="quickPost()"
+            >
+              Publicar
+            </button>
+
+          </div>
+
         </div>
-        <div id="feed" class="feed"></div>
+
+        <div id="feed"></div>
+
       </section>
 
-      <!-- SEARCH -->
-      <section id="searchPage" class="page hidden">
-        <div class="page-title">Buscar</div>
-        <div class="search-page">
-          <input id="searchInput" class="search-input" placeholder="Pesquisar..." oninput="searchEverything()">
+
+      <section id="searchPage" class="hidden">
+
+        <div class="card" style="padding:18px">
+
+          <h2 style="margin-bottom:15px">
+            Buscar
+          </h2>
+
+          <div class="search-box">
+
+            <input
+              id="searchInput"
+              placeholder="Pesquisar pessoas ou posts..."
+              oninput="searchEverything()"
+            >
+
+          </div>
+
           <div id="searchResults"></div>
+
         </div>
+
       </section>
 
-      <!-- CREATE -->
-      <section id="createPage" class="page hidden">
-        <div class="page-title">Nova publicação</div>
-        <div class="create">
-          <div class="create-user">
-            <img id="createAvatar" src="">
-            <strong id="createName">Você</strong>
-          </div>
-          <textarea id="caption" placeholder="No que você está pensando?"></textarea>
-          <div id="preview" class="create-preview"></div>
-          <div class="create-tools">
-            <label class="file-button" title="Adicionar foto ou vídeo">
-              📷
-              <input id="mediaFile" type="file" accept="image/*,video/*" hidden onchange="previewMedia()">
-            </label>
-            <button class="publish-button" onclick="publish()">Publicar</button>
-          </div>
+
+      <section id="profilePage" class="hidden">
+
+  <div class="profile card">
+
+    <div class="profile-cover" id="profileCover">
+      <button class="profile-cover-edit" onclick="openEditProfile()">✏️ Editar</button>
+    </div>
+
+    <div class="profile-head-v2">
+      <img class="profile-avatar-v2" id="profileAvatar" src="" alt="Foto de perfil">
+
+      <div class="profile-main-info">
+        <div class="profile-name-v2" id="profileName">Usuário</div>
+        <div class="profile-handle-v2" id="profileUsername">@usuario</div>
+        <div class="profile-bio-v2" id="profileBio"></div>
+
+        <div class="profile-meta">
+          <span id="profileBirthday"></span>
         </div>
+      </div>
+    </div>
+
+    <div class="profile-status" id="profileStatus"></div>
+
+    <div class="profile-music hidden" id="profileMusic">
+      <div class="profile-music-icon">🎵</div>
+      <div class="profile-music-info">
+        <div class="profile-music-title" id="profileMusicTitle"></div>
+        <div class="profile-music-artist" id="profileMusicArtist"></div>
+      </div>
+      <a id="profileMusicLink" class="profile-music-link" target="_blank" rel="noopener">▶ Ouvir</a>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="profileTab('posts',this)">Posts</button>
+      <button class="tab" onclick="profileTab('reposts',this)">Repostados</button>
+    </div>
+
+  </div>
+
+  <div id="profileContent"></div>
+
+</section>
+
+<section id="repostsPage" class="hidden">
+
+        <div class="card" style="padding:20px;margin-bottom:18px">
+
+          <h2>
+            🔄 Repostados
+          </h2>
+
+          <p style="color:var(--muted);margin-top:5px">
+            Aqui ficam somente os conteúdos que você repostou.
+          </p>
+
+        </div>
+
+        <div id="repostsContent"></div>
+
       </section>
 
-      <!-- PROFILE -->
-      <section id="profilePage" class="page hidden">
-        <div class="profile-top">
-          <div class="profile-main">
-            <img id="profileAvatar" class="profile-avatar" src="">
-            <div class="profile-data">
-              <div id="profileName" class="profile-name"></div>
-              <div id="profileUsername" class="profile-user"></div>
-              <div id="profileBio" class="profile-bio"></div>
-            </div>
-          </div>
-          <div class="profile-buttons">
-            <button class="profile-button" onclick="openEdit()">Editar perfil</button>
-          </div>
-        </div>
-
-        <div class="profile-tabs">
-          <button class="profile-tab active" id="tabPosts" onclick="profileTab('posts')">▦</button>
-          <button class="profile-tab" id="tabReels" onclick="profileTab('reels')">▤</button>
-          <button class="profile-tab" id="tabReposts" onclick="profileTab('reposts')">↻</button>
-          <button class="profile-tab" id="tabSaved" onclick="profileTab('saved')">♡</button>
-        </div>
-
-        <div id="profileGrid" class="profile-grid"></div>
-      </section>
-
-      <!-- MESSAGES -->
-      <section id="messagesPage" class="page hidden">
-        <div class="page-title">Mensagens</div>
-        <div style="padding:25px 15px;text-align:center;color:var(--muted);font-size:13px;">
-          Suas conversas aparecerão aqui.
-        </div>
-      </section>
     </main>
 
+
+    <aside class="right">
+
+      <div class="right-card card">
+
+        <div class="right-title">
+          Seu Vibra
+        </div>
+
+        <p style="color:var(--muted);line-height:1.5">
+          Compartilhe momentos, descubra pessoas e deixe sua vibração registrada.
+        </p>
+
+        <button
+          class="primary"
+          style="width:100%;margin-top:15px"
+          onclick="openCreate()"
+        >
+          Criar publicação
+        </button>
+
+      </div>
+
+    </aside>
+
   </div>
 
-  <nav class="bottom">
-    <button id="navHome" class="active" onclick="showPage('home')">⌂</button>
-    <button id="navSearch" onclick="showPage('search')">⌕</button>
-    <button id="navCreate" onclick="showPage('create')">＋</button>
-    <button id="navReels" onclick="showPage('messages')">▣</button>
-    <button id="navProfile" onclick="showPage('profile')">♙</button>
+
+  <nav class="mobile-nav">
+
+    <button onclick="showPage('home')">⌂</button>
+
+    <button onclick="showPage('search')">⌕</button>
+
+    <button onclick="openCreate()">＋</button>
+
+    <button onclick="showPage('reposts')">↻</button>
+
+    <button onclick="showPage('profile')">◉</button>
+
   </nav>
+
 </div>
 
-<div id="editModal" class="modal hidden">
-  <div class="modal-box">
+
+<div class="modal-bg" id="editProfileModal">
+
+  <div class="modal">
+
     <div class="modal-head">
-      <span>Editar perfil</span>
-      <button onclick="closeEdit()">×</button>
+      <h2>Editar perfil</h2>
+      <button class="icon-btn" onclick="closeEditProfile()">×</button>
     </div>
-    <div class="modal-body">
-      <input id="editName" placeholder="Nome">
-      <input id="editUsername" placeholder="Nome de usuário">
-      <textarea id="editBio" placeholder="Bio"></textarea>
-      <input id="editAvatar" type="file" accept="image/*">
+
+    <div class="edit-profile-grid">
+
+      <div>
+        <label class="edit-label">Foto de perfil</label>
+        <div class="profile-edit-preview">
+          <img id="editAvatarPreview" src="" alt="">
+          <div>
+            <div style="font-weight:700">Sua foto</div>
+            <input class="edit-file" type="file" id="editAvatarInput" accept="image/*">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Foto de capa</label>
+        <input class="edit-file" type="file" id="editCoverInput" accept="image/*">
+      </div>
+
+      <div class="edit-row">
+        <div>
+          <label class="edit-label">Nome</label>
+          <input class="input" id="editDisplayName" placeholder="Seu nome">
+        </div>
+        <div>
+          <label class="edit-label">Nome de usuário</label>
+          <input class="input" id="editUsername" placeholder="seuusuario">
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Bio</label>
+        <textarea id="editBio" class="input" style="min-height:95px;resize:vertical" placeholder="Conte um pouco sobre você..."></textarea>
+      </div>
+
+      <div class="edit-row">
+        <div>
+          <label class="edit-label">Aniversário</label>
+          <input class="input" id="editBirthday" type="date">
+        </div>
+        <div>
+          <label class="edit-label">Mostrar aniversário</label>
+          <select class="input" id="editShowBirthday">
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Frase/status</label>
+        <input class="input" id="editStatus" maxlength="60" placeholder="Uma frase curta sobre você">
+      </div>
+
+      <div>
+        <label class="edit-label">Música do perfil</label>
+        <input class="input" id="editMusicTitle" placeholder="Nome da música">
+        <input class="input" id="editMusicArtist" placeholder="Artista" style="margin-top:8px">
+        <input class="input" id="editMusicUrl" type="url" placeholder="Link da música" style="margin-top:8px">
+      </div>
+
     </div>
-    <div class="modal-foot">
-      <button class="save" onclick="saveProfile()">Salvar</button>
+
+    <div class="modal-footer">
+      <button class="secondary" onclick="closeEditProfile()">Cancelar</button>
+      <button class="primary" onclick="saveProfile()">Salvar perfil</button>
     </div>
+
   </div>
 </div>
 
-<div id="toast" class="toast hidden"></div>
+<div class="modal-bg" id="createModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <h2>Criar publicação</h2>
+
+      <button
+        class="icon-btn"
+        onclick="closeCreate()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <textarea
+      id="postCaption"
+      placeholder="Escreva uma legenda..."
+    ></textarea>
+
+    <div style="margin-top:12px">
+
+      <input
+        type="file"
+        id="mediaInput"
+        accept="image/*,video/*"
+      >
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="secondary"
+        onclick="closeCreate()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="primary"
+        onclick="createPost()"
+      >
+        Publicar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
 
 <script>
-const SUPABASE_URL="https://dkkudlzpopmfhyqwjfsv.supabase.co";
-const SUPABASE_KEY="sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let user=null;
-let profile=null;
-let authMode="login";
+/* ==========================================
+   SUPABASE
+========================================== */
 
-const $=id=>document.getElementById(id);
+const SUPABASE_URL =
+"https://dkkudlzpopmfhyqwjfsv.supabase.co";
 
-function esc(v){
-  return String(v??"")
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-function avatar(name){
-  return "https://ui-avatars.com/api/?name="+encodeURIComponent((name||"V").slice(0,1))+"&background=777&color=fff";
-}
-function toast(t){
-  $("toast").textContent=t;
-  $("toast").classList.remove("hidden");
-  clearTimeout(window._toast);
-  window._toast=setTimeout(()=>$("toast").classList.add("hidden"),2500);
-}
-function date(v){
-  if(!v)return"";
-  return new Date(v).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
-}
+const SUPABASE_KEY =
+"sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
 
-function toggleAuth(){
-  authMode=authMode==="login"?"signup":"login";
-  $("authSub").textContent=authMode==="login"?"Entre na sua conta":"Crie sua conta no Vibra";
-  $("authBtn").textContent=authMode==="login"?"Entrar":"Criar conta";
-  $("switchText").textContent=authMode==="login"?"Ainda não tem conta?":"Já tem uma conta?";
-  document.querySelector(".auth-switch button").textContent=authMode==="login"?"Criar conta":"Entrar";
-}
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-async function authAction(){
-  const email=$("email").value.trim();
-  const password=$("password").value;
-  if(!email||!password)return toast("Preencha e-mail e senha.");
 
-  try{
-    if(authMode==="login"){
-      const {error}=await db.auth.signInWithPassword({email,password});
-      if(error)throw error;
-    }else{
-      const {data,error}=await db.auth.signUp({email,password});
-      if(error)throw error;
-      if(!data.session)toast("Conta criada! Verifique seu e-mail.");
-    }
-  }catch(e){toast(e.message||"Não foi possível continuar.");}
-}
+/* ==========================================
+   ESTADO
+========================================== */
 
-db.auth.onAuthStateChange((event,session)=>{
+let currentUser = null;
+let authMode = "login";
+let allPosts = [];
+
+
+/* ==========================================
+   TOAST
+========================================== */
+
+function toast(message){
+
+  const el =
+  document.getElementById("toast");
+
+  el.textContent = message;
+
+  el.classList.add("show");
+
   setTimeout(()=>{
-    if(session){user=session.user;enter();}
-    else{user=null;showAuth();}
-  },0);
-});
+    el.classList.remove("show");
+  },2500);
 
-async function check(){
-  const {data}=await db.auth.getSession();
-  if(data.session){user=data.session.user;await enter();}
 }
-function showAuth(){$("auth").classList.remove("hidden");$("app").classList.add("hidden");}
 
-async function enter(){
-  $("auth").classList.add("hidden");
-  $("app").classList.remove("hidden");
+
+/* ==========================================
+   AUTENTICAÇÃO
+========================================== */
+
+function toggleAuthMode(){
+
+  authMode =
+  authMode === "login"
+  ? "signup"
+  : "login";
+
+  const button =
+  document.getElementById("authButton");
+
+  const desc =
+  document.getElementById("loginDescription");
+
+  const text =
+  document.getElementById("switchText");
+
+  const switchButton =
+  document.getElementById("switchButton");
+
+  if(authMode === "signup"){
+
+    button.textContent = "Criar conta";
+
+    desc.textContent =
+    "Crie sua conta no Vibra.";
+
+    text.textContent =
+    "Já tem uma conta?";
+
+    switchButton.textContent =
+    "Entrar";
+
+  }else{
+
+    button.textContent = "Entrar";
+
+    desc.textContent =
+    "Entre na sua conta para continuar.";
+
+    text.textContent =
+    "Ainda não tem uma conta?";
+
+    switchButton.textContent =
+    "Criar conta";
+
+  }
+
+}
+
+
+async function handleAuth(){
+
+  const email =
+  document.getElementById("email").value.trim();
+
+  const password =
+  document.getElementById("password").value;
+
+  if(!email || !password){
+
+    toast("Preencha e-mail e senha.");
+
+    return;
+  }
+
+  let result;
+
+  if(authMode === "signup"){
+
+    result =
+    await db.auth.signUp({
+      email,
+      password
+    });
+
+  }else{
+
+    result =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  }
+
+  if(result.error){
+
+    toast(result.error.message);
+
+    return;
+  }
+
+  if(authMode === "signup"){
+
+    toast(
+      "Conta criada! Verifique seu e-mail se necessário."
+    );
+
+  }
+
+}
+
+
+async function logout(){
+
+  await db.auth.signOut();
+
+}
+
+
+/* ==========================================
+   SESSÃO
+========================================== */
+
+async function checkSession(){
+
+  const {
+    data
+  } =
+  await db.auth.getSession();
+
+  if(data.session){
+
+    currentUser =
+    data.session.user;
+
+    await enterApp();
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+db.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    if(session){
+
+      currentUser =
+      session.user;
+
+      await enterApp();
+
+    }else{
+
+      currentUser = null;
+
+      showLogin();
+
+    }
+
+  }
+);
+
+
+function showLogin(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("app")
+  .classList.add("hidden");
+
+}
+
+
+async function enterApp(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("app")
+  .classList.remove("hidden");
+
   await ensureProfile();
+
   await loadProfile();
-  renderStories();
+
   await loadFeed();
+
 }
+
+
+/* ==========================================
+   PERFIL
+========================================== */
 
 async function ensureProfile(){
-  if(!user)return;
-  const {data}=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();
+
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
+
   if(!data){
-    const base=(user.email||"usuario").split("@")[0].replace(/[^a-zA-Z0-9_]/g,"").slice(0,18)||"usuario";
-    await db.from("profiles").insert({
-      id:user.id,
-      username:base+"_"+Math.floor(Math.random()*9999),
-      display_name:base,
-      bio:"",
-      avatar_url:""
+
+    const emailName =
+    currentUser.email
+    ?.split("@")[0]
+    || "usuario";
+
+    const username =
+    emailName
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"")
+    .slice(0,25)
+    || "usuario";
+
+    await db
+    .from("profiles")
+    .insert({
+      id:currentUser.id,
+      username,
+      display_name:emailName
     });
+
   }
+
 }
+
 
 async function loadProfile(){
-  const {data}=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();
-  if(!data)return;
-  profile=data;
-  const name=data.display_name||data.username||"Usuário";
-  const av=data.avatar_url||avatar(name);
 
-  $("profileAvatar").src=av;
-  $("profileName").textContent=name;
-  $("profileUsername").textContent=data.username?"@"+data.username:"";
-  $("profileBio").textContent=data.bio||"";
-  $("createAvatar").src=av;
-  $("createName").textContent=name;
-}
-
-function renderStories(){
-  const av=profile?.avatar_url||avatar(profile?.display_name||"Você");
-  $("stories").innerHTML=`
-    <div class="story">
-      <div class="story-ring me story-plus">
-        <div class="story-inner"><img src="${esc(av)}"></div>
-      </div>
-      <span>Seu story</span>
-    </div>
-    <div class="story">
-      <div class="story-ring me">
-        <div class="story-inner"><img src="${esc(av)}"></div>
-      </div>
-      <span>Seu perfil</span>
-    </div>
-  `;
-}
-
-async function loadFeed(){
-  const {data,error}=await db.from("posts").select(`
-    *,
-    profiles:user_id(id,username,display_name,avatar_url)
-  `).order("created_at",{ascending:false});
+  const {data,error} =
+    await db.from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
 
   if(error){
-    $("feed").innerHTML=`<div style="padding:30px;text-align:center;color:var(--muted)">Não foi possível carregar o feed.</div>`;
+    console.error(error);
     return;
   }
 
-  if(!data?.length){
-    $("feed").innerHTML=`
-      <div style="padding:55px 20px;text-align:center;color:var(--muted);font-size:13px">
-        <div style="font-size:35px;margin-bottom:8px">✦</div>
-        Ainda não há publicações.<br>
-        Crie a primeira!
-      </div>`;
-    return;
+  if(!data) return;
+
+  const name = data.display_name || data.username || "Usuário";
+  const username = data.username ? "@" + data.username : "";
+  const avatarUrl = data.avatar_url || defaultAvatar(name);
+
+  document.getElementById("profileAvatar").src = avatarUrl;
+  document.getElementById("profileName").textContent = name;
+  document.getElementById("profileUsername").textContent = username;
+  document.getElementById("profileBio").textContent = data.bio || "";
+
+  const cover = document.getElementById("profileCover");
+  cover.style.backgroundImage = data.cover_url
+    ? `url("${String(data.cover_url).replace(/"/g,'\\"')}")`
+    : "";
+
+  const birthday = document.getElementById("profileBirthday");
+  birthday.textContent =
+    data.birthday && data.show_birthday !== false
+      ? "🎂 " + formatBirthday(data.birthday)
+      : "";
+
+  const status = document.getElementById("profileStatus");
+  status.textContent = data.status || "";
+  status.style.display = data.status ? "block" : "none";
+
+  const musicBox = document.getElementById("profileMusic");
+  const hasMusic = !!(data.music_title || data.music_url);
+
+  musicBox.classList.toggle("hidden",!hasMusic);
+
+  if(hasMusic){
+    document.getElementById("profileMusicTitle").textContent =
+      data.music_title || "Música do perfil";
+    document.getElementById("profileMusicArtist").textContent =
+      data.music_artist || "";
+
+    const link = document.getElementById("profileMusicLink");
+    link.href = data.music_url || "#";
+    link.style.display = data.music_url ? "block" : "none";
   }
 
-  const parts=[];
-  for(const p of data)parts.push(await postHTML(p));
-  $("feed").innerHTML=parts.join("");
+  document.getElementById("editAvatarPreview").src = avatarUrl;
 }
 
-async function postHTML(p){
-  const pr=p.profiles||{};
-  const name=pr.display_name||pr.username||"Usuário";
-  const av=pr.avatar_url||avatar(name);
+function formatBirthday(value){
+  if(!value) return "";
+  const parts = String(value).split("-");
+  if(parts.length !== 3) return value;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
 
-  const {count:likes}=await db.from("likes").select("*",{count:"exact",head:true}).eq("post_id",p.id);
-  const {count:comments}=await db.from("comments").select("*",{count:"exact",head:true}).eq("post_id",p.id);
-  const {data:liked}=await db.from("likes").select("id").eq("post_id",p.id).eq("user_id",user.id).maybeSingle();
-  const {data:reposted}=await db.from("reposts").select("id").eq("post_id",p.id).eq("user_id",user.id).maybeSingle();
+function defaultAvatar(name){
+  const letter =
+    String(name || "V").trim().charAt(0).toUpperCase() || "V";
 
-  let media="";
-  if(p.media_url){
-    media=p.media_type==="video"
-      ? `<video class="media" src="${esc(p.media_url)}" controls playsinline></video>`
-      : `<img class="media" src="${esc(p.media_url)}" alt="">`;
+  return "https://ui-avatars.com/api/?name=" +
+    encodeURIComponent(letter) +
+    "&background=777777&color=ffffff&bold=true";
+}
+
+
+/* ==========================================
+   POSTS
+==========================================
+
+
+========================================== */
+
+async function loadFeed(){
+
+  const {
+    data,
+    error
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .order("created_at",{ascending:false});
+
+  if(error){
+
+    console.error(error);
+
+    toast("Não foi possível carregar os posts.");
+
+    return;
+  }
+
+  allPosts =
+  data || [];
+
+  await renderPosts(
+    allPosts,
+    document.getElementById("feed")
+  );
+
+}
+
+
+async function renderPosts(posts,container){
+
+  if(!posts.length){
+
+    container.innerHTML = `
+      <div class="empty card">
+        <div style="font-size:35px">✨</div>
+        <h3 style="margin:10px 0">
+          Seu Vibra começa aqui
+        </h3>
+        <p>
+          Publique alguma coisa para começar.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for(const post of posts){
+
+    const html =
+    await buildPost(post);
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      html
+    );
+
+  }
+
+}
+
+
+async function buildPost(post){
+
+  const {
+    data:like
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const {
+    count
+  } =
+  await db
+  .from("likes")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    count:commentCount
+  } =
+  await db
+  .from("comments")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    data:repost
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const profile =
+  post.profiles || {};
+
+  const name =
+  profile.display_name ||
+  profile.username ||
+  "Usuário";
+
+  const username =
+  profile.username
+  ? "@" + profile.username
+  : "";
+
+  const date =
+  new Date(post.created_at)
+  .toLocaleString("pt-BR",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+
+  let media = "";
+
+  if(post.media_url){
+
+    if(post.media_type === "video"){
+
+      media =
+      `<video
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        controls
+        playsinline
+      ></video>`;
+
+    }else{
+
+      media =
+      `<img
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        alt="Publicação"
+      >`;
+
+    }
+
   }
 
   return `
-  <article class="post" id="post-${esc(p.id)}">
+
+  <article class="post card">
+
     <div class="post-head">
-      <div class="post-user">
-        <img class="post-avatar" src="${esc(av)}">
-        <div class="post-user-text">
-          <div class="post-name">${esc(name)}</div>
-          <div class="post-meta">${pr.username?"@"+esc(pr.username):""} · ${date(p.created_at)}</div>
+
+      <div class="avatar">
+
+        ${
+          profile.avatar_url
+          ? `<img src="${escapeHtml(profile.avatar_url)}">`
+          : name[0].toUpperCase()
+        }
+
+      </div>
+
+      <div class="user-info">
+
+        <div class="username">
+          ${escapeHtml(name)}
         </div>
+
+        <div class="date">
+          ${escapeHtml(username)}
+          ${username ? " · " : ""}
+          ${date}
+        </div>
+
       </div>
-      <button class="more" onclick="share('${esc(p.id)}')">•••</button>
+
     </div>
-    ${media}
-    <div class="post-body">
-      <div class="actions">
-        <button class="action ${liked?"active":""}" onclick="like('${esc(p.id)}')">${liked?"♥":"♡"}</button>
-        <button class="action" onclick="toggleComments('${esc(p.id)}')">♧</button>
-        <button class="action repost ${reposted?"active":""}" onclick="repost('${esc(p.id)}')">↻</button>
-        <button class="action share" onclick="share('${esc(p.id)}')">⌁</button>
+
+    ${
+      post.caption
+      ? `
+      <div class="post-content">
+        ${escapeHtml(post.caption)}
       </div>
-      <div class="likes">${likes||0} curtidas</div>
-      ${p.caption?`<div class="caption"><strong>${esc(name)}</strong>${esc(p.caption)}</div>`:""}
-      <button class="view-comments" onclick="toggleComments('${esc(p.id)}')">
-        Ver ${comments||0} comentário(s)
-      </button>
-      <div id="comments-${esc(p.id)}" class="comments-list hidden"></div>
-    </div>
-  </article>`;
-}
-
-async function like(id){
-  const {data}=await db.from("likes").select("id").eq("post_id",id).eq("user_id",user.id).maybeSingle();
-  if(data)await db.from("likes").delete().eq("id",data.id);
-  else await db.from("likes").insert({post_id:id,user_id:user.id});
-  await loadFeed();
-}
-
-async function repost(id){
-  const {data}=await db.from("reposts").select("id").eq("post_id",id).eq("user_id",user.id).maybeSingle();
-  if(data){await db.from("reposts").delete().eq("id",data.id);toast("Repost removido");}
-  else{await db.from("reposts").insert({post_id:id,user_id:user.id});toast("Repostado!");}
-  await loadFeed();
-}
-
-async function toggleComments(id){
-  const box=$("comments-"+id);
-  box.classList.toggle("hidden");
-  if(box.classList.contains("hidden"))return;
-
-  const {data}=await db.from("comments").select(`
-    *,profiles:user_id(username,display_name,avatar_url)
-  `).eq("post_id",id).order("created_at",{ascending:true});
-
-  box.innerHTML=(data||[]).map(c=>{
-    const p=c.profiles||{};
-    const n=p.display_name||p.username||"Usuário";
-    return `<div class="comment">
-      <img src="${esc(p.avatar_url||avatar(n))}">
-      <div class="comment-content"><strong>${esc(n)}</strong>${esc(c.content)}</div>
-    </div>`;
-  }).join("")+
-  `<div class="comment-box">
-    <input id="ci-${esc(id)}" placeholder="Adicionar comentário..." onkeydown="if(event.key==='Enter')comment('${esc(id)}')">
-    <button onclick="comment('${esc(id)}')">Enviar</button>
-  </div>`;
-}
-
-async function comment(id){
-  const input=$("ci-"+id);
-  if(!input||!input.value.trim())return;
-  const {error}=await db.from("comments").insert({post_id:id,user_id:user.id,content:input.value.trim()});
-  if(error)return toast(error.message);
-  await toggleComments(id);
-  const box=$("comments-"+id);
-  box.classList.remove("hidden");
-  await toggleComments(id);
-}
-
-async function share(id){
-  const url=location.origin+location.pathname+"?post="+encodeURIComponent(id);
-  try{
-    if(navigator.share)await navigator.share({title:"Vibra",text:"Veja esta publicação no Vibra",url});
-    else{await navigator.clipboard.writeText(url);toast("Link copiado!");}
-  }catch(e){}
-}
-
-function showPage(page){
-  ["home","search","create","profile","messages"].forEach(x=>{
-    const el=$(x+"Page");
-    if(el)el.classList.toggle("hidden",x!==page);
-  });
-
-  ["navHome","navSearch","navCreate","navReels","navProfile"].forEach(x=>$(x)?.classList.remove("active"));
-  const map={home:"navHome",search:"navSearch",create:"navCreate",profile:"navProfile",messages:"navReels"};
-  $(map[page])?.classList.add("active");
-
-  if(page==="profile")loadProfileGrid("posts");
-}
-
-function previewMedia(){
-  const file=$("mediaFile").files[0];
-  if(!file){$("preview").innerHTML="";return;}
-  const u=URL.createObjectURL(file);
-  $("preview").innerHTML=file.type.startsWith("video/")
-    ? `<video src="${u}" controls></video>`
-    : `<img src="${u}">`;
-}
-
-function dataURL(file){
-  return new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=()=>resolve(r.result);
-    r.onerror=reject;
-    r.readAsDataURL(file);
-  });
-}
-
-async function publish(){
-  const caption=$("caption").value.trim();
-  const file=$("mediaFile").files[0];
-  if(!caption&&!file)return toast("Escreva algo ou escolha uma mídia.");
-  if(file&&file.size>2*1024*1024)return toast("O arquivo precisa ter até 2 MB.");
-
-  let media_url="",media_type="";
-  if(file){
-    media_url=await dataURL(file);
-    media_type=file.type.startsWith("video/")?"video":"image";
-  }
-
-  const {error}=await db.from("posts").insert({
-    user_id:user.id,caption,media_url,media_type
-  });
-  if(error)return toast(error.message);
-
-  $("caption").value="";
-  $("mediaFile").value="";
-  $("preview").innerHTML="";
-  toast("Publicado! ✨");
-  showPage("home");
-  await loadFeed();
-}
-
-async function loadProfileGrid(type){
-  const grid=$("profileGrid");
-  grid.innerHTML="";
-
-  if(type==="reposts"){
-    const {data:r}=await db.from("reposts").select("*").eq("user_id",user.id).order("created_at",{ascending:false});
-    const ids=(r||[]).map(x=>x.post_id);
-    if(!ids.length)return;
-    const {data}=await db.from("posts").select("*").in("id",ids);
-    renderGrid(data||[]);
-    return;
-  }
-
-  if(type==="saved"){
-    grid.innerHTML=`<div style="grid-column:1/-1;padding:45px;text-align:center;color:var(--muted);font-size:12px">Nenhuma publicação salva.</div>`;
-    return;
-  }
-
-  if(type==="reels"){
-    const {data}=await db.from("posts").select("*").eq("user_id",user.id).eq("media_type","video").order("created_at",{ascending:false});
-    renderGrid(data||[]);
-    return;
-  }
-
-  const {data}=await db.from("posts").select("*").eq("user_id",user.id).order("created_at",{ascending:false});
-  renderGrid(data||[]);
-}
-
-function renderGrid(data){
-  const grid=$("profileGrid");
-  if(!data.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;padding:45px;text-align:center;color:var(--muted);font-size:12px">Nenhuma publicação.</div>`;
-    return;
-  }
-  grid.innerHTML=data.map(p=>{
-    if(p.media_url){
-      return `<div class="grid-item">${p.media_type==="video"
-        ? `<video src="${esc(p.media_url)}"></video>`
-        : `<img src="${esc(p.media_url)}">`}</div>`;
+      `
+      : ""
     }
-    return `<div class="grid-item"><div class="grid-text">${esc(p.caption||"")}</div></div>`;
-  }).join("");
+
+    ${media}
+
+    <div class="post-actions">
+
+      <button
+        class="action ${like ? "liked":""}"
+        onclick="toggleLike('${post.id}')"
+      >
+        ${like ? "♥" : "♡"}
+        ${count || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleComments('${post.id}')"
+      >
+        💬 ${commentCount || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleRepost('${post.id}')"
+      >
+        ${repost ? "↻ Repostado" : "↻ Repostar"}
+      </button>
+
+    </div>
+
+    <div
+      id="comments-${post.id}"
+      class="comments hidden"
+    ></div>
+
+  </article>
+
+  `;
+
 }
 
-function profileTab(type){
-  document.querySelectorAll(".profile-tab").forEach(x=>x.classList.remove("active"));
-  const ids={posts:"tabPosts",reels:"tabReels",reposts:"tabReposts",saved:"tabSaved"};
-  $(ids[type]).classList.add("active");
-  loadProfileGrid(type);
-}
 
-async function searchEverything(){
-  const q=$("searchInput").value.trim();
-  const out=$("searchResults");
-  if(!q){out.innerHTML="";return;}
+/* ==========================================
+   PUBLICAR
+========================================== */
 
-  const safe=q.replace(/[%_,]/g," ");
-  const {data:people}=await db.from("profiles").select("id,username,display_name,avatar_url")
-    .or(`username.ilike.%${safe}%,display_name.ilike.%${safe}%`).limit(10);
+async function quickPost(){
 
-  out.innerHTML="";
-  if(people?.length){
-    out.innerHTML+=`<div class="search-title">Pessoas</div>`;
-    people.forEach(p=>{
-      const n=p.display_name||p.username||"Usuário";
-      out.innerHTML+=`<div class="search-person">
-        <img src="${esc(p.avatar_url||avatar(n))}">
-        <div><div class="search-person-name">${esc(n)}</div><div class="search-person-user">@${esc(p.username||"")}</div></div>
-      </div>`;
-    });
+  const textarea =
+  document.getElementById("quickCaption");
+
+  const caption =
+  textarea.value.trim();
+
+  if(!caption){
+
+    openCreate();
+
+    return;
   }
-  if(!people?.length)out.innerHTML=`<div style="padding:40px;text-align:center;color:var(--muted);font-size:12px">Nenhum resultado.</div>`;
+
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_type:"text"
+  });
+
+  if(error){
+
+    toast(error.message);
+
+    return;
+  }
+
+  textarea.value = "";
+
+  toast("Publicado! ✨");
+
+  await loadFeed();
+
 }
 
-function openEdit(){
-  $("editName").value=profile?.display_name||"";
-  $("editUsername").value=profile?.username||"";
-  $("editBio").value=profile?.bio||"";
-  $("editModal").classList.remove("hidden");
+
+function openCreate(){
+
+  document
+  .getElementById("createModal")
+  .classList.add("open");
+
 }
-function closeEdit(){$("editModal").classList.add("hidden")}
+
+
+function closeCreate(){
+
+  document
+  .getElementById("createModal")
+  .classList.remove("open");
+
+}
+
+
+async function createPost(){
+
+  const caption =
+  document
+  .getElementById("postCaption")
+  .value.trim();
+
+  const file =
+  document
+  .getElementById("mediaInput")
+  .files[0];
+
+  let media_url = null;
+  let media_type = "text";
+
+  if(file){
+
+    /*
+      Para a primeira versão,
+      imagens pequenas podem ser
+      armazenadas como Data URL.
+    */
+
+    if(file.size > 2 * 1024 * 1024){
+
+      toast(
+        "Use uma imagem de até 2 MB nesta versão."
+      );
+
+      return;
+    }
+
+    media_url =
+    await fileToDataURL(file);
+
+    media_type =
+    file.type.startsWith("video")
+    ? "video"
+    : "image";
+
+  }
+
+  if(!caption && !media_url){
+
+    toast(
+      "Adicione uma legenda ou mídia."
+    );
+
+    return;
+  }
+
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_url,
+    media_type
+  });
+
+  if(error){
+
+    console.error(error);
+
+    toast(error.message);
+
+    return;
+  }
+
+  document
+  .getElementById("postCaption")
+  .value = "";
+
+  document
+  .getElementById("mediaInput")
+  .value = "";
+
+  closeCreate();
+
+  toast("Publicação criada! 🎉");
+
+  await loadFeed();
+
+}
+
+
+function fileToDataURL(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    () => resolve(reader.result);
+
+    reader.onerror =
+    reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+/* ==========================================
+   CURTIDAS
+========================================== */
+
+async function toggleLike(postId){
+
+  const {
+    data
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  if(data){
+
+    await db
+    .from("likes")
+    .delete()
+    .eq("id",data.id);
+
+  }else{
+
+    await db
+    .from("likes")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
+
+  }
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
+   REPOST
+========================================== */
+
+async function toggleRepost(postId){
+
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  if(data){
+
+    await db
+    .from("reposts")
+    .delete()
+    .eq("id",data.id);
+
+    toast("Repost removido.");
+
+  }else{
+
+    await db
+    .from("reposts")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
+
+    toast("Repostado! 🔄");
+
+  }
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
+   COMENTÁRIOS
+========================================== */
+
+async function toggleComments(postId){
+
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  if(!box) return;
+
+  if(!box.classList.contains("hidden")){
+
+    box.classList.add("hidden");
+
+    return;
+
+  }
+
+  box.classList.remove("hidden");
+
+  await loadComments(
+    postId,
+    box
+  );
+
+}
+
+
+async function loadComments(postId,box){
+
+  const {
+    data
+  } =
+  await db
+  .from("comments")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name
+    )
+  `)
+  .eq("post_id",postId)
+  .order("created_at",{ascending:true});
+
+  let html = "";
+
+  for(const comment of data || []){
+
+    const name =
+    comment.profiles?.display_name ||
+    comment.profiles?.username ||
+    "Usuário";
+
+    html += `
+      <div class="comment">
+        <b>${escapeHtml(name)}</b>
+        ${escapeHtml(comment.content)}
+      </div>
+    `;
+
+  }
+
+  html += `
+
+    <form
+      class="comment-form"
+      onsubmit="addComment(event,'${postId}')"
+    >
+
+      <input
+        id="comment-${postId}"
+        placeholder="Escreva um comentário..."
+      >
+
+      <button class="primary">
+        Enviar
+      </button>
+
+    </form>
+
+  `;
+
+  box.innerHTML = html;
+
+}
+
+
+async function addComment(event,postId){
+
+  event.preventDefault();
+
+  const input =
+  document
+  .getElementById("comment-"+postId);
+
+  const content =
+  input.value.trim();
+
+  if(!content) return;
+
+  const {
+    error
+  } =
+  await db
+  .from("comments")
+  .insert({
+    post_id:postId,
+    user_id:currentUser.id,
+    content
+  });
+
+  if(error){
+
+    toast(error.message);
+
+    return;
+  }
+
+  input.value = "";
+
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  await loadComments(
+    postId,
+    box
+  );
+
+}
+
+
+/* ==========================================
+   EDIÇÃO DO PERFIL
+========================================== */
+
+function openEditProfile(){
+
+  db.from("profiles")
+    .select("*")
+    .eq("id",currentUser.id)
+    .maybeSingle()
+    .then(({data,error})=>{
+
+      if(error || !data){
+        toast("Não foi possível abrir o perfil.");
+        return;
+      }
+
+      document.getElementById("editDisplayName").value = data.display_name || "";
+      document.getElementById("editUsername").value = data.username || "";
+      document.getElementById("editBio").value = data.bio || "";
+      document.getElementById("editBirthday").value = data.birthday || "";
+      document.getElementById("editShowBirthday").value =
+        data.show_birthday === false ? "false" : "true";
+      document.getElementById("editStatus").value = data.status || "";
+      document.getElementById("editMusicTitle").value = data.music_title || "";
+      document.getElementById("editMusicArtist").value = data.music_artist || "";
+      document.getElementById("editMusicUrl").value = data.music_url || "";
+      document.getElementById("editAvatarInput").value = "";
+      document.getElementById("editCoverInput").value = "";
+      document.getElementById("editAvatarPreview").src =
+        data.avatar_url || defaultAvatar(data.display_name);
+
+      document.getElementById("editProfileModal").classList.add("open");
+    });
+}
+
+function closeEditProfile(){
+  document.getElementById("editProfileModal").classList.remove("open");
+}
 
 async function saveProfile(){
-  let av=profile?.avatar_url||"";
-  const f=$("editAvatar").files[0];
-  if(f){
-    if(f.size>2*1024*1024)return toast("A imagem precisa ter até 2 MB.");
-    av=await dataURL(f);
+
+  const displayName =
+    document.getElementById("editDisplayName").value.trim();
+
+  const username =
+    document.getElementById("editUsername").value.trim()
+      .replace(/^@/,"")
+      .replace(/[^a-zA-Z0-9_.]/g,"")
+      .slice(0,30);
+
+  const bio =
+    document.getElementById("editBio").value.trim();
+
+  const birthday =
+    document.getElementById("editBirthday").value || null;
+
+  const showBirthday =
+    document.getElementById("editShowBirthday").value === "true";
+
+  const status =
+    document.getElementById("editStatus").value.trim().slice(0,60);
+
+  const musicTitle =
+    document.getElementById("editMusicTitle").value.trim();
+
+  const musicArtist =
+    document.getElementById("editMusicArtist").value.trim();
+
+  const musicUrl =
+    document.getElementById("editMusicUrl").value.trim();
+
+  const avatarFile =
+    document.getElementById("editAvatarInput").files[0];
+
+  const coverFile =
+    document.getElementById("editCoverInput").files[0];
+
+  try{
+
+    const updateData = {
+      display_name:displayName,
+      username:username,
+      bio:bio,
+      birthday:birthday,
+      show_birthday:showBirthday,
+      music_title:musicTitle,
+      music_artist:musicArtist,
+      music_url:musicUrl,
+      status:status
+    };
+
+    if(avatarFile){
+      if(avatarFile.size > 2*1024*1024){
+        toast("A foto de perfil precisa ter até 2 MB.");
+        return;
+      }
+      updateData.avatar_url = await fileToDataURL(avatarFile);
+    }
+
+    if(coverFile){
+      if(coverFile.size > 2*1024*1024){
+        toast("A foto de capa precisa ter até 2 MB.");
+        return;
+      }
+      updateData.cover_url = await fileToDataURL(coverFile);
+    }
+
+    const {error} =
+      await db.from("profiles")
+        .update(updateData)
+        .eq("id",currentUser.id);
+
+    if(error) throw error;
+
+    closeEditProfile();
+    await loadProfile();
+
+    toast("Perfil atualizado! ✨");
+
+  }catch(error){
+
+    console.error(error);
+    toast(error.message || "Não foi possível salvar o perfil.");
   }
-  const {error}=await db.from("profiles").update({
-    display_name:$("editName").value.trim(),
-    username:$("editUsername").value.trim(),
-    bio:$("editBio").value.trim(),
-    avatar_url:av
-  }).eq("id",user.id);
-  if(error)return toast(error.message);
-  closeEdit();
-  await loadProfile();
-  toast("Perfil atualizado!");
 }
 
-function loadTheme(){
-  if(localStorage.getItem("vibra_theme")==="dark")document.body.classList.add("dark");
-}
-function toggleTheme(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("vibra_theme",document.body.classList.contains("dark")?"dark":"light");
-}
 
-document.addEventListener("dblclick",e=>{
-  const post=e.target.closest(".post");
-  if(post){
-    const id=post.id.replace("post-","");
-    like(id);
-  }
+document.getElementById("editAvatarInput").addEventListener("change",function(){
+
+  const file = this.files[0];
+
+  if(!file) return;
+
+  document.getElementById("editAvatarPreview").src =
+    URL.createObjectURL(file);
 });
 
+/* ==========================================
+   PÁGINAS
+========================================== */
+
+function showPage(page,button){
+
+  const pages = [
+    "homePage",
+    "searchPage",
+    "profilePage",
+    "repostsPage"
+  ];
+
+  pages.forEach(id=>{
+
+    document
+    .getElementById(id)
+    .classList.add("hidden");
+
+  });
+
+  const map = {
+    home:"homePage",
+    search:"searchPage",
+    profile:"profilePage",
+    reposts:"repostsPage"
+  };
+
+  document
+  .getElementById(map[page])
+  .classList.remove("hidden");
+
+  if(page === "profile"){
+
+    profileTab("posts");
+
+  }
+
+  if(page === "reposts"){
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+function profileTab(tab,button){
+
+  document
+  .querySelectorAll(".tab")
+  .forEach(x=>x.classList.remove("active"));
+
+  if(button){
+
+    button.classList.add("active");
+
+  }
+
+  if(tab === "posts"){
+
+    loadMyPosts();
+
+  }else{
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+/* ==========================================
+   MEUS POSTS
+========================================== */
+
+async function loadMyPosts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  await renderPosts(
+    data || [],
+    document.getElementById("profileContent")
+  );
+
+}
+
+
+async function loadMyReposts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select(`
+    *,
+    posts(
+      *,
+      profiles:user_id(
+        username,
+        display_name,
+        avatar_url
+      )
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  const posts =
+  (data || [])
+  .map(x=>x.posts)
+  .filter(Boolean);
+
+  await renderPosts(
+    posts,
+    document.getElementById("repostsContent")
+  );
+
+}
+
+
+/* ==========================================
+   BUSCA
+========================================== */
+
+async function searchEverything(){
+
+  const q =
+  document
+  .getElementById("searchInput")
+  .value.trim();
+
+  const result =
+  document
+  .getElementById("searchResults");
+
+  if(!q){
+
+    result.innerHTML = `
+      <div class="empty">
+        Pesquise por pessoas ou publicações.
+      </div>
+    `;
+
+    return;
+  }
+
+  const {
+    data:profiles
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .or(
+    `username.ilike.%${q}%,display_name.ilike.%${q}%`
+  )
+  .limit(10);
+
+  let html = "";
+
+  for(const profile of profiles || []){
+
+    html += `
+
+      <div
+        class="card"
+        style="
+          padding:12px;
+          margin-bottom:8px;
+          display:flex;
+          align-items:center;
+          gap:10px
+        "
+      >
+
+        <div class="avatar">
+          ${
+            profile.avatar_url
+            ? `<img src="${escapeHtml(profile.avatar_url)}">`
+            : (
+              profile.display_name ||
+              profile.username ||
+              "U"
+            )[0].toUpperCase()
+          }
+        </div>
+
+        <div>
+
+          <b>
+            ${escapeHtml(
+              profile.display_name ||
+              profile.username
+            )}
+          </b>
+
+          <div class="date">
+            @${escapeHtml(profile.username || "")}
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+  result.innerHTML =
+  html ||
+  `<div class="empty">Nenhum resultado encontrado.</div>`;
+
+}
+
+
+/* ==========================================
+   TEMA
+========================================== */
+
+function toggleTheme(){
+
+  document
+  .body
+  .classList
+  .toggle("dark");
+
+  localStorage.setItem(
+    "vibra-theme",
+    document.body.classList.contains("dark")
+    ? "dark"
+    : "light"
+  );
+
+}
+
+
+function loadTheme(){
+
+  const theme =
+  localStorage.getItem("vibra-theme");
+
+  if(theme === "dark"){
+
+    document
+    .body
+    .classList
+    .add("dark");
+
+  }
+
+}
+
+
+/* ==========================================
+   SEGURANÇA HTML
+========================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
+
 loadTheme();
-check();
+
+checkSession();
+
 </script>
+
 </body>
 </html>
