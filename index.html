@@ -432,6 +432,54 @@ button{
   display:flex;
 }
 
+/* Editor de perfil abre como uma página inteira */
+#editProfileModal{
+  padding:0;
+  align-items:stretch;
+  justify-content:stretch;
+}
+
+#editProfileModal .modal{
+  width:100%;
+  max-width:none;
+  height:100vh;
+  max-height:none;
+  border-radius:0;
+  padding:0;
+  overflow-y:auto;
+  background:var(--bg);
+}
+
+#editProfileModal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 22px;
+  margin:0;
+}
+
+#editProfileModal .edit-profile-grid{
+  width:min(720px,100%);
+  margin:0 auto;
+  padding:24px 20px 100px;
+}
+
+#editProfileModal .modal-footer{
+  position:sticky;
+  bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:14px 20px;
+}
+
+@media(max-width:600px){
+  #editProfileModal .edit-profile-grid{
+    padding:18px 14px 100px;
+  }
+}
+
 .modal{
   width:min(520px,100%);
   background:var(--surface);
@@ -554,6 +602,50 @@ button{
 .profile-edit-preview{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:12px}
 .profile-edit-preview img{width:58px;height:58px;border-radius:50%;object-fit:cover}
 @media(max-width:600px){.profile-cover{height:125px}.profile-head-v2{padding:0 14px 16px;gap:12px}.profile-avatar-v2{width:84px;height:84px}.profile-main-info{padding-top:36px}.profile-name-v2{font-size:19px}.edit-row{grid-template-columns:1fr}}
+
+
+/* Criar publicação também abre como uma página inteira no celular e desktop */
+#createModal{
+  padding:0;
+  align-items:stretch;
+  justify-content:stretch;
+}
+#createModal .modal{
+  width:100%;
+  max-width:none;
+  height:100vh;
+  max-height:none;
+  border-radius:0;
+  padding:0;
+  overflow-y:auto;
+}
+#createModal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 22px;
+  margin:0;
+}
+#createModal .modal > textarea,
+#createModal .modal > div:not(.modal-head):not(.modal-footer){
+  width:min(720px,100%);
+  margin-left:auto;
+  margin-right:auto;
+}
+#createModal .modal > textarea{
+  display:block;
+  margin-top:22px;
+  min-height:240px;
+}
+#createModal .modal-footer{
+  position:sticky;
+  bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:14px 20px;
+}
 
 </style>
 </head>
@@ -813,8 +905,8 @@ button{
   <div class="modal">
 
     <div class="modal-head">
-      <h2>Editar perfil</h2>
-      <button class="icon-btn" onclick="closeEditProfile()">×</button>
+      <h2>← Editar perfil</h2>
+      <button class="icon-btn" onclick="closeEditProfile()" title="Voltar">×</button>
     </div>
 
     <div class="edit-profile-grid">
@@ -855,6 +947,7 @@ button{
         <div>
           <label class="edit-label">Aniversário</label>
           <input class="input" id="editBirthday" type="date">
+          <div style="font-size:12px;color:var(--muted);margin-top:-4px;">Você escolhe se a data aparece no seu perfil.</div>
         </div>
         <div>
           <label class="edit-label">Mostrar aniversário</label>
@@ -871,7 +964,8 @@ button{
       </div>
 
       <div>
-        <label class="edit-label">Música do perfil</label>
+        <label class="edit-label">🎵 Música do perfil</label>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Coloque o link da música para o botão "Ouvir" aparecer no perfil.</div>
         <input class="input" id="editMusicTitle" placeholder="Nome da música">
         <input class="input" id="editMusicArtist" placeholder="Artista" style="margin-top:8px">
         <input class="input" id="editMusicUrl" type="url" placeholder="Link da música" style="margin-top:8px">
@@ -1185,6 +1279,37 @@ async function enterApp(){
 
   await loadFeed();
 
+}
+
+
+/* ==========================================
+   STORAGE DE MÍDIA
+========================================== */
+
+const VIBRA_BUCKET = "vibra-media";
+
+async function uploadMedia(file, folder){
+  if(!file) return null;
+
+  const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+  const safeExt = ext.replace(/[^a-z0-9]/g, "") || "bin";
+  const path = `${folder}/${currentUser.id}/${Date.now()}-${crypto.randomUUID()}.${safeExt}`;
+
+  const { error } = await db.storage
+    .from(VIBRA_BUCKET)
+    .upload(path, file, {
+      cacheControl: "31536000",
+      upsert: false,
+      contentType: file.type || undefined
+    });
+
+  if(error) throw error;
+
+  const { data } = db.storage
+    .from(VIBRA_BUCKET)
+    .getPublicUrl(path);
+
+  return data.publicUrl;
 }
 
 
@@ -1622,89 +1747,47 @@ function closeCreate(){
 async function createPost(){
 
   const caption =
-  document
-  .getElementById("postCaption")
-  .value.trim();
+    document.getElementById("postCaption").value.trim();
 
   const file =
-  document
-  .getElementById("mediaInput")
-  .files[0];
+    document.getElementById("mediaInput").files[0];
 
   let media_url = null;
   let media_type = "text";
 
-  if(file){
+  try{
 
-    /*
-      Para a primeira versão,
-      imagens pequenas podem ser
-      armazenadas como Data URL.
-    */
+    if(file){
+      media_url = await uploadMedia(file,"posts");
+      media_type = file.type.startsWith("video") ? "video" : "image";
+    }
 
-    if(file.size > 2 * 1024 * 1024){
-
-      toast(
-        "Use uma imagem de até 2 MB nesta versão."
-      );
-
+    if(!caption && !media_url){
+      toast("Adicione uma legenda ou mídia.");
       return;
     }
 
-    media_url =
-    await fileToDataURL(file);
+    const { error } =
+      await db.from("posts").insert({
+        user_id:currentUser.id,
+        caption,
+        media_url,
+        media_type
+      });
 
-    media_type =
-    file.type.startsWith("video")
-    ? "video"
-    : "image";
+    if(error) throw error;
 
-  }
+    document.getElementById("postCaption").value = "";
+    document.getElementById("mediaInput").value = "";
+    closeCreate();
 
-  if(!caption && !media_url){
+    toast("Publicação criada! 🎉");
+    await loadFeed();
 
-    toast(
-      "Adicione uma legenda ou mídia."
-    );
-
-    return;
-  }
-
-  const {
-    error
-  } =
-  await db
-  .from("posts")
-  .insert({
-    user_id:currentUser.id,
-    caption,
-    media_url,
-    media_type
-  });
-
-  if(error){
-
+  }catch(error){
     console.error(error);
-
-    toast(error.message);
-
-    return;
+    toast(error.message || "Não foi possível publicar a mídia.");
   }
-
-  document
-  .getElementById("postCaption")
-  .value = "";
-
-  document
-  .getElementById("mediaInput")
-  .value = "";
-
-  closeCreate();
-
-  toast("Publicação criada! 🎉");
-
-  await loadFeed();
-
 }
 
 
@@ -2023,6 +2106,9 @@ async function saveProfile(){
   const coverFile =
     document.getElementById("editCoverInput").files[0];
 
+  const saveButton = document.querySelector("#editProfileModal .modal-footer .primary");
+  if(saveButton) saveButton.disabled = true;
+
   try{
 
     const updateData = {
@@ -2037,20 +2123,14 @@ async function saveProfile(){
       status:status
     };
 
+    // Não existe mais limite artificial de 2 MB.
+    // As imagens vão para o Supabase Storage em vez de virar Data URL no banco.
     if(avatarFile){
-      if(avatarFile.size > 2*1024*1024){
-        toast("A foto de perfil precisa ter até 2 MB.");
-        return;
-      }
-      updateData.avatar_url = await fileToDataURL(avatarFile);
+      updateData.avatar_url = await uploadMedia(avatarFile,"profiles");
     }
 
     if(coverFile){
-      if(coverFile.size > 2*1024*1024){
-        toast("A foto de capa precisa ter até 2 MB.");
-        return;
-      }
-      updateData.cover_url = await fileToDataURL(coverFile);
+      updateData.cover_url = await uploadMedia(coverFile,"covers");
     }
 
     const {error} =
@@ -2069,6 +2149,9 @@ async function saveProfile(){
 
     console.error(error);
     toast(error.message || "Não foi possível salvar o perfil.");
+
+  }finally{
+    if(saveButton) saveButton.disabled = false;
   }
 }
 
