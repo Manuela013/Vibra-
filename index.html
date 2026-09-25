@@ -598,7 +598,7 @@ button{
 .profile-music-link{font-size:12px;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);padding:8px 11px;border-radius:10px;cursor:pointer}
 .profile-music-player{width:100%;border-radius:12px;overflow:hidden;background:#000}
 .profile-music-player iframe{display:block;width:100%;border:0;height:152px}
-.profile-music-player audio{display:block;width:100%;height:42px}
+.profile-music-player audio{display:block;width:100%;height:42px;accent-color:#ff5c8a}
 .profile-status{margin:0 20px 18px;color:var(--muted);font-size:13px}
 .edit-profile-grid{display:grid;gap:12px}.edit-label{font-size:13px;font-weight:700;margin-bottom:5px;display:block}
 .edit-file{width:100%;margin-top:4px}.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -924,7 +924,7 @@ body:not(.dark) .mobile-nav{background:rgba(255,255,255,.96)}
         <div class="profile-music-title" id="profileMusicTitle"></div>
         <div class="profile-music-artist" id="profileMusicArtist"></div>
       </div>
-      <button id="profileMusicPlay" class="profile-music-link" type="button" onclick="toggleProfileMusic()">▶ Ouvir</button>
+      <button id="profileMusicPlay" class="profile-music-link" type="button" onclick="toggleProfileMusic()">▶ Ouvir no Vibra</button>
       <div id="profileMusicPlayer" class="profile-music-player hidden"></div>
     </div>
 
@@ -1069,10 +1069,12 @@ body:not(.dark) .mobile-nav{background:rgba(255,255,255,.96)}
 
       <div>
         <label class="edit-label">🎵 Música do perfil</label>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Cole um link do YouTube ou Spotify. A música será reproduzida dentro do Vibra, sem mandar você para outro site.</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Envie um arquivo de áudio para ele tocar diretamente dentro do Vibra. MP3, M4A, OGG e WAV.</div>
         <input class="input" id="editMusicTitle" placeholder="Nome da música">
         <input class="input" id="editMusicArtist" placeholder="Artista" style="margin-top:8px">
-        <input class="input" id="editMusicUrl" type="url" placeholder="Link da música" style="margin-top:8px">
+        <input class="edit-file" id="editMusicFile" type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/ogg,audio/wav,audio/*" style="margin-top:8px">
+        <div id="musicFileStatus" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+        <input type="hidden" id="editMusicUrl">
       </div>
 
     </div>
@@ -1511,7 +1513,7 @@ async function loadProfile(){
 
     const play = document.getElementById("profileMusicPlay");
     play.style.display = data.music_url ? "block" : "none";
-    play.textContent = "▶ Ouvir";
+    play.textContent = "▶ Ouvir no Vibra";
     document.getElementById("profileMusicPlayer").classList.add("hidden");
     document.getElementById("profileMusicPlayer").innerHTML = "";
   }
@@ -1570,34 +1572,28 @@ function toggleProfileMusic(){
   if(!url || !player || !button) return;
 
   if(!player.classList.contains("hidden")){
+    const audio = player.querySelector("audio");
+    if(audio){ audio.pause(); }
     player.classList.add("hidden");
     player.innerHTML = "";
-    button.textContent = "▶ Ouvir";
+    button.textContent = "▶ Ouvir no Vibra";
     return;
   }
 
-  const embed = getMusicEmbed(url);
-  if(!embed){
-    showToast("Use um link do YouTube ou Spotify.");
-    return;
-  }
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.preload = "metadata";
+  audio.src = url;
+  audio.style.width = "100%";
+  audio.addEventListener("play",()=>{ button.textContent = "⏸ Pausar"; });
+  audio.addEventListener("pause",()=>{ button.textContent = "▶ Ouvir no Vibra"; });
+  audio.addEventListener("ended",()=>{ button.textContent = "▶ Ouvir no Vibra"; });
 
-  if(embed.type === "iframe"){
-    const iframe = document.createElement("iframe");
-    iframe.src = embed.src;
-    iframe.title = embed.title;
-    iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
-    iframe.allowFullscreen = true;
-    player.appendChild(iframe);
-  }else{
-    const audio = document.createElement("audio");
-    audio.controls = true;
-    audio.src = embed.src;
-    player.appendChild(audio);
-  }
-
+  player.innerHTML = "";
+  player.appendChild(audio);
   player.classList.remove("hidden");
-  button.textContent = "▲ Fechar";
+  button.textContent = "⏸ Pausar";
+  audio.play().catch(()=>{});
 }
 
 function formatBirthday(value){
@@ -2242,6 +2238,8 @@ function openEditProfile(){
       document.getElementById("editMusicTitle").value = data.music_title || "";
       document.getElementById("editMusicArtist").value = data.music_artist || "";
       document.getElementById("editMusicUrl").value = data.music_url || "";
+      document.getElementById("editMusicFile").value = "";
+      document.getElementById("musicFileStatus").textContent = data.music_url ? "🎵 Já existe uma música salva. Envie outra para substituir." : "Nenhuma música interna escolhida.";
       document.getElementById("editAvatarInput").value = "";
       document.getElementById("editCoverInput").value = "";
       document.getElementById("editAvatarPreview").src =
@@ -2284,8 +2282,11 @@ async function saveProfile(){
   const musicArtist =
     document.getElementById("editMusicArtist").value.trim();
 
-  const musicUrl =
+  let musicUrl =
     document.getElementById("editMusicUrl").value.trim();
+
+  const musicFile =
+    document.getElementById("editMusicFile").files[0];
 
   const avatarFile =
     document.getElementById("editAvatarInput").files[0];
@@ -2310,8 +2311,15 @@ async function saveProfile(){
       status:status
     };
 
-    // Não existe mais limite artificial de 2 MB.
-    // As imagens vão para o Supabase Storage em vez de virar Data URL no banco.
+    // Mídias e música são armazenadas no Supabase Storage.
+    // Não usamos Data URL nem o antigo limite artificial de 2 MB.
+    if(musicFile){
+      if(!musicFile.type.startsWith("audio/")){
+        throw new Error("Escolha um arquivo de áudio válido.");
+      }
+      musicUrl = await uploadMedia(musicFile,"music");
+    }
+
     if(avatarFile){
       updateData.avatar_url = await uploadMedia(avatarFile,"profiles");
     }
@@ -2342,6 +2350,17 @@ async function saveProfile(){
   }
 }
 
+
+document.getElementById("editMusicFile").addEventListener("change",function(){
+  const file = this.files[0];
+  const status = document.getElementById("musicFileStatus");
+  if(!file){
+    status.textContent = "Nenhuma música interna escolhida.";
+    return;
+  }
+  const sizeMB = file.size / (1024 * 1024);
+  status.textContent = `🎵 ${file.name} • ${sizeMB.toFixed(1)} MB • será tocada dentro do Vibra`;
+});
 
 document.getElementById("editAvatarInput").addEventListener("change",function(){
 
