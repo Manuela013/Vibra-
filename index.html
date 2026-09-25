@@ -591,11 +591,14 @@ button{
 .profile-handle-v2{color:var(--muted);margin-top:3px}
 .profile-bio-v2{margin-top:10px;line-height:1.45;white-space:pre-wrap}
 .profile-meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px;margin-top:10px}
-.profile-music{margin:0 20px 18px;padding:12px 14px;border:1px solid var(--border);background:var(--surface2);border-radius:14px;display:flex;align-items:center;gap:12px}
+.profile-music{margin:0 20px 18px;padding:12px 14px;border:1px solid var(--border);background:var(--surface2);border-radius:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .profile-music-icon{font-size:24px}.profile-music-info{flex:1;min-width:0}
 .profile-music-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .profile-music-artist{font-size:12px;color:var(--muted);margin-top:3px}
-.profile-music-link{font-size:12px;text-decoration:none;color:var(--text)}
+.profile-music-link{font-size:12px;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);padding:8px 11px;border-radius:10px;cursor:pointer}
+.profile-music-player{width:100%;border-radius:12px;overflow:hidden;background:#000}
+.profile-music-player iframe{display:block;width:100%;border:0;height:152px}
+.profile-music-player audio{display:block;width:100%;height:42px}
 .profile-status{margin:0 20px 18px;color:var(--muted);font-size:13px}
 .edit-profile-grid{display:grid;gap:12px}.edit-label{font-size:13px;font-weight:700;margin-bottom:5px;display:block}
 .edit-file{width:100%;margin-top:4px}.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -921,7 +924,8 @@ body:not(.dark) .mobile-nav{background:rgba(255,255,255,.96)}
         <div class="profile-music-title" id="profileMusicTitle"></div>
         <div class="profile-music-artist" id="profileMusicArtist"></div>
       </div>
-      <a id="profileMusicLink" class="profile-music-link" target="_blank" rel="noopener">▶ Ouvir</a>
+      <button id="profileMusicPlay" class="profile-music-link" type="button" onclick="toggleProfileMusic()">▶ Ouvir</button>
+      <div id="profileMusicPlayer" class="profile-music-player hidden"></div>
     </div>
 
     <div class="tabs">
@@ -1065,7 +1069,7 @@ body:not(.dark) .mobile-nav{background:rgba(255,255,255,.96)}
 
       <div>
         <label class="edit-label">🎵 Música do perfil</label>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Coloque o link da música para o botão "Ouvir" aparecer no perfil.</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Cole um link do YouTube ou Spotify. A música será reproduzida dentro do Vibra, sem mandar você para outro site.</div>
         <input class="input" id="editMusicTitle" placeholder="Nome da música">
         <input class="input" id="editMusicArtist" placeholder="Artista" style="margin-top:8px">
         <input class="input" id="editMusicUrl" type="url" placeholder="Link da música" style="margin-top:8px">
@@ -1505,12 +1509,95 @@ async function loadProfile(){
     document.getElementById("profileMusicArtist").textContent =
       data.music_artist || "";
 
-    const link = document.getElementById("profileMusicLink");
-    link.href = data.music_url || "#";
-    link.style.display = data.music_url ? "block" : "none";
+    const play = document.getElementById("profileMusicPlay");
+    play.style.display = data.music_url ? "block" : "none";
+    play.textContent = "▶ Ouvir";
+    document.getElementById("profileMusicPlayer").classList.add("hidden");
+    document.getElementById("profileMusicPlayer").innerHTML = "";
   }
 
   document.getElementById("editAvatarPreview").src = avatarUrl;
+}
+
+function getMusicEmbed(url){
+  if(!url) return null;
+  try{
+    const u = new URL(url);
+    const host = u.hostname.replace("www.","").toLowerCase();
+
+    // YouTube: watch, shorts, youtu.be e embed
+    if(host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com" || host === "youtu.be"){
+      let id = "";
+      if(host === "youtu.be") id = u.pathname.slice(1);
+      if(u.searchParams.get("v")) id = u.searchParams.get("v");
+      const m = u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/);
+      if(m) id = m[1];
+      if(id){
+        return {
+          type:"iframe",
+          src:`https://www.youtube.com/embed/${encodeURIComponent(id)}?rel=0&playsinline=1`,
+          title:"YouTube"
+        };
+      }
+    }
+
+    // Spotify: track, album, playlist, episode
+    if(host === "open.spotify.com"){
+      const m = u.pathname.match(/^\/(track|album|playlist|episode)\/([^/?]+)/);
+      if(m){
+        return {
+          type:"iframe",
+          src:`https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`,
+          title:"Spotify"
+        };
+      }
+    }
+
+    // Link direto de áudio, caso a pessoa use .mp3/.m4a/.ogg/.wav
+    if(/\.(mp3|m4a|ogg|wav)(\?.*)?$/i.test(u.pathname)){
+      return {type:"audio",src:u.href};
+    }
+  }catch(e){
+    console.error(e);
+  }
+  return null;
+}
+
+function toggleProfileMusic(){
+  const url = currentProfile?.music_url;
+  const player = document.getElementById("profileMusicPlayer");
+  const button = document.getElementById("profileMusicPlay");
+  if(!url || !player || !button) return;
+
+  if(!player.classList.contains("hidden")){
+    player.classList.add("hidden");
+    player.innerHTML = "";
+    button.textContent = "▶ Ouvir";
+    return;
+  }
+
+  const embed = getMusicEmbed(url);
+  if(!embed){
+    showToast("Use um link do YouTube ou Spotify.");
+    return;
+  }
+
+  if(embed.type === "iframe"){
+    const iframe = document.createElement("iframe");
+    iframe.src = embed.src;
+    iframe.title = embed.title;
+    iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+    iframe.allowFullscreen = true;
+    player.appendChild(iframe);
+  }else{
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.src = embed.src;
+    player.appendChild(audio);
+  }
+
+  player.classList.remove("hidden");
+  button.textContent = "▲ Fechar";
 }
 
 function formatBirthday(value){
