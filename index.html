@@ -3,21 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Vibra</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
-  --bg:#f6f6f7;
-  --card:#ffffff;
-  --text:#111111;
-  --muted:#777777;
-  --border:#e5e5e7;
-  --accent:#111111;
-  --danger:#e53935;
-  --shadow:0 8px 30px rgba(0,0,0,.06);
-}
 
 *{
   box-sizing:border-box;
@@ -25,21 +16,34 @@
   padding:0;
 }
 
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
+:root{
+  --bg:#f7f7f8;
+  --surface:#ffffff;
+  --surface2:#f0f0f3;
+  --text:#111111;
+  --muted:#777;
+  --border:#e5e5e8;
+  --accent:#111111;
+  --danger:#ed4956;
+  --shadow:0 8px 30px rgba(0,0,0,.07);
 }
 
 body.dark{
-  --bg:#0d0d0f;
-  --card:#171719;
+  --bg:#090909;
+  --surface:#151515;
+  --surface2:#202020;
   --text:#ffffff;
-  --muted:#99999f;
-  --border:#29292d;
+  --muted:#aaa;
+  --border:#2d2d2d;
   --accent:#ffffff;
   --shadow:0 8px 30px rgba(0,0,0,.25);
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
 }
 
 button,
@@ -52,107 +56,27 @@ button{
   cursor:pointer;
 }
 
-.hidden{
-  display:none!important;
-}
-
-/* AUTH */
-
-.auth-screen{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
-
-.auth-box{
-  width:100%;
-  max-width:420px;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:32px;
-  box-shadow:var(--shadow);
-}
-
-.logo{
-  font-size:38px;
-  font-weight:800;
-  letter-spacing:-2px;
-  text-align:center;
-  margin-bottom:8px;
-}
-
-.auth-subtitle{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:28px;
-}
-
-.input{
-  width:100%;
-  padding:14px 15px;
-  border:1px solid var(--border);
-  border-radius:13px;
-  background:var(--bg);
-  color:var(--text);
-  outline:none;
-  margin-bottom:12px;
-}
-
-.input:focus{
-  border-color:var(--text);
-}
-
-.primary-btn{
-  width:100%;
-  border:0;
-  background:var(--accent);
-  color:var(--bg);
-  padding:14px;
-  border-radius:13px;
-  font-weight:700;
-}
-
-.auth-switch{
-  text-align:center;
-  margin-top:18px;
-  color:var(--muted);
-}
-
-.auth-switch button{
-  border:0;
-  background:none;
-  color:var(--text);
-  font-weight:700;
-}
-
-/* APP */
-
 .app{
   min-height:100vh;
 }
 
 .topbar{
-  position:fixed;
+  position:sticky;
   top:0;
-  left:0;
-  right:0;
+  z-index:50;
   height:64px;
-  background:var(--card);
+  background:var(--surface);
   border-bottom:1px solid var(--border);
-  z-index:20;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 24px;
+  padding:0 22px;
 }
 
-.top-logo{
-  font-size:28px;
+.logo{
+  font-size:25px;
   font-weight:800;
-  letter-spacing:-1.5px;
+  letter-spacing:-1px;
 }
 
 .top-actions{
@@ -161,526 +85,421 @@ button{
 }
 
 .icon-btn{
-  width:42px;
-  height:42px;
+  width:40px;
+  height:40px;
+  border:0;
   border-radius:50%;
-  border:1px solid var(--border);
-  background:var(--card);
+  background:var(--surface2);
   color:var(--text);
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   font-size:18px;
 }
 
 .layout{
-  max-width:1250px;
+  width:min(1100px,100%);
   margin:auto;
-  padding:84px 20px 30px;
   display:grid;
-  grid-template-columns:220px minmax(0,650px) 260px;
-  gap:24px;
+  grid-template-columns:220px minmax(0,620px) 220px;
+  gap:22px;
+  padding:25px 15px 100px;
 }
 
 .sidebar{
   position:sticky;
-  top:84px;
+  top:90px;
   height:max-content;
 }
 
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.nav-btn{
+.nav-item{
+  width:100%;
+  padding:13px 15px;
   border:0;
   background:transparent;
   color:var(--text);
-  padding:13px 15px;
-  border-radius:13px;
   text-align:left;
-  font-weight:600;
+  border-radius:13px;
+  margin-bottom:5px;
+  font-size:15px;
 }
 
-.nav-btn:hover,
-.nav-btn.active{
-  background:var(--card);
-  box-shadow:var(--shadow);
-}
-
-.main{
-  min-width:0;
-}
-
-.rightbar{
-  position:sticky;
-  top:84px;
-  height:max-content;
+.nav-item:hover,
+.nav-item.active{
+  background:var(--surface2);
+  font-weight:700;
 }
 
 .card{
-  background:var(--card);
+  background:var(--surface);
   border:1px solid var(--border);
   border-radius:18px;
   box-shadow:var(--shadow);
 }
 
-.section{
+.composer{
+  padding:18px;
   margin-bottom:18px;
 }
 
-/* COMPOSER */
-
-.composer{
-  padding:16px;
+.composer textarea{
+  width:100%;
+  border:0;
+  outline:0;
+  resize:none;
+  background:transparent;
+  color:var(--text);
+  min-height:70px;
+  font-size:16px;
 }
 
-.composer-row{
+.composer-bottom{
   display:flex;
-  gap:12px;
+  justify-content:space-between;
   align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:10px;
 }
 
-.avatar{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--border);
-  flex:none;
-}
-
-.avatar.small{
-  width:36px;
-  height:36px;
-}
-
-.composer-input{
-  flex:1;
-  border:1px solid var(--border);
-  background:var(--bg);
-  color:var(--text);
-  padding:12px 15px;
-  border-radius:25px;
-  outline:none;
-  cursor:pointer;
-}
-
-.composer-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:12px;
-}
-
-.secondary-btn{
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--text);
-  padding:9px 14px;
+.primary{
+  border:0;
+  background:var(--accent);
+  color:var(--bg);
+  padding:10px 17px;
   border-radius:10px;
-  font-weight:600;
+  font-weight:700;
 }
 
-/* POST */
+.secondary{
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  padding:9px 13px;
+  border-radius:10px;
+}
 
 .post{
   overflow:hidden;
   margin-bottom:18px;
 }
 
-.post-header{
+.post-head{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:14px 16px;
+  gap:11px;
+  padding:15px;
 }
 
-.post-user{
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--surface2);
   display:flex;
-  gap:10px;
   align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+  font-weight:700;
 }
 
-.post-user-info{
-  display:flex;
-  flex-direction:column;
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.user-info{
+  flex:1;
 }
 
 .username{
   font-weight:700;
 }
 
-.post-time{
+.date{
   color:var(--muted);
   font-size:12px;
   margin-top:3px;
 }
 
-.post-menu{
-  border:0;
-  background:none;
-  color:var(--muted);
-  font-size:20px;
+.post-content{
+  padding:0 15px 15px;
+  line-height:1.5;
+  white-space:pre-wrap;
 }
 
 .post-media{
   width:100%;
   max-height:700px;
-  object-fit:contain;
   display:block;
+  object-fit:contain;
   background:#000;
-}
-
-.post-content{
-  padding:14px 16px 16px;
-}
-
-.post-caption{
-  line-height:1.45;
-  margin-bottom:12px;
-  white-space:pre-wrap;
-  word-break:break-word;
 }
 
 .post-actions{
   display:flex;
-  align-items:center;
   gap:5px;
+  padding:10px 12px;
+  border-top:1px solid var(--border);
 }
 
-.post-action{
+.action{
   border:0;
   background:transparent;
   color:var(--text);
-  padding:8px;
+  padding:9px 10px;
   border-radius:9px;
-  font-size:18px;
 }
 
-.post-action:hover{
-  background:var(--bg);
+.action:hover{
+  background:var(--surface2);
 }
 
-.post-action.active{
-  font-weight:800;
-}
-
-.post-count{
-  font-size:13px;
-  color:var(--muted);
-  margin-left:4px;
+.action.liked{
+  color:var(--danger);
 }
 
 .comments{
-  border-top:1px solid var(--border);
-  padding-top:12px;
-  margin-top:12px;
+  padding:0 15px 15px;
 }
 
 .comment{
-  display:flex;
-  gap:9px;
-  margin-bottom:11px;
-}
-
-.comment-body{
-  background:var(--bg);
-  padding:9px 11px;
-  border-radius:12px;
-  flex:1;
-}
-
-.comment-user{
-  font-size:13px;
-  font-weight:700;
-}
-
-.comment-text{
-  margin-top:3px;
+  padding:7px 0;
   font-size:14px;
+}
+
+.comment b{
+  margin-right:5px;
 }
 
 .comment-form{
   display:flex;
   gap:8px;
-  margin-top:10px;
+  margin-top:8px;
 }
 
 .comment-form input{
   flex:1;
-  border:1px solid var(--border);
-  background:var(--bg);
+  background:var(--surface2);
   color:var(--text);
-  padding:10px 12px;
-  border-radius:12px;
-  outline:none;
-}
-
-.comment-form button{
   border:0;
-  background:var(--accent);
-  color:var(--bg);
-  border-radius:12px;
-  padding:0 14px;
+  outline:0;
+  border-radius:9px;
+  padding:9px 11px;
 }
 
-/* SEARCH */
+.right-card{
+  padding:18px;
+}
+
+.right-title{
+  font-weight:800;
+  margin-bottom:13px;
+}
 
 .search-box{
-  padding:16px;
-  margin-bottom:16px;
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
 }
 
-.search-input{
+.search-box input{
   width:100%;
+  padding:11px 13px;
+  border-radius:11px;
   border:1px solid var(--border);
-  background:var(--bg);
+  background:var(--surface);
   color:var(--text);
-  border-radius:13px;
-  padding:13px 15px;
   outline:none;
 }
 
-.search-results{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+.profile{
+  padding:22px;
+  margin-bottom:18px;
 }
 
-.search-user{
-  padding:14px;
+.profile-head{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:15px;
 }
 
-/* PROFILE */
-
-.profile-header{
-  padding:24px;
-}
-
-.profile-top{
-  display:flex;
-  gap:20px;
-  align-items:center;
-}
-
-.profile-avatar{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--border);
-}
-
-.profile-info{
-  flex:1;
-}
-
-.profile-name{
-  font-size:23px;
-  font-weight:800;
-}
-
-.profile-handle{
-  color:var(--muted);
-  margin-top:4px;
-}
-
-.profile-bio{
-  margin-top:10px;
-  line-height:1.45;
-}
-
-.profile-actions{
-  margin-top:15px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.profile-tabs{
-  display:flex;
-  border-top:1px solid var(--border);
-  margin-top:24px;
-}
-
-.profile-tab{
-  flex:1;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  padding:14px;
-  font-weight:700;
-}
-
-.profile-tab.active{
-  color:var(--text);
-  border-bottom:2px solid var(--text);
-}
-
-.profile-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:3px;
-  margin-top:12px;
-}
-
-.profile-grid-item{
-  aspect-ratio:1;
-  background:var(--border);
-  overflow:hidden;
-  cursor:pointer;
-}
-
-.profile-grid-item img,
-.profile-grid-item video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-/* RIGHT */
-
-.side-card{
-  padding:16px;
-}
-
-.side-title{
-  font-weight:800;
-  margin-bottom:10px;
-}
-
-.side-text{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.5;
-}
-
-/* MODAL */
-
-.modal-backdrop{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:100;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.modal{
-  width:100%;
-  max-width:550px;
-  max-height:90vh;
-  overflow:auto;
-  background:var(--card);
-  border-radius:20px;
-  border:1px solid var(--border);
-  box-shadow:0 20px 70px rgba(0,0,0,.3);
-}
-
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 20px;
-  border-bottom:1px solid var(--border);
-}
-
-.modal-title{
-  font-size:20px;
-  font-weight:800;
-}
-
-.modal-close{
-  border:0;
-  background:transparent;
-  color:var(--text);
+.profile .avatar{
+  width:75px;
+  height:75px;
   font-size:25px;
 }
 
-.modal-body{
-  padding:20px;
+.profile-name{
+  font-size:22px;
+  font-weight:800;
 }
 
-.modal-footer{
-  padding:16px 20px;
-  border-top:1px solid var(--border);
+.profile-bio{
+  margin-top:13px;
+  color:var(--muted);
+}
+
+.tabs{
   display:flex;
-  justify-content:flex-end;
-  gap:8px;
+  border-bottom:1px solid var(--border);
+  margin-top:20px;
 }
 
-.textarea{
-  width:100%;
-  min-height:130px;
-  resize:vertical;
-  border:1px solid var(--border);
-  background:var(--bg);
+.tab{
+  flex:1;
+  padding:12px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+}
+
+.tab.active{
   color:var(--text);
-  padding:14px;
-  border-radius:13px;
+  font-weight:700;
+  border-bottom:2px solid var(--text);
+}
+
+.empty{
+  text-align:center;
+  padding:55px 20px;
+  color:var(--muted);
+}
+
+.login{
+  width:min(420px,calc(100% - 30px));
+  margin:80px auto;
+  padding:30px;
+}
+
+.login h1{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.login p{
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface);
+  color:var(--text);
   outline:none;
 }
 
-.file-input{
+.login .primary{
   width:100%;
-  margin-top:12px;
+  margin-top:5px;
 }
 
-/* TOAST */
+.switch{
+  text-align:center;
+  margin-top:16px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.switch button{
+  border:0;
+  background:none;
+  color:var(--text);
+  font-weight:700;
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:15px;
+}
+
+.modal-bg.open{
+  display:flex;
+}
+
+.modal{
+  width:min(520px,100%);
+  background:var(--surface);
+  color:var(--text);
+  border-radius:20px;
+  padding:22px;
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.modal textarea{
+  width:100%;
+  min-height:130px;
+  resize:vertical;
+  padding:12px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:11px;
+  outline:none;
+}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:12px;
+}
 
 .toast{
   position:fixed;
   bottom:25px;
   left:50%;
   transform:translateX(-50%);
-  background:var(--text);
-  color:var(--bg);
+  background:#111;
+  color:#fff;
   padding:12px 18px;
   border-radius:12px;
-  z-index:300;
-  font-size:14px;
-  box-shadow:var(--shadow);
+  display:none;
+  z-index:200;
 }
 
-/* MOBILE */
+.toast.show{
+  display:block;
+}
 
 .mobile-nav{
   display:none;
 }
 
-@media(max-width:1000px){
-  .layout{
-    grid-template-columns:190px minmax(0,1fr);
-  }
-
-  .rightbar{
-    display:none;
-  }
+.hidden{
+  display:none!important;
 }
 
-@media(max-width:700px){
-  .topbar{
-    padding:0 14px;
-  }
-
-  .top-logo{
-    font-size:25px;
-  }
+@media(max-width:900px){
 
   .layout{
-    display:block;
-    padding:78px 10px 78px;
+    grid-template-columns:1fr;
+    width:min(650px,100%);
   }
 
-  .sidebar{
+  .sidebar,
+  .right{
     display:none;
   }
 
@@ -690,10 +509,10 @@ button{
     bottom:0;
     left:0;
     right:0;
-    height:62px;
-    background:var(--card);
+    height:64px;
+    background:var(--surface);
     border-top:1px solid var(--border);
-    z-index:50;
+    z-index:60;
     justify-content:space-around;
   }
 
@@ -701,194 +520,555 @@ button{
     flex:1;
     border:0;
     background:transparent;
-    color:var(--muted);
+    color:var(--text);
     font-size:20px;
   }
 
-  .mobile-nav button.active{
-    color:var(--text);
+}
+
+
+/* =========================================================
+   VIBRA UI V7 - visual mobile-first
+========================================================= */
+
+:root{
+  --bg:#f7f7f8;
+  --surface:#fff;
+  --surface2:#f1f1f3;
+  --text:#111;
+  --muted:#777;
+  --border:#e7e7ea;
+  --accent:#111;
+  --danger:#ed4956;
+  --shadow:0 2px 14px rgba(0,0,0,.045);
+}
+
+body.dark{
+  --bg:#050505;
+  --surface:#0d0d0f;
+  --surface2:#19191c;
+  --text:#f5f5f7;
+  --muted:#96969d;
+  --border:#242428;
+  --accent:#f5f5f7;
+  --shadow:none;
+}
+
+body{
+  background:var(--bg);
+}
+
+.topbar{
+  height:58px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:80;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--border);
+  padding:0 max(14px,calc((100vw - 960px)/2));
+  backdrop-filter:blur(12px);
+}
+
+body.dark .topbar{
+  background:rgba(13,13,15,.96);
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:-1.4px;
+}
+
+.top-actions{
+  gap:2px;
+}
+
+.icon-btn{
+  background:transparent;
+  width:40px;
+  height:40px;
+  font-size:21px;
+}
+
+.layout{
+  width:min(1060px,100%);
+  grid-template-columns:190px minmax(0,590px) 210px;
+  gap:26px;
+  padding-top:76px;
+}
+
+main{
+  min-width:0;
+}
+
+#homePage{
+  width:100%;
+}
+
+.story-bar{
+  display:flex;
+  gap:15px;
+  overflow-x:auto;
+  padding:13px 12px;
+  margin-bottom:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  scrollbar-width:none;
+}
+
+.story-bar::-webkit-scrollbar{
+  display:none;
+}
+
+.story{
+  flex:0 0 62px;
+  text-align:center;
+  font-size:11px;
+  color:var(--text);
+}
+
+.story-ring{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  padding:2px;
+  margin:auto;
+  background:linear-gradient(135deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+}
+
+.story-ring.empty{
+  background:var(--border);
+}
+
+.story-inner{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:var(--surface);
+  padding:2px;
+  position:relative;
+}
+
+.story-inner img{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.story-plus{
+  position:absolute;
+  right:-1px;
+  bottom:-1px;
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid var(--surface);
+  font-size:13px;
+}
+
+.story-name{
+  display:block;
+  margin-top:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.composer{
+  background:var(--surface);
+  border-radius:14px;
+  padding:13px 14px;
+  margin-bottom:12px;
+}
+
+.composer textarea{
+  min-height:48px;
+  font-size:14px;
+}
+
+.composer-bottom{
+  padding-top:9px;
+  margin-top:7px;
+}
+
+.post{
+  border-radius:14px;
+  box-shadow:none;
+  margin-bottom:12px;
+  overflow:hidden;
+}
+
+.post-head{
+  min-height:58px;
+  padding:11px 13px;
+}
+
+.post-head .avatar{
+  width:38px;
+  height:38px;
+}
+
+.post-media{
+  max-height:none;
+  aspect-ratio:1/1;
+  object-fit:cover;
+}
+
+.post-content{
+  padding:10px 13px 4px;
+}
+
+.post-actions{
+  border-top:0;
+  padding:2px 0 7px;
+}
+
+.action{
+  font-size:21px;
+  padding:6px 8px;
+}
+
+.action.liked{
+  color:var(--danger);
+}
+
+.post-caption{
+  font-size:14px;
+}
+
+.comments{
+  padding:0 13px 13px;
+}
+
+.profile{
+  border-radius:14px;
+  box-shadow:none;
+}
+
+.profile-head{
+  align-items:flex-start;
+}
+
+.profile .avatar{
+  width:82px;
+  height:82px;
+  border-radius:50%;
+}
+
+.tabs{
+  margin-left:-22px;
+  margin-right:-22px;
+  margin-bottom:-22px;
+}
+
+.tab{
+  font-size:13px;
+}
+
+.mobile-nav{
+  height:58px;
+  background:rgba(255,255,255,.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+
+body.dark .mobile-nav{
+  background:rgba(13,13,15,.97);
+}
+
+.mobile-nav button{
+  font-size:22px;
+}
+
+.mobile-nav button:nth-child(3){
+  font-size:27px;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    display:block;
+    width:min(590px,100%);
+    padding:70px 0 75px;
   }
 
-  .profile-top{
-    flex-direction:column;
-    text-align:center;
+  .sidebar,
+  .right{
+    display:none;
   }
 
-  .profile-avatar{
-    width:90px;
-    height:90px;
+  main{
+    width:100%;
   }
 
-  .profile-actions{
-    justify-content:center;
+  .story-bar{
+    border-left:0;
+    border-right:0;
+    border-radius:0;
+    margin-bottom:8px;
+    padding-left:13px;
+    padding-right:13px;
   }
 
-  .profile-grid{
-    gap:2px;
+  .composer{
+    border-left:0;
+    border-right:0;
+    border-radius:0;
+    margin-bottom:8px;
   }
 
-  .auth-box{
-    padding:24px;
+  .post{
+    border-left:0;
+    border-right:0;
+    border-radius:0;
+    margin-bottom:8px;
+  }
+
+  .post-media{
+    aspect-ratio:1/1;
+  }
+
+  #searchPage,
+  #profilePage,
+  #repostsPage{
+    padding:0 10px;
+  }
+
+  .topbar{
+    padding:0 10px;
   }
 }
+
+@media(min-width:901px){
+
+  .story-bar{
+    margin-bottom:12px;
+  }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
-<div id="authScreen" class="auth-screen">
-  <div class="auth-box">
-    <div class="logo">Vibra</div>
-    <div class="auth-subtitle" id="authSubtitle">
-      Entre na sua conta
-    </div>
+<div id="loginScreen" class="login card">
 
-    <input id="authEmail" class="input" type="email" placeholder="Seu e-mail">
-    <input id="authPassword" class="input" type="password" placeholder="Sua senha">
+  <h1>Vibra</h1>
 
-    <button class="primary-btn" onclick="handleAuth()" id="authButton">
-      Entrar
-    </button>
+  <p id="loginDescription">
+    Entre na sua conta para continuar.
+  </p>
 
-    <div class="auth-switch">
-      <span id="authSwitchText">Ainda não tem conta?</span>
-      <button onclick="toggleAuthMode()" id="authSwitchButton">
-        Criar conta
-      </button>
-    </div>
+  <div class="field">
+    <input id="email" type="email" placeholder="Seu e-mail">
   </div>
+
+  <div class="field">
+    <input id="password" type="password" placeholder="Sua senha">
+  </div>
+
+  <button class="primary" id="authButton" onclick="handleAuth()">
+    Entrar
+  </button>
+
+  <div class="switch">
+    <span id="switchText">Ainda não tem uma conta?</span>
+    <button onclick="toggleAuthMode()" id="switchButton">
+      Criar conta
+    </button>
+  </div>
+
 </div>
 
-<!-- APP -->
+
 <div id="app" class="app hidden">
 
   <header class="topbar">
-    <div class="top-logo">Vibra</div>
+
+    <div class="logo">Vibra</div>
 
     <div class="top-actions">
-      <button class="icon-btn" onclick="showPage('home')" title="Início">⌂</button>
-      <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">☾</button>
-      <button class="icon-btn" onclick="logout()" title="Sair">↪</button>
+
+      <button class="icon-btn" onclick="showToast('Notificações em breve ❤️')" title="Notificações">
+        ♡
+      </button>
+
+      <button class="icon-btn" onclick="showToast('Mensagens em breve 💬')" title="Mensagens">
+        ♡
+      </button>
+
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        ◐
+      </button>
+
     </div>
+
   </header>
+
 
   <div class="layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-      <nav class="nav">
-        <button class="nav-btn active" data-page="home" onclick="showPage('home')">
-          🏠 Início
-        </button>
 
-        <button class="nav-btn" data-page="search" onclick="showPage('search')">
-          🔎 Buscar
-        </button>
+      <button class="nav-item active" onclick="showPage('home',this)">
+        🏠 Início
+      </button>
 
-        <button class="nav-btn" data-page="create" onclick="openCreate()">
-          ➕ Criar
-        </button>
+      <button class="nav-item" onclick="showPage('search',this)">
+        🔎 Buscar
+      </button>
 
-        <button class="nav-btn" data-page="profile" onclick="showPage('profile')">
-          👤 Perfil
-        </button>
+      <button class="nav-item" onclick="openCreate()">
+        ➕ Criar
+      </button>
 
-        <button class="nav-btn" data-page="reposts" onclick="showPage('reposts')">
-          🔄 Repostados
-        </button>
-      </nav>
+      <button class="nav-item" onclick="showPage('profile',this)">
+        👤 Perfil
+      </button>
+
+      <button class="nav-item" onclick="showPage('reposts',this)">
+        🔄 Repostados
+      </button>
+
     </aside>
 
-    <!-- MAIN -->
-    <main class="main">
 
-      <!-- HOME -->
-      <section id="page-home" class="page">
+    <main>
 
-        <div class="card composer section">
-          <div class="composer-row">
-            <img id="quickAvatar" class="avatar" src="" alt="">
-            <input
-              class="composer-input"
-              placeholder="No que você está pensando?"
+      <section id="homePage">
+
+
+        <div class="story-bar" id="storyBar">
+          <div class="story" onclick="openCreate()">
+            <div class="story-ring empty">
+              <div class="story-inner">
+                <img id="storyAvatar" src="" alt="">
+                <span class="story-plus">+</span>
+              </div>
+            </div>
+            <span class="story-name">Seu story</span>
+          </div>
+        </div>
+
+        <div class="composer card">
+
+          <textarea
+            id="quickCaption"
+            placeholder="No que você está pensando?"
+          ></textarea>
+
+          <div class="composer-bottom">
+
+            <button
+              class="secondary"
               onclick="openCreate()"
-              readonly
             >
-          </div>
-
-          <div class="composer-actions">
-            <button class="secondary-btn" onclick="openCreate()">
-              📷 Foto ou vídeo
+              📷 Foto / vídeo
             </button>
 
-            <button class="secondary-btn" onclick="openCreate()">
-              ✍️ Publicar
+            <button
+              class="primary"
+              onclick="quickPost()"
+            >
+              Publicar
             </button>
+
           </div>
+
         </div>
 
         <div id="feed"></div>
 
       </section>
 
-      <!-- SEARCH -->
-      <section id="page-search" class="page hidden">
 
-        <div class="card search-box">
-          <input
-            id="searchInput"
-            class="search-input"
-            placeholder="Pesquisar pessoas ou publicações..."
-            oninput="searchEverything()"
-          >
+      <section id="searchPage" class="hidden">
+
+        <div class="card" style="padding:18px">
+
+          <h2 style="margin-bottom:15px">
+            Buscar
+          </h2>
+
+          <div class="search-box">
+
+            <input
+              id="searchInput"
+              placeholder="Pesquisar pessoas ou posts..."
+              oninput="searchEverything()"
+            >
+
+          </div>
+
+          <div id="searchResults"></div>
+
         </div>
-
-        <div id="searchResults"></div>
 
       </section>
 
-      <!-- PROFILE -->
-      <section id="page-profile" class="page hidden">
 
-        <div class="card profile-header">
+      <section id="profilePage" class="hidden">
 
-          <div class="profile-top">
-            <img id="profileAvatar" class="profile-avatar" src="" alt="">
+        <div class="profile card">
 
-            <div class="profile-info">
-              <div id="profileName" class="profile-name"></div>
-              <div id="profileUsername" class="profile-handle"></div>
-              <div id="profileBio" class="profile-bio"></div>
+          <div class="profile-head">
 
-              <div class="profile-actions">
-                <button class="secondary-btn" onclick="openEditProfile()">
-                  ✏️ Editar perfil
-                </button>
-
-                <button class="secondary-btn" onclick="showPage('reposts')">
-                  🔄 Repostados
-                </button>
-              </div>
+            <div class="avatar" id="profileAvatar">
+              ?
             </div>
+
+            <div>
+
+              <div
+                class="profile-name"
+                id="profileName"
+              >
+                Usuário
+              </div>
+
+              <div
+                class="date"
+                id="profileUsername"
+              >
+                @usuario
+              </div>
+
+            </div>
+
           </div>
 
-          <div class="profile-tabs">
+          <div
+            class="profile-bio"
+            id="profileBio"
+          >
+          </div>
+
+          <div class="tabs">
+
             <button
-              id="profileTabPosts"
-              class="profile-tab active"
-              onclick="profileTab('posts')"
+              class="tab active"
+              onclick="profileTab('posts',this)"
             >
-              Publicações
+              Posts
             </button>
 
             <button
-              id="profileTabReposts"
-              class="profile-tab"
-              onclick="profileTab('reposts')"
+              class="tab"
+              onclick="profileTab('reposts',this)"
             >
               Repostados
             </button>
+
           </div>
 
         </div>
@@ -897,14 +1077,19 @@ button{
 
       </section>
 
-      <!-- REPOSTS -->
-      <section id="page-reposts" class="page hidden">
 
-        <div class="card" style="padding:18px;margin-bottom:18px;">
-          <h2>Repostados</h2>
-          <p style="color:var(--muted);margin-top:5px;">
-            Publicações que você repostou aparecem somente aqui.
+      <section id="repostsPage" class="hidden">
+
+        <div class="card" style="padding:20px;margin-bottom:18px">
+
+          <h2>
+            🔄 Repostados
+          </h2>
+
+          <p style="color:var(--muted);margin-top:5px">
+            Aqui ficam somente os conteúdos que você repostou.
           </p>
+
         </div>
 
         <div id="repostsContent"></div>
@@ -913,737 +1098,584 @@ button{
 
     </main>
 
-    <!-- RIGHTBAR -->
-    <aside class="rightbar">
 
-      <div class="card side-card section">
-        <div class="side-title">Sobre o Vibra</div>
-        <div class="side-text">
-          Compartilhe momentos, fotos, vídeos e descubra novas publicações.
-        </div>
-      </div>
+    <aside class="right">
 
-      <div class="card side-card">
-        <div class="side-title">Sua conta</div>
-        <div id="sideAccount" class="side-text">
-          Carregando...
+      <div class="right-card card">
+
+        <div class="right-title">
+          Seu Vibra
         </div>
+
+        <p style="color:var(--muted);line-height:1.5">
+          Compartilhe momentos, descubra pessoas e deixe sua vibração registrada.
+        </p>
+
+        <button
+          class="primary"
+          style="width:100%;margin-top:15px"
+          onclick="openCreate()"
+        >
+          Criar publicação
+        </button>
+
       </div>
 
     </aside>
 
   </div>
 
-  <!-- MOBILE NAV -->
+
   <nav class="mobile-nav">
-    <button data-mobile-page="home" onclick="showPage('home')">⌂</button>
-    <button data-mobile-page="search" onclick="showPage('search')">⌕</button>
+
+    <button onclick="showPage('home')">⌂</button>
+
+    <button onclick="showPage('search')">⌕</button>
+
     <button onclick="openCreate()">＋</button>
-    <button data-mobile-page="profile" onclick="showPage('profile')">♙</button>
-    <button data-mobile-page="reposts" onclick="showPage('reposts')">↻</button>
+
+    <button onclick="showPage('reposts')">↻</button>
+
+    <button onclick="showPage('profile')">◉</button>
+
   </nav>
 
 </div>
 
-<!-- CREATE MODAL -->
-<div id="createModal" class="modal-backdrop hidden">
+
+<div class="modal-bg" id="createModal">
 
   <div class="modal">
 
-    <div class="modal-header">
-      <div class="modal-title">Criar publicação</div>
+    <div class="modal-head">
 
-      <button class="modal-close" onclick="closeCreate()">
+      <h2>Criar publicação</h2>
+
+      <button
+        class="icon-btn"
+        onclick="closeCreate()"
+      >
         ×
       </button>
+
     </div>
 
-    <div class="modal-body">
+    <textarea
+      id="postCaption"
+      placeholder="Escreva uma legenda..."
+    ></textarea>
 
-      <textarea
-        id="createCaption"
-        class="textarea"
-        placeholder="Escreva alguma coisa..."
-      ></textarea>
+    <div style="margin-top:12px">
 
       <input
-        id="createFile"
-        class="file-input"
         type="file"
+        id="mediaInput"
         accept="image/*,video/*"
-        onchange="previewCreateFile()"
-      >
-
-      <div id="createPreview" style="margin-top:14px;"></div>
-
-    </div>
-
-    <div class="modal-footer">
-      <button class="secondary-btn" onclick="closeCreate()">
-        Cancelar
-      </button>
-
-      <button class="primary-btn" style="width:auto;padding:11px 20px;" onclick="createPost()">
-        Publicar
-      </button>
-    </div>
-
-  </div>
-</div>
-
-<!-- EDIT PROFILE MODAL -->
-<div id="editProfileModal" class="modal-backdrop hidden">
-
-  <div class="modal">
-
-    <div class="modal-header">
-      <div class="modal-title">Editar perfil</div>
-
-      <button class="modal-close" onclick="closeEditProfile()">
-        ×
-      </button>
-    </div>
-
-    <div class="modal-body">
-
-      <input
-        id="editDisplayName"
-        class="input"
-        placeholder="Nome"
-      >
-
-      <input
-        id="editUsername"
-        class="input"
-        placeholder="Nome de usuário"
-      >
-
-      <textarea
-        id="editBio"
-        class="textarea"
-        style="min-height:90px;"
-        placeholder="Bio"
-      ></textarea>
-
-      <label style="display:block;margin-top:12px;font-weight:700;">
-        Foto de perfil
-      </label>
-
-      <input
-        id="editAvatar"
-        class="file-input"
-        type="file"
-        accept="image/*"
       >
 
     </div>
 
     <div class="modal-footer">
 
-      <button class="secondary-btn" onclick="closeEditProfile()">
+      <button
+        class="secondary"
+        onclick="closeCreate()"
+      >
         Cancelar
       </button>
 
       <button
-        class="primary-btn"
-        style="width:auto;padding:11px 20px;"
-        onclick="saveProfile()"
+        class="primary"
+        onclick="createPost()"
       >
-        Salvar
+        Publicar
       </button>
 
     </div>
 
   </div>
+
 </div>
 
-<div id="toast" class="toast hidden"></div>
+
+<div id="toast" class="toast"></div>
+
 
 <script>
-/* =========================================================
+
+/* ==========================================
    SUPABASE
-========================================================= */
+========================================== */
 
-const SUPABASE_URL = "https://dkkudlzpopmfhyqwjfsv.supabase.co";
-const SUPABASE_KEY = "sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
+const SUPABASE_URL =
+"https://dkkudlzpopmfhyqwjfsv.supabase.co";
 
-const supabaseClient = window.supabase.createClient(
+const SUPABASE_KEY =
+"sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
+
+const db =
+window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
+
+/* ==========================================
+   ESTADO
+========================================== */
+
 let currentUser = null;
 let authMode = "login";
-let currentProfile = null;
-let currentProfileTab = "posts";
+let allPosts = [];
 
-/* =========================================================
-   UTIL
-========================================================= */
 
-function $(id){
-  return document.getElementById(id);
+/* ==========================================
+   TOAST
+========================================== */
+
+function toast(message){
+
+  const el =
+  document.getElementById("toast");
+
+  el.textContent = message;
+
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+
 }
 
-function escapeHtml(value){
-  if(value === null || value === undefined) return "";
 
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-function showToast(message){
-  const toast = $("toast");
-
-  toast.textContent = message;
-  toast.classList.remove("hidden");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer = setTimeout(()=>{
-    toast.classList.add("hidden");
-  },3000);
-}
-
-function formatDate(date){
-  if(!date) return "";
-
-  const d = new Date(date);
-
-  return d.toLocaleDateString("pt-BR",{
-    day:"2-digit",
-    month:"2-digit",
-    year:"numeric"
-  });
-}
-
-function defaultAvatar(name="V"){
-  const letter = String(name).trim().charAt(0).toUpperCase() || "V";
-
-  return "https://ui-avatars.com/api/?name="
-    + encodeURIComponent(letter)
-    + "&background=777777&color=ffffff&bold=true";
-}
-
-/* =========================================================
-   AUTH
-========================================================= */
+/* ==========================================
+   AUTENTICAÇÃO
+========================================== */
 
 function toggleAuthMode(){
 
-  authMode = authMode === "login"
-    ? "signup"
-    : "login";
+  authMode =
+  authMode === "login"
+  ? "signup"
+  : "login";
+
+  const button =
+  document.getElementById("authButton");
+
+  const desc =
+  document.getElementById("loginDescription");
+
+  const text =
+  document.getElementById("switchText");
+
+  const switchButton =
+  document.getElementById("switchButton");
 
   if(authMode === "signup"){
 
-    $("authSubtitle").textContent =
-      "Crie sua conta no Vibra";
+    button.textContent = "Criar conta";
 
-    $("authButton").textContent =
-      "Criar conta";
+    desc.textContent =
+    "Crie sua conta no Vibra.";
 
-    $("authSwitchText").textContent =
-      "Já tem uma conta?";
+    text.textContent =
+    "Já tem uma conta?";
 
-    $("authSwitchButton").textContent =
-      "Entrar";
+    switchButton.textContent =
+    "Entrar";
 
   }else{
 
-    $("authSubtitle").textContent =
-      "Entre na sua conta";
+    button.textContent = "Entrar";
 
-    $("authButton").textContent =
-      "Entrar";
+    desc.textContent =
+    "Entre na sua conta para continuar.";
 
-    $("authSwitchText").textContent =
-      "Ainda não tem conta?";
+    text.textContent =
+    "Ainda não tem uma conta?";
 
-    $("authSwitchButton").textContent =
-      "Criar conta";
+    switchButton.textContent =
+    "Criar conta";
+
   }
+
 }
+
 
 async function handleAuth(){
 
-  const email = $("authEmail").value.trim();
-  const password = $("authPassword").value;
+  const email =
+  document.getElementById("email").value.trim();
+
+  const password =
+  document.getElementById("password").value;
 
   if(!email || !password){
-    showToast("Preencha e-mail e senha.");
+
+    toast("Preencha e-mail e senha.");
+
     return;
   }
 
-  $("authButton").disabled = true;
+  let result;
 
-  try{
+  if(authMode === "signup"){
 
-    if(authMode === "login"){
+    result =
+    await db.auth.signUp({
+      email,
+      password
+    });
 
-      const {error} =
-        await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
+  }else{
 
-      if(error) throw error;
+    result =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
 
-    }else{
+  }
 
-      const {data,error} =
-        await supabaseClient.auth.signUp({
-          email,
-          password
-        });
+  if(result.error){
 
-      if(error) throw error;
+    toast(result.error.message);
 
-      if(data.session){
-        currentUser = data.user;
-        await enterApp();
-      }else{
+    return;
+  }
 
-        showToast(
-          "Conta criada! Verifique seu e-mail se necessário."
-        );
+  if(authMode === "signup"){
 
-        authMode = "login";
-        toggleAuthMode();
-      }
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      error.message || "Não foi possível continuar."
+    toast(
+      "Conta criada! Verifique seu e-mail se necessário."
     );
 
-  }finally{
-
-    $("authButton").disabled = false;
   }
+
 }
+
 
 async function logout(){
 
-  await supabaseClient.auth.signOut();
+  await db.auth.signOut();
 
-  currentUser = null;
-  currentProfile = null;
-
-  $("app").classList.add("hidden");
-  $("authScreen").classList.remove("hidden");
 }
 
-/* =========================================================
-   SESSION
-========================================================= */
+
+/* ==========================================
+   SESSÃO
+========================================== */
 
 async function checkSession(){
 
-  const {data} =
-    await supabaseClient.auth.getSession();
+  const {
+    data
+  } =
+  await db.auth.getSession();
 
   if(data.session){
 
-    currentUser = data.session.user;
+    currentUser =
+    data.session.user;
 
     await enterApp();
 
   }else{
 
     showLogin();
+
   }
+
 }
 
-supabaseClient.auth.onAuthStateChange(
-  (event,session)=>{
 
-    setTimeout(async()=>{
+db.auth.onAuthStateChange(
+  async(event,session)=>{
 
-      if(session){
+    if(session){
 
-        currentUser = session.user;
-        await enterApp();
+      currentUser =
+      session.user;
 
-      }else{
+      await enterApp();
 
-        currentUser = null;
-        showLogin();
-      }
+    }else{
 
-    },0);
+      currentUser = null;
+
+      showLogin();
+
+    }
 
   }
 );
 
+
 function showLogin(){
 
-  $("app").classList.add("hidden");
-  $("authScreen").classList.remove("hidden");
+  document
+  .getElementById("loginScreen")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("app")
+  .classList.add("hidden");
+
 }
+
 
 async function enterApp(){
 
-  if(!currentUser) return;
+  document
+  .getElementById("loginScreen")
+  .classList.add("hidden");
 
-  $("authScreen").classList.add("hidden");
-  $("app").classList.remove("hidden");
+  document
+  .getElementById("app")
+  .classList.remove("hidden");
 
   await ensureProfile();
+
   await loadProfile();
+
   await loadFeed();
 
-  showPage("home");
 }
 
-/* =========================================================
-   PROFILE
-========================================================= */
+
+/* ==========================================
+   PERFIL
+========================================== */
 
 async function ensureProfile(){
 
-  if(!currentUser) return;
-
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-
-  if(error){
-    console.error(error);
-    return;
-  }
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
 
   if(!data){
 
-    const usernameBase =
-      (currentUser.email || "usuario")
-      .split("@")[0]
-      .replace(/[^a-zA-Z0-9_]/g,"")
-      .slice(0,20) || "usuario";
+    const emailName =
+    currentUser.email
+    ?.split("@")[0]
+    || "usuario";
 
-    const {error:createError} =
-      await supabaseClient
-        .from("profiles")
-        .insert({
-          id:currentUser.id,
-          username:
-            usernameBase +
-            "_" +
-            Math.floor(Math.random()*9999),
-          display_name:
-            currentUser.email?.split("@")[0] || "Usuário",
-          bio:"",
-          avatar_url:""
-        });
+    const username =
+    emailName
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"")
+    .slice(0,25)
+    || "usuario";
 
-    if(createError){
-      console.error(createError);
-    }
+    await db
+    .from("profiles")
+    .insert({
+      id:currentUser.id,
+      username,
+      display_name:emailName
+    });
+
   }
+
 }
+
 
 async function loadProfile(){
 
-  if(!currentUser) return;
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
 
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id",currentUser.id)
-      .maybeSingle();
+  if(!data) return;
 
-  if(error){
-    console.error(error);
-    return;
-  }
+  document
+  .getElementById("profileName")
+  .textContent =
+  data.display_name ||
+  data.username ||
+  "Usuário";
 
-  currentProfile = data;
+  document
+  .getElementById("profileUsername")
+  .textContent =
+  data.username
+  ? "@" + data.username
+  : "";
 
-  const name =
-    data?.display_name ||
-    currentUser.email?.split("@")[0] ||
-    "Usuário";
-
-  const username =
-    data?.username
-      ? "@" + data.username
-      : "";
+  document
+  .getElementById("profileBio")
+  .textContent =
+  data.bio || "";
 
   const avatar =
-    data?.avatar_url ||
-    defaultAvatar(name);
+  document.getElementById("profileAvatar");
 
-  $("profileName").textContent = name;
-  $("profileUsername").textContent = username;
-  $("profileBio").textContent = data?.bio || "";
+  if(data.avatar_url){
 
-  $("profileAvatar").src = avatar;
-  $("quickAvatar").src = avatar;
+    avatar.innerHTML =
+    `<img src="${escapeHtml(data.avatar_url)}">`;
 
-  $("sideAccount").innerHTML =
-    `<strong>${escapeHtml(name)}</strong><br>
-     ${escapeHtml(username)}`;
+  }else{
+
+    avatar.textContent =
+    (data.display_name ||
+     data.username ||
+     "U")[0]
+    .toUpperCase();
+
+  }
 
 }
 
-/* =========================================================
-   PROFILE EDIT
-========================================================= */
 
-function openEditProfile(){
-
-  if(!currentProfile) return;
-
-  $("editDisplayName").value =
-    currentProfile.display_name || "";
-
-  $("editUsername").value =
-    currentProfile.username || "";
-
-  $("editBio").value =
-    currentProfile.bio || "";
-
-  $("editAvatar").value = "";
-
-  $("editProfileModal").classList.remove("hidden");
-}
-
-function closeEditProfile(){
-  $("editProfileModal").classList.add("hidden");
-}
-
-async function saveProfile(){
-
-  if(!currentUser) return;
-
-  const displayName =
-    $("editDisplayName").value.trim();
-
-  const username =
-    $("editUsername").value.trim();
-
-  const bio =
-    $("editBio").value.trim();
-
-  let avatarUrl =
-    currentProfile?.avatar_url || "";
-
-  const file =
-    $("editAvatar").files[0];
-
-  try{
-
-    if(file){
-
-      if(file.size > 2 * 1024 * 1024){
-        showToast("A imagem precisa ter até 2 MB.");
-        return;
-      }
-
-      avatarUrl = await fileToDataURL(file);
-    }
-
-    const {error} =
-      await supabaseClient
-        .from("profiles")
-        .update({
-          display_name:displayName,
-          username:username,
-          bio:bio,
-          avatar_url:avatarUrl
-        })
-        .eq("id",currentUser.id);
-
-    if(error) throw error;
-
-    closeEditProfile();
-
-    await loadProfile();
-
-    showToast("Perfil atualizado!");
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      error.message || "Não foi possível atualizar o perfil."
-    );
-  }
-}
-
-/* =========================================================
-   PAGES
-========================================================= */
-
-function showPage(page){
-
-  document.querySelectorAll(".page")
-    .forEach(el=>{
-      el.classList.add("hidden");
-    });
-
-  const target =
-    $("page-" + page);
-
-  if(target){
-    target.classList.remove("hidden");
-  }
-
-  document.querySelectorAll(".nav-btn")
-    .forEach(btn=>{
-      btn.classList.toggle(
-        "active",
-        btn.dataset.page === page
-      );
-    });
-
-  document.querySelectorAll(".mobile-nav button")
-    .forEach(btn=>{
-      btn.classList.toggle(
-        "active",
-        btn.dataset.mobilePage === page
-      );
-    });
-
-  if(page === "home"){
-    loadFeed();
-  }
-
-  if(page === "profile"){
-    loadProfile();
-    profileTab(currentProfileTab);
-  }
-
-  if(page === "reposts"){
-    loadMyReposts();
-  }
-}
-
-/* =========================================================
-   FEED
-========================================================= */
+/* ==========================================
+   POSTS
+========================================== */
 
 async function loadFeed(){
 
-  const feed = $("feed");
-
-  feed.innerHTML =
-    `<div class="card" style="padding:25px;text-align:center;color:var(--muted)">
-      Carregando publicações...
-    </div>`;
-
-  const {data,error} =
-    await supabaseClient
-      .from("posts")
-      .select(`
-        *,
-        profiles:user_id(
-          id,
-          username,
-          display_name,
-          avatar_url
-        )
-      `)
-      .order("created_at",{ascending:false});
+  const {
+    data,
+    error
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .order("created_at",{ascending:false});
 
   if(error){
 
     console.error(error);
 
-    feed.innerHTML =
-      `<div class="card" style="padding:20px;">
-        Não foi possível carregar o feed.
-      </div>`;
+    toast("Não foi possível carregar os posts.");
 
     return;
   }
 
-  if(!data || !data.length){
+  allPosts =
+  data || [];
 
-    feed.innerHTML =
-      `<div class="card" style="padding:35px;text-align:center;">
-        <div style="font-size:35px;margin-bottom:10px;">✨</div>
-        <strong>O Vibra ainda está vazio.</strong>
-        <p style="color:var(--muted);margin-top:7px;">
-          Crie a primeira publicação!
-        </p>
-      </div>`;
+  await renderPosts(
+    allPosts,
+    document.getElementById("feed")
+  );
 
-    return;
-  }
-
-  const html = [];
-
-  for(const post of data){
-    html.push(await buildPost(post));
-  }
-
-  feed.innerHTML = html.join("");
 }
 
-/* =========================================================
-   BUILD POST
-========================================================= */
+
+async function renderPosts(posts,container){
+
+  if(!posts.length){
+
+    container.innerHTML = `
+      <div class="empty card">
+        <div style="font-size:35px">✨</div>
+        <h3 style="margin:10px 0">
+          Seu Vibra começa aqui
+        </h3>
+        <p>
+          Publique alguma coisa para começar.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for(const post of posts){
+
+    const html =
+    await buildPost(post);
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      html
+    );
+
+  }
+
+}
+
 
 async function buildPost(post){
 
+  const {
+    data:like
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const {
+    count
+  } =
+  await db
+  .from("likes")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    count:commentCount
+  } =
+  await db
+  .from("comments")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    data:repost
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
   const profile =
-    post.profiles || {};
+  post.profiles || {};
 
   const name =
-    profile.display_name ||
-    profile.username ||
-    "Usuário";
+  profile.display_name ||
+  profile.username ||
+  "Usuário";
 
   const username =
-    profile.username
-      ? "@" + profile.username
-      : "";
+  profile.username
+  ? "@" + profile.username
+  : "";
 
-  const avatar =
-    profile.avatar_url ||
-    defaultAvatar(name);
-
-  const {count:likesCount} =
-    await supabaseClient
-      .from("likes")
-      .select("*",{count:"exact",head:true})
-      .eq("post_id",post.id);
-
-  const {data:myLike} =
-    await supabaseClient
-      .from("likes")
-      .select("id")
-      .eq("post_id",post.id)
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
-
-  const {count:commentsCount} =
-    await supabaseClient
-      .from("comments")
-      .select("*",{count:"exact",head:true})
-      .eq("post_id",post.id);
-
-  const {data:myRepost} =
-    await supabaseClient
-      .from("reposts")
-      .select("id")
-      .eq("post_id",post.id)
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
+  const date =
+  new Date(post.created_at)
+  .toLocaleString("pt-BR",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 
   let media = "";
 
@@ -1652,1032 +1684,788 @@ async function buildPost(post){
     if(post.media_type === "video"){
 
       media =
-        `<video
-          class="post-media"
-          src="${escapeHtml(post.media_url)}"
-          controls
-          playsinline
-        ></video>`;
+      `<video
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        controls
+        playsinline
+      ></video>`;
 
     }else{
 
       media =
-        `<img
-          class="post-media"
-          src="${escapeHtml(post.media_url)}"
-          alt="Publicação"
-        >`;
+      `<img
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        alt="Publicação"
+      >`;
+
     }
+
   }
 
-  const ownPost =
-    post.user_id === currentUser.id;
-
   return `
-    <article class="card post" id="post-${post.id}">
 
-      <div class="post-header">
+  <article class="post card">
 
-        <div class="post-user">
+    <div class="post-head">
 
-          <img
-            class="avatar small"
-            src="${escapeHtml(avatar)}"
-            alt=""
-          >
-
-          <div class="post-user-info">
-
-            <span class="username">
-              ${escapeHtml(name)}
-            </span>
-
-            <span class="post-time">
-              ${escapeHtml(username)}
-              ·
-              ${formatDate(post.created_at)}
-            </span>
-
-          </div>
-
-        </div>
-
-        <button
-          class="post-menu"
-          onclick="sharePost('${post.id}')"
-        >
-          ⋯
-        </button>
-
-      </div>
-
-      ${media}
-
-      <div class="post-content">
+      <div class="avatar">
 
         ${
-          post.caption
-            ? `<div class="post-caption">
-                ${escapeHtml(post.caption)}
-              </div>`
-            : ""
+          profile.avatar_url
+          ? `<img src="${escapeHtml(profile.avatar_url)}">`
+          : name[0].toUpperCase()
         }
-
-        <div class="post-actions">
-
-          <button
-            class="post-action ${myLike ? "active" : ""}"
-            onclick="toggleLike('${post.id}')"
-          >
-            ${myLike ? "❤️" : "♡"}
-          </button>
-
-          <span class="post-count">
-            ${likesCount || 0}
-          </span>
-
-          <button
-            class="post-action"
-            onclick="toggleComments('${post.id}')"
-          >
-            💬
-          </button>
-
-          <span class="post-count">
-            ${commentsCount || 0}
-          </span>
-
-          <button
-            class="post-action ${myRepost ? "active" : ""}"
-            onclick="toggleRepost('${post.id}')"
-          >
-            🔄
-          </button>
-
-          <button
-            class="post-action"
-            onclick="sharePost('${post.id}')"
-          >
-            ↗
-          </button>
-
-          ${
-            ownPost
-              ? `<button
-                   class="post-action"
-                   onclick="deletePost('${post.id}')"
-                 >
-                   🗑️
-                 </button>`
-              : ""
-          }
-
-        </div>
-
-        <div
-          id="comments-${post.id}"
-          class="comments hidden"
-        ></div>
 
       </div>
 
-    </article>
+      <div class="user-info">
+
+        <div class="username">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="date">
+          ${escapeHtml(username)}
+          ${username ? " · " : ""}
+          ${date}
+        </div>
+
+      </div>
+
+    </div>
+
+    ${
+      post.caption
+      ? `
+      <div class="post-content">
+        ${escapeHtml(post.caption)}
+      </div>
+      `
+      : ""
+    }
+
+    ${media}
+
+    <div class="post-actions">
+
+      <button
+        class="action ${like ? "liked":""}"
+        onclick="toggleLike('${post.id}')"
+      >
+        ${like ? "♥" : "♡"}
+        ${count || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleComments('${post.id}')"
+      >
+        💬 ${commentCount || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleRepost('${post.id}')"
+      >
+        ${repost ? "↻ Repostado" : "↻ Repostar"}
+      </button>
+
+    </div>
+
+    <div
+      id="comments-${post.id}"
+      class="comments hidden"
+    ></div>
+
+  </article>
+
   `;
+
 }
 
-/* =========================================================
-   CREATE POST
-========================================================= */
+
+/* ==========================================
+   PUBLICAR
+========================================== */
+
+async function quickPost(){
+
+  const textarea =
+  document.getElementById("quickCaption");
+
+  const caption =
+  textarea.value.trim();
+
+  if(!caption){
+
+    openCreate();
+
+    return;
+  }
+
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_type:"text"
+  });
+
+  if(error){
+
+    toast(error.message);
+
+    return;
+  }
+
+  textarea.value = "";
+
+  toast("Publicado! ✨");
+
+  await loadFeed();
+
+}
+
 
 function openCreate(){
-  $("createModal").classList.remove("hidden");
-  $("createCaption").focus();
+
+  document
+  .getElementById("createModal")
+  .classList.add("open");
+
 }
+
 
 function closeCreate(){
 
-  $("createModal").classList.add("hidden");
+  document
+  .getElementById("createModal")
+  .classList.remove("open");
 
-  $("createCaption").value = "";
-  $("createFile").value = "";
-  $("createPreview").innerHTML = "";
 }
 
-function previewCreateFile(){
-
-  const file =
-    $("createFile").files[0];
-
-  if(!file){
-    $("createPreview").innerHTML = "";
-    return;
-  }
-
-  const url =
-    URL.createObjectURL(file);
-
-  if(file.type.startsWith("video/")){
-
-    $("createPreview").innerHTML =
-      `<video
-        src="${url}"
-        controls
-        style="width:100%;max-height:400px;border-radius:13px;background:#000;"
-      ></video>`;
-
-  }else{
-
-    $("createPreview").innerHTML =
-      `<img
-        src="${url}"
-        style="width:100%;max-height:400px;object-fit:contain;border-radius:13px;"
-      >`;
-  }
-}
 
 async function createPost(){
 
-  if(!currentUser) return;
-
   const caption =
-    $("createCaption").value.trim();
+  document
+  .getElementById("postCaption")
+  .value.trim();
 
   const file =
-    $("createFile").files[0];
+  document
+  .getElementById("mediaInput")
+  .files[0];
 
-  if(!caption && !file){
+  let media_url = null;
+  let media_type = "text";
 
-    showToast(
-      "Escreva algo ou escolha uma foto/vídeo."
+  if(file){
+
+    /*
+      Para a primeira versão,
+      imagens pequenas podem ser
+      armazenadas como Data URL.
+    */
+
+    if(file.size > 2 * 1024 * 1024){
+
+      toast(
+        "Use uma imagem de até 2 MB nesta versão."
+      );
+
+      return;
+    }
+
+    media_url =
+    await fileToDataURL(file);
+
+    media_type =
+    file.type.startsWith("video")
+    ? "video"
+    : "image";
+
+  }
+
+  if(!caption && !media_url){
+
+    toast(
+      "Adicione uma legenda ou mídia."
     );
 
     return;
   }
 
-  try{
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_url,
+    media_type
+  });
 
-    let mediaUrl = "";
-    let mediaType = "";
-
-    if(file){
-
-      if(file.size > 2 * 1024 * 1024){
-
-        showToast(
-          "Por enquanto, o arquivo precisa ter até 2 MB."
-        );
-
-        return;
-      }
-
-      mediaUrl =
-        await fileToDataURL(file);
-
-      mediaType =
-        file.type.startsWith("video/")
-          ? "video"
-          : "image";
-    }
-
-    const {error} =
-      await supabaseClient
-        .from("posts")
-        .insert({
-          user_id:currentUser.id,
-          caption,
-          media_url:mediaUrl,
-          media_type:mediaType
-        });
-
-    if(error) throw error;
-
-    closeCreate();
-
-    showToast("Publicação criada! ✨");
-
-    await loadFeed();
-
-  }catch(error){
+  if(error){
 
     console.error(error);
 
-    showToast(
-      error.message ||
-      "Não foi possível publicar."
-    );
+    toast(error.message);
+
+    return;
   }
+
+  document
+  .getElementById("postCaption")
+  .value = "";
+
+  document
+  .getElementById("mediaInput")
+  .value = "";
+
+  closeCreate();
+
+  toast("Publicação criada! 🎉");
+
+  await loadFeed();
+
 }
+
 
 function fileToDataURL(file){
 
   return new Promise((resolve,reject)=>{
 
-    const reader = new FileReader();
+    const reader =
+    new FileReader();
 
     reader.onload =
-      ()=>resolve(reader.result);
+    () => resolve(reader.result);
 
     reader.onerror =
-      ()=>reject(reader.error);
+    reject;
 
     reader.readAsDataURL(file);
+
   });
+
 }
 
-/* =========================================================
-   LIKE
-========================================================= */
+
+/* ==========================================
+   CURTIDAS
+========================================== */
 
 async function toggleLike(postId){
 
-  if(!currentUser) return;
+  const {
+    data
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
 
-  const {data:existing,error:checkError} =
-    await supabaseClient
-      .from("likes")
-      .select("id")
-      .eq("post_id",postId)
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
+  if(data){
 
-  if(checkError){
-    showToast(checkError.message);
-    return;
-  }
-
-  if(existing){
-
-    const {error} =
-      await supabaseClient
-        .from("likes")
-        .delete()
-        .eq("id",existing.id);
-
-    if(error){
-      showToast(error.message);
-      return;
-    }
+    await db
+    .from("likes")
+    .delete()
+    .eq("id",data.id);
 
   }else{
 
-    const {error} =
-      await supabaseClient
-        .from("likes")
-        .insert({
-          post_id:postId,
-          user_id:currentUser.id
-        });
+    await db
+    .from("likes")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
 
-    if(error){
-      showToast(error.message);
-      return;
-    }
   }
 
   await loadFeed();
+
 }
 
-/* =========================================================
+
+/* ==========================================
    REPOST
-========================================================= */
+========================================== */
 
 async function toggleRepost(postId){
 
-  if(!currentUser) return;
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
 
-  const {data:existing,error:checkError} =
-    await supabaseClient
-      .from("reposts")
-      .select("id")
-      .eq("post_id",postId)
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
+  if(data){
 
-  if(checkError){
-    showToast(checkError.message);
-    return;
-  }
+    await db
+    .from("reposts")
+    .delete()
+    .eq("id",data.id);
 
-  if(existing){
-
-    const {error} =
-      await supabaseClient
-        .from("reposts")
-        .delete()
-        .eq("id",existing.id);
-
-    if(error){
-      showToast(error.message);
-      return;
-    }
-
-    showToast("Repost removido.");
+    toast("Repost removido.");
 
   }else{
 
-    const {error} =
-      await supabaseClient
-        .from("reposts")
-        .insert({
-          post_id:postId,
-          user_id:currentUser.id
-        });
+    await db
+    .from("reposts")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
 
-    if(error){
-      showToast(error.message);
-      return;
-    }
+    toast("Repostado! 🔄");
 
-    showToast("Publicação repostada! 🔄");
   }
 
   await loadFeed();
+
 }
 
-/* =========================================================
-   COMMENTS
-========================================================= */
+
+/* ==========================================
+   COMENTÁRIOS
+========================================== */
 
 async function toggleComments(postId){
 
   const box =
-    $("comments-" + postId);
+  document
+  .getElementById("comments-"+postId);
 
   if(!box) return;
 
   if(!box.classList.contains("hidden")){
 
     box.classList.add("hidden");
+
     return;
+
   }
 
   box.classList.remove("hidden");
 
-  await loadComments(postId);
+  await loadComments(
+    postId,
+    box
+  );
+
 }
 
-async function loadComments(postId){
 
-  const box =
-    $("comments-" + postId);
+async function loadComments(postId,box){
 
-  if(!box) return;
-
-  box.innerHTML =
-    `<div style="color:var(--muted);padding:5px;">
-      Carregando comentários...
-    </div>`;
-
-  const {data,error} =
-    await supabaseClient
-      .from("comments")
-      .select(`
-        *,
-        profiles:user_id(
-          username,
-          display_name,
-          avatar_url
-        )
-      `)
-      .eq("post_id",postId)
-      .order("created_at",{ascending:true});
-
-  if(error){
-
-    console.error(error);
-
-    box.innerHTML =
-      `<div style="color:var(--muted);">
-        Não foi possível carregar os comentários.
-      </div>`;
-
-    return;
-  }
+  const {
+    data
+  } =
+  await db
+  .from("comments")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name
+    )
+  `)
+  .eq("post_id",postId)
+  .order("created_at",{ascending:true});
 
   let html = "";
 
-  if(!data || !data.length){
-
-    html +=
-      `<div style="color:var(--muted);margin-bottom:10px;">
-        Ainda não há comentários.
-      </div>`;
-  }
-
-  for(const comment of data){
-
-    const p =
-      comment.profiles || {};
+  for(const comment of data || []){
 
     const name =
-      p.display_name ||
-      p.username ||
-      "Usuário";
-
-    const avatar =
-      p.avatar_url ||
-      defaultAvatar(name);
+    comment.profiles?.display_name ||
+    comment.profiles?.username ||
+    "Usuário";
 
     html += `
       <div class="comment">
-
-        <img
-          class="avatar small"
-          src="${escapeHtml(avatar)}"
-          alt=""
-        >
-
-        <div class="comment-body">
-
-          <div class="comment-user">
-            ${escapeHtml(name)}
-          </div>
-
-          <div class="comment-text">
-            ${escapeHtml(comment.content || "")}
-          </div>
-
-        </div>
-
+        <b>${escapeHtml(name)}</b>
+        ${escapeHtml(comment.content)}
       </div>
     `;
+
   }
 
   html += `
-    <div class="comment-form">
+
+    <form
+      class="comment-form"
+      onsubmit="addComment(event,'${postId}')"
+    >
 
       <input
-        id="comment-input-${postId}"
+        id="comment-${postId}"
         placeholder="Escreva um comentário..."
-        onkeydown="if(event.key==='Enter') addComment('${postId}')"
       >
 
-      <button onclick="addComment('${postId}')">
+      <button class="primary">
         Enviar
       </button>
 
-    </div>
+    </form>
+
   `;
 
   box.innerHTML = html;
+
 }
 
-async function addComment(postId){
+
+async function addComment(event,postId){
+
+  event.preventDefault();
 
   const input =
-    $("comment-input-" + postId);
-
-  if(!input) return;
+  document
+  .getElementById("comment-"+postId);
 
   const content =
-    input.value.trim();
+  input.value.trim();
 
   if(!content) return;
 
-  const {error} =
-    await supabaseClient
-      .from("comments")
-      .insert({
-        post_id:postId,
-        user_id:currentUser.id,
-        content
-      });
+  const {
+    error
+  } =
+  await db
+  .from("comments")
+  .insert({
+    post_id:postId,
+    user_id:currentUser.id,
+    content
+  });
 
   if(error){
 
-    showToast(error.message);
+    toast(error.message);
+
     return;
   }
 
   input.value = "";
 
-  await loadComments(postId);
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  await loadComments(
+    postId,
+    box
+  );
+
 }
 
-/* =========================================================
-   DELETE POST
-========================================================= */
 
-async function deletePost(postId){
+/* ==========================================
+   PÁGINAS
+========================================== */
 
-  if(!currentUser) return;
+function showPage(page,button){
 
-  const confirmDelete =
-    confirm("Excluir esta publicação?");
+  const pages = [
+    "homePage",
+    "searchPage",
+    "profilePage",
+    "repostsPage"
+  ];
 
-  if(!confirmDelete) return;
+  pages.forEach(id=>{
 
-  try{
+    document
+    .getElementById(id)
+    .classList.add("hidden");
 
-    await supabaseClient
-      .from("likes")
-      .delete()
-      .eq("post_id",postId);
+  });
 
-    await supabaseClient
-      .from("comments")
-      .delete()
-      .eq("post_id",postId);
+  const map = {
+    home:"homePage",
+    search:"searchPage",
+    profile:"profilePage",
+    reposts:"repostsPage"
+  };
 
-    await supabaseClient
-      .from("reposts")
-      .delete()
-      .eq("post_id",postId);
+  document
+  .getElementById(map[page])
+  .classList.remove("hidden");
 
-    const {error} =
-      await supabaseClient
-        .from("posts")
-        .delete()
-        .eq("id",postId)
-        .eq("user_id",currentUser.id);
+  if(page === "profile"){
 
-    if(error) throw error;
+    profileTab("posts");
 
-    showToast("Publicação excluída.");
-
-    await loadFeed();
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      error.message ||
-      "Não foi possível excluir a publicação."
-    );
   }
+
+  if(page === "reposts"){
+
+    loadMyReposts();
+
+  }
+
 }
 
-/* =========================================================
-   PROFILE POSTS
-========================================================= */
 
-async function profileTab(tab){
+function profileTab(tab,button){
 
-  currentProfileTab = tab;
+  document
+  .querySelectorAll(".tab")
+  .forEach(x=>x.classList.remove("active"));
 
-  $("profileTabPosts")
-    .classList.toggle("active",tab === "posts");
+  if(button){
 
-  $("profileTabReposts")
-    .classList.toggle("active",tab === "reposts");
+    button.classList.add("active");
+
+  }
 
   if(tab === "posts"){
-    await loadMyPosts();
+
+    loadMyPosts();
+
   }else{
-    await loadMyReposts(true);
+
+    loadMyReposts();
+
   }
+
 }
+
+
+/* ==========================================
+   MEUS POSTS
+========================================== */
 
 async function loadMyPosts(){
 
-  const content =
-    $("profileContent");
+  const {
+    data
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
 
-  const {data,error} =
-    await supabaseClient
-      .from("posts")
-      .select(`
-        *,
-        profiles:user_id(
-          id,
-          username,
-          display_name,
-          avatar_url
-        )
-      `)
-      .eq("user_id",currentUser.id)
-      .order("created_at",{ascending:false});
+  await renderPosts(
+    data || [],
+    document.getElementById("profileContent")
+  );
 
-  if(error){
-
-    console.error(error);
-
-    content.innerHTML =
-      `<div class="card" style="padding:20px;">
-        Não foi possível carregar suas publicações.
-      </div>`;
-
-    return;
-  }
-
-  if(!data || !data.length){
-
-    content.innerHTML =
-      `<div class="card" style="padding:35px;text-align:center;">
-        Você ainda não publicou nada.
-      </div>`;
-
-    return;
-  }
-
-  content.innerHTML =
-    `<div class="profile-grid">
-      ${
-        data.map(post=>{
-
-          if(post.media_url){
-
-            if(post.media_type === "video"){
-
-              return `
-                <div
-                  class="profile-grid-item"
-                  onclick="scrollToPost('${post.id}')"
-                >
-                  <video src="${escapeHtml(post.media_url)}"></video>
-                </div>
-              `;
-
-            }
-
-            return `
-              <div
-                class="profile-grid-item"
-                onclick="scrollToPost('${post.id}')"
-              >
-                <img src="${escapeHtml(post.media_url)}">
-              </div>
-            `;
-          }
-
-          return `
-            <div
-              class="profile-grid-item"
-              style="padding:15px;display:flex;align-items:center;justify-content:center;text-align:center;"
-              onclick="scrollToPost('${post.id}')"
-            >
-              ${escapeHtml(post.caption || "")}
-            </div>
-          `;
-
-        }).join("")
-      }
-    </div>`;
-
-  window.profilePosts = data;
 }
 
-function scrollToPost(postId){
 
-  showPage("home");
+async function loadMyReposts(){
 
-  setTimeout(()=>{
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select(`
+    *,
+    posts(
+      *,
+      profiles:user_id(
+        username,
+        display_name,
+        avatar_url
+      )
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
 
-    const el =
-      $("post-" + postId);
+  const posts =
+  (data || [])
+  .map(x=>x.posts)
+  .filter(Boolean);
 
-    if(el){
+  await renderPosts(
+    posts,
+    document.getElementById("repostsContent")
+  );
 
-      el.scrollIntoView({
-        behavior:"smooth",
-        block:"center"
-      });
-
-      el.style.outline =
-        "3px solid var(--text)";
-
-      setTimeout(()=>{
-        el.style.outline = "";
-      },1500);
-
-    }
-
-  },300);
 }
 
-/* =========================================================
-   REPOSTS
-========================================================= */
 
-async function loadMyReposts(inProfile=false){
+/* ==========================================
+   BUSCA
+========================================== */
 
-  const target =
-    inProfile
-      ? $("profileContent")
-      : $("repostsContent");
-
-  if(!target) return;
-
-  const {data:reposts,error} =
-    await supabaseClient
-      .from("reposts")
-      .select("*")
-      .eq("user_id",currentUser.id)
-      .order("created_at",{ascending:false});
-
-  if(error){
-
-    console.error(error);
-
-    target.innerHTML =
-      `<div class="card" style="padding:20px;">
-        Não foi possível carregar seus reposts.
-      </div>`;
-
-    return;
-  }
-
-  if(!reposts || !reposts.length){
-
-    target.innerHTML =
-      `<div class="card" style="padding:35px;text-align:center;">
-        Você ainda não repostou nenhuma publicação.
-      </div>`;
-
-    return;
-  }
-
-  const ids =
-    reposts.map(item=>item.post_id);
-
-  const {data:posts,error:postsError} =
-    await supabaseClient
-      .from("posts")
-      .select(`
-        *,
-        profiles:user_id(
-          id,
-          username,
-          display_name,
-          avatar_url
-        )
-      `)
-      .in("id",ids)
-      .order("created_at",{ascending:false});
-
-  if(postsError){
-
-    console.error(postsError);
-
-    target.innerHTML =
-      `<div class="card" style="padding:20px;">
-        Não foi possível carregar as publicações repostadas.
-      </div>`;
-
-    return;
-  }
-
-  const html = [];
-
-  for(const post of posts || []){
-    html.push(await buildPost(post));
-  }
-
-  target.innerHTML =
-    html.length
-      ? html.join("")
-      : `<div class="card" style="padding:35px;text-align:center;">
-           Os posts repostados não estão mais disponíveis.
-         </div>`;
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-let searchTimer;
-
-function searchEverything(){
-
-  clearTimeout(searchTimer);
-
-  searchTimer =
-    setTimeout(runSearch,250);
-}
-
-async function runSearch(){
+async function searchEverything(){
 
   const q =
-    $("searchInput").value.trim();
+  document
+  .getElementById("searchInput")
+  .value.trim();
 
-  const results =
-    $("searchResults");
+  const result =
+  document
+  .getElementById("searchResults");
 
   if(!q){
 
-    results.innerHTML = "";
+    result.innerHTML = `
+      <div class="empty">
+        Pesquise por pessoas ou publicações.
+      </div>
+    `;
+
     return;
   }
 
-  results.innerHTML =
-    `<div class="card" style="padding:20px;color:var(--muted);">
-      Buscando...
-    </div>`;
-
-  const safe =
-    q.replace(/[%_,]/g," ");
-
-  const {data:profiles,error:profilesError} =
-    await supabaseClient
-      .from("profiles")
-      .select("id,username,display_name,avatar_url")
-      .or(
-        `username.ilike.%${safe}%,display_name.ilike.%${safe}%`
-      )
-      .limit(10);
-
-  const {data:posts,error:postsError} =
-    await supabaseClient
-      .from("posts")
-      .select(`
-        *,
-        profiles:user_id(
-          id,
-          username,
-          display_name,
-          avatar_url
-        )
-      `)
-      .ilike("caption",`%${safe}%`)
-      .order("created_at",{ascending:false})
-      .limit(15);
+  const {
+    data:profiles
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .or(
+    `username.ilike.%${q}%,display_name.ilike.%${q}%`
+  )
+  .limit(10);
 
   let html = "";
 
-  if(profiles && profiles.length){
+  for(const profile of profiles || []){
 
     html += `
-      <div style="font-weight:800;margin:0 0 10px;">
-        Pessoas
-      </div>
-    `;
 
-    for(const p of profiles){
+      <div
+        class="card"
+        style="
+          padding:12px;
+          margin-bottom:8px;
+          display:flex;
+          align-items:center;
+          gap:10px
+        "
+      >
 
-      const name =
-        p.display_name ||
-        p.username ||
-        "Usuário";
+        <div class="avatar">
+          ${
+            profile.avatar_url
+            ? `<img src="${escapeHtml(profile.avatar_url)}">`
+            : (
+              profile.display_name ||
+              profile.username ||
+              "U"
+            )[0].toUpperCase()
+          }
+        </div>
 
-      html += `
-        <div class="card search-user">
+        <div>
 
-          <img
-            class="avatar"
-            src="${escapeHtml(
-              p.avatar_url || defaultAvatar(name)
-            )}"
-          >
+          <b>
+            ${escapeHtml(
+              profile.display_name ||
+              profile.username
+            )}
+          </b>
 
-          <div>
-            <strong>${escapeHtml(name)}</strong>
-
-            <div style="color:var(--muted);font-size:13px;">
-              @${escapeHtml(p.username || "")}
-            </div>
+          <div class="date">
+            @${escapeHtml(profile.username || "")}
           </div>
 
         </div>
-      `;
-    }
-  }
 
-  if(posts && posts.length){
-
-    html += `
-      <div style="font-weight:800;margin:20px 0 10px;">
-        Publicações
       </div>
+
     `;
 
-    for(const post of posts){
-
-      html += await buildPost(post);
-    }
   }
 
-  if(!html){
+  result.innerHTML =
+  html ||
+  `<div class="empty">Nenhum resultado encontrado.</div>`;
 
-    html =
-      `<div class="card" style="padding:30px;text-align:center;color:var(--muted);">
-        Nenhum resultado encontrado.
-      </div>`;
-  }
-
-  results.innerHTML = html;
 }
 
-/* =========================================================
-   SHARE
-========================================================= */
 
-async function sharePost(postId){
-
-  const url =
-    window.location.origin +
-    window.location.pathname +
-    "?post=" +
-    encodeURIComponent(postId);
-
-  try{
-
-    if(navigator.share){
-
-      await navigator.share({
-        title:"Vibra",
-        text:"Confira esta publicação no Vibra!",
-        url
-      });
-
-    }else{
-
-      await navigator.clipboard.writeText(url);
-
-      showToast("Link copiado!");
-
-    }
-
-  }catch(error){
-
-    if(error?.name !== "AbortError"){
-      console.error(error);
-    }
-  }
-}
-
-/* =========================================================
-   THEME
-========================================================= */
+/* ==========================================
+   TEMA
+========================================== */
 
 function toggleTheme(){
 
-  document.body.classList.toggle("dark");
-
-  const dark =
-    document.body.classList.contains("dark");
+  document
+  .body
+  .classList
+  .toggle("dark");
 
   localStorage.setItem(
-    "vibra_theme",
-    dark ? "dark" : "light"
+    "vibra-theme",
+    document.body.classList.contains("dark")
+    ? "dark"
+    : "light"
   );
 
-  $("themeBtn").textContent =
-    dark ? "☀" : "☾";
 }
+
 
 function loadTheme(){
 
   const theme =
-    localStorage.getItem("vibra_theme");
+  localStorage.getItem("vibra-theme");
 
   if(theme === "dark"){
 
-    document.body.classList.add("dark");
+    document
+    .body
+    .classList
+    .add("dark");
 
-    $("themeBtn").textContent = "☀";
-
-  }else{
-
-    $("themeBtn").textContent = "☾";
   }
+
 }
 
-/* =========================================================
-   START
-========================================================= */
+
+/* ==========================================
+   SEGURANÇA HTML
+========================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
 
 loadTheme();
+
 checkSession();
 
 </script>
