@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Vibra</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -15,39 +17,38 @@
 }
 
 :root{
-  --bg:#f4f5f6;
+  --bg:#f7f7f8;
   --surface:#ffffff;
-  --surface2:#f0f2f3;
-  --text:#101114;
-  --muted:#7e858d;
-  --border:#e0e4e7;
-  --accent:#ff5a2f;
-  --accent2:#a66cff;
-  --pink:#ff3f72;
+  --surface2:#f0f0f3;
+  --text:#111111;
+  --muted:#777;
+  --border:#e5e5e8;
+  --accent:#111111;
   --danger:#ed4956;
+  --shadow:0 8px 30px rgba(0,0,0,.07);
 }
 
 body.dark{
-  --bg:#050a0c;
-  --surface:#081115;
-  --surface2:#102027;
-  --text:#f6f8f9;
-  --muted:#8e9ba3;
-  --border:#1c3038;
-  --accent:#ff6438;
-  --accent2:#a878ff;
-  --pink:#ff3e70;
-  --shadow:0 14px 40px rgba(0,0,0,.35);
+  --bg:#090909;
+  --surface:#151515;
+  --surface2:#202020;
+  --text:#ffffff;
+  --muted:#aaa;
+  --border:#2d2d2d;
+  --accent:#ffffff;
+  --shadow:0 8px 30px rgba(0,0,0,.25);
 }
 
 body{
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);
   color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
   min-height:100vh;
 }
 
-button,input,textarea{
+button,
+input,
+textarea{
   font:inherit;
 }
 
@@ -60,36 +61,27 @@ button{
 }
 
 .topbar{
-  position:fixed;
+  position:sticky;
   top:0;
-  left:0;
-  right:0;
-  height:58px;
-  padding:0 18px;
-  background:rgba(5,10,12,.94);
-  backdrop-filter:blur(18px);
+  z-index:50;
+  height:64px;
+  background:var(--surface);
   border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  z-index:50;
-}
-
-body:not(.dark) .topbar{
-  background:rgba(255,255,255,.94);
+  padding:0 22px;
 }
 
 .logo{
-  font-family:Georgia,serif;
-  font-style:italic;
   font-size:25px;
-  letter-spacing:-1.5px;
   font-weight:800;
+  letter-spacing:-1px;
 }
 
 .top-actions{
   display:flex;
-  gap:2px;
+  gap:8px;
 }
 
 .icon-btn{
@@ -105,38 +97,31 @@ body:not(.dark) .topbar{
   font-size:18px;
 }
 
-.top-icon{
-  background:transparent!important;
-  font-size:22px;
-  width:38px;
-  height:38px;
-}
-
 .layout{
-  width:min(980px,100%);
+  width:min(1100px,100%);
   margin:auto;
   display:grid;
-  grid-template-columns:180px minmax(0,560px);
-  gap:28px;
-  padding:78px 14px 90px;
+  grid-template-columns:220px minmax(0,620px) 220px;
+  gap:22px;
+  padding:25px 15px 100px;
 }
 
 .sidebar{
   position:sticky;
-  top:76px;
+  top:90px;
   height:max-content;
 }
 
 .nav-item{
   width:100%;
-  padding:12px 14px;
+  padding:13px 15px;
   border:0;
   background:transparent;
   color:var(--text);
   text-align:left;
-  border-radius:14px;
+  border-radius:13px;
   margin-bottom:5px;
-  font-size:14px;
+  font-size:15px;
 }
 
 .nav-item:hover,
@@ -145,101 +130,11 @@ body:not(.dark) .topbar{
   font-weight:700;
 }
 
-main{
-  min-width:0;
-}
-
 .card{
   background:var(--surface);
   border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:none;
-}
-
-.primary{
-  border:0;
-  background:var(--accent);
-  color:white;
-  padding:10px 17px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-.secondary{
-  border:1px solid var(--border);
-  background:var(--surface2);
-  color:var(--text);
-  padding:9px 13px;
-  border-radius:10px;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.stories-bar{
-  display:flex;
-  gap:14px;
-  overflow-x:auto;
-  padding:12px 10px;
-  margin-bottom:10px;
-  background:transparent;
-  border:0;
-  box-shadow:none;
-}
-
-.stories-bar::-webkit-scrollbar{
-  display:none;
-}
-
-.story-item{
-  border:0;
-  background:transparent;
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:5px;
-  min-width:66px;
-  font-size:11px;
-}
-
-.story-ring{
-  width:56px;
-  height:56px;
-  border-radius:50%;
-  padding:2px;
-  background:linear-gradient(135deg,#ffb52e,#ff3c68,#9d67ff);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.story-ring:before{
-  content:"";
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  background:var(--surface);
-}
-
-.story-ring.own{
-  background:var(--border);
-}
-
-.story-plus{
-  position:absolute;
-  z-index:2;
-  width:25px;
-  height:25px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--accent);
-  color:white;
-  font-size:19px;
-  border:2px solid var(--surface);
+  border-radius:18px;
+  box-shadow:var(--shadow);
 }
 
 .composer{
@@ -265,6 +160,23 @@ main{
   border-top:1px solid var(--border);
   padding-top:12px;
   margin-top:10px;
+}
+
+.primary{
+  border:0;
+  background:var(--accent);
+  color:var(--bg);
+  padding:10px 17px;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.secondary{
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  padding:9px 13px;
+  border-radius:10px;
 }
 
 .post{
@@ -376,10 +288,6 @@ main{
   outline:0;
   border-radius:9px;
   padding:9px 11px;
-}
-
-.right{
-  display:none;
 }
 
 .right-card{
@@ -524,6 +432,54 @@ main{
   display:flex;
 }
 
+/* Editor de perfil abre como uma página inteira */
+#editProfileModal{
+  padding:0;
+  align-items:stretch;
+  justify-content:stretch;
+}
+
+#editProfileModal .modal{
+  width:100%;
+  max-width:none;
+  height:100vh;
+  max-height:none;
+  border-radius:0;
+  padding:0;
+  overflow-y:auto;
+  background:var(--bg);
+}
+
+#editProfileModal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 22px;
+  margin:0;
+}
+
+#editProfileModal .edit-profile-grid{
+  width:min(720px,100%);
+  margin:0 auto;
+  padding:24px 20px 100px;
+}
+
+#editProfileModal .modal-footer{
+  position:sticky;
+  bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:14px 20px;
+}
+
+@media(max-width:600px){
+  #editProfileModal .edit-profile-grid{
+    padding:18px 14px 100px;
+  }
+}
+
 .modal{
   width:min(520px,100%);
   background:var(--surface);
@@ -578,3 +534,2137 @@ main{
 .mobile-nav{
   display:none;
 }
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    grid-template-columns:1fr;
+    width:min(650px,100%);
+  }
+
+  .sidebar,
+  .right{
+    display:none;
+  }
+
+  .mobile-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:64px;
+    background:var(--surface);
+    border-top:1px solid var(--border);
+    z-index:60;
+    justify-content:space-around;
+  }
+
+  .mobile-nav button{
+    flex:1;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    font-size:20px;
+  }
+
+}
+
+
+/* ===== PERFIL COMPLETO V8 ===== */
+.profile-cover{
+  height:150px;background:var(--surface2);background-size:cover;background-position:center;
+  border-radius:16px 16px 0 0;position:relative;
+}
+.profile-cover-edit{
+  position:absolute;right:12px;top:12px;border:1px solid rgba(255,255,255,.7);
+  background:rgba(0,0,0,.45);color:#fff;padding:7px 10px;border-radius:10px;cursor:pointer;
+}
+.profile-head-v2{display:flex;align-items:flex-end;gap:18px;padding:0 20px 18px;margin-top:-42px;position:relative}
+.profile-avatar-v2{width:96px;height:96px;border-radius:50%;object-fit:cover;background:var(--surface2);border:4px solid var(--surface)}
+.profile-main-info{flex:1;min-width:0;padding-top:42px}
+.profile-name-v2{font-size:22px;font-weight:800}
+.profile-handle-v2{color:var(--muted);margin-top:3px}
+.profile-bio-v2{margin-top:10px;line-height:1.45;white-space:pre-wrap}
+.profile-meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px;margin-top:10px}
+.profile-music{margin:0 20px 18px;padding:12px 14px;border:1px solid var(--border);background:var(--surface2);border-radius:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.profile-music-icon{font-size:24px}.profile-music-info{flex:1;min-width:0}
+.profile-music-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-music-artist{font-size:12px;color:var(--muted);margin-top:3px}
+.profile-music-link{font-size:12px;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);padding:8px 11px;border-radius:10px;cursor:pointer}
+.profile-music-player{width:100%;border-radius:12px;overflow:hidden;background:#000}
+.profile-music-player iframe{display:block;width:100%;border:0;height:152px}
+.profile-music-player audio{display:block;width:100%;height:42px;accent-color:#ff5c8a}
+.profile-status{margin:0 20px 18px;color:var(--muted);font-size:13px}
+.edit-profile-grid{display:grid;gap:12px}.edit-label{font-size:13px;font-weight:700;margin-bottom:5px;display:block}
+.edit-file{width:100%;margin-top:4px}.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.profile-edit-preview{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:12px}
+.profile-edit-preview img{width:58px;height:58px;border-radius:50%;object-fit:cover}
+@media(max-width:600px){.profile-cover{height:125px}.profile-head-v2{padding:0 14px 16px;gap:12px}.profile-avatar-v2{width:84px;height:84px}.profile-main-info{padding-top:36px}.profile-name-v2{font-size:19px}.edit-row{grid-template-columns:1fr}}
+
+
+/* Criar publicação também abre como uma página inteira no celular e desktop */
+#createModal{
+  padding:0;
+  align-items:stretch;
+  justify-content:stretch;
+}
+#createModal .modal{
+  width:100%;
+  max-width:none;
+  height:100vh;
+  max-height:none;
+  border-radius:0;
+  padding:0;
+  overflow-y:auto;
+}
+#createModal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 22px;
+  margin:0;
+}
+#createModal .modal > textarea,
+#createModal .modal > div:not(.modal-head):not(.modal-footer){
+  width:min(720px,100%);
+  margin-left:auto;
+  margin-right:auto;
+}
+#createModal .modal > textarea{
+  display:block;
+  margin-top:22px;
+  min-height:240px;
+}
+#createModal .modal-footer{
+  position:sticky;
+  bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:14px 20px;
+}
+
+
+/* ==========================================================
+   VIBRA V10 - VISUAL MOBILE / DARK SOCIAL APP
+========================================================== */
+:root{
+  --bg:#f4f5f6;
+  --surface:#ffffff;
+  --surface2:#f0f2f3;
+  --text:#101114;
+  --muted:#7e858d;
+  --border:#e0e4e7;
+  --accent:#ff5a2f;
+  --accent2:#a66cff;
+  --pink:#ff3f72;
+}
+body.dark{
+  --bg:#050a0c;
+  --surface:#081115;
+  --surface2:#102027;
+  --text:#f6f8f9;
+  --muted:#8e9ba3;
+  --border:#1c3038;
+  --accent:#ff6438;
+  --accent2:#a878ff;
+  --pink:#ff3e70;
+  --shadow:0 14px 40px rgba(0,0,0,.35);
+}
+body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg)}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:58px;padding:0 18px;
+  background:rgba(5,10,12,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)
+}
+body:not(.dark) .topbar{background:rgba(255,255,255,.94)}
+.logo{font-family:Georgia,serif;font-style:italic;font-size:25px;letter-spacing:-1.5px}
+.top-actions{gap:2px}.top-icon{background:transparent!important;font-size:22px;width:38px;height:38px}
+.layout{width:min(980px,100%);grid-template-columns:180px minmax(0,560px);gap:28px;padding:78px 14px 90px}
+.right{display:none}.sidebar{top:76px}
+.nav-item{font-size:14px;border-radius:14px;padding:12px 14px}
+.nav-item.active,.nav-item:hover{background:var(--surface2)}
+main{min-width:0}
+.card{border-radius:16px;box-shadow:none;border-color:var(--border)}
+.stories-bar{display:flex;gap:14px;overflow-x:auto;padding:12px 10px;margin-bottom:10px;background:transparent;border:0;box-shadow:none}
+.stories-bar::-webkit-scrollbar{display:none}
+.story-item{border:0;background:transparent;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:5px;min-width:66px;font-size:11px}
+.story-ring{width:56px;height:56px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#ffb52e,#ff3c68,#9d67ff);display:flex;align-items:center;justify-content:center}
+.story-ring:before{content:"";width:100%;height:100%;border-radius:50%;background:var(--surface);position:relative}
+.story-plus{position:absolute;z-index:2;width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent);color:white;font-size:19px;border:2px solid var(--surface)}
+.story-ring.own{background:var(--border)}
+.composer{padding:12px 14px;margin-bottom:12px;background:var(--surface)}
+.composer textarea{min-height:52px;font-size:14px}
+.composer-bottom{padding-top:8px;margin-top:5px}
+.secondary{background:transparent;border:0;color:var(--muted);padding:7px 8px}
+.primary{background:linear-gradient(135deg,var(--accent),#ff8c37);color:#fff;border-radius:11px;padding:9px 15px}
+.post{border-radius:0;margin-bottom:14px;overflow:hidden;background:var(--surface)}
+.post-head{padding:11px 12px 9px}.avatar{width:38px;height:38px}.user-info .username{font-size:13px}.date{font-size:11px;color:var(--muted)}
+.post-content{padding:5px 12px 10px;font-size:14px;line-height:1.45}
+.post-media{width:100%;max-height:650px;object-fit:cover;background:#000;display:block}
+.post-actions{padding:8px 9px;border-bottom:1px solid var(--border);gap:2px}
+.action{border:0;background:transparent;color:var(--text);padding:5px 7px;font-size:15px}
+.action.liked{color:var(--pink)}
+.comments{padding:10px 12px;background:var(--surface2);border-top:0}
+.comment-form input{background:var(--surface);border-color:var(--border);color:var(--text)}
+.search-box{margin-bottom:10px}.search-box input{background:var(--surface2);border:0;border-radius:22px;padding:12px 16px}
+.profile{padding:0;overflow:hidden;background:var(--surface)}
+.profile-cover{height:190px;border-radius:0;background-color:var(--surface2);position:relative}
+.profile-cover-edit{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.35);border-radius:50%;width:38px;height:38px;padding:0}
+.profile-head-v2{padding:0 18px 15px;margin-top:-45px;align-items:flex-end}
+.profile-avatar-v2{width:92px;height:92px;border:4px solid var(--surface);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.profile-main-info{padding-top:48px}.profile-name-v2{font-size:21px}.profile-handle-v2{font-size:13px}.profile-bio-v2{font-size:14px;color:var(--text)}
+.profile-meta{color:var(--muted);font-size:12px}.profile-status{padding:0 18px;margin:0 0 12px;color:var(--muted)}
+.profile-music{margin:0 14px 14px;padding:11px 12px;background:var(--surface2);border-color:var(--border)}
+.profile-music-link{background:var(--surface);border:1px solid var(--border);padding:7px 9px;border-radius:9px}
+.tabs{margin-top:0}.tab{font-size:13px;padding:13px}.tab.active{border-bottom:2px solid var(--text)}
+/* fullscreen editors */
+#editProfileModal .modal,#createModal .modal{background:var(--bg)}
+#editProfileModal .modal-head,#createModal .modal-head{background:rgba(5,10,12,.96);color:#fff;border-bottom:1px solid var(--border);height:58px;padding:0 16px;display:flex;align-items:center}
+body:not(.dark) #editProfileModal .modal-head,body:not(.dark) #createModal .modal-head{background:#fff;color:var(--text)}
+#editProfileModal .modal-head h2,#createModal .modal-head h2{font-size:17px;margin:0}
+#editProfileModal .edit-profile-grid{width:min(620px,100%);padding:20px 16px 100px;gap:16px}
+#editProfileModal .edit-profile-grid:before{content:"";display:block;height:130px;border-radius:16px;background:linear-gradient(135deg,#142a32,#0b1519);border:1px solid var(--border);grid-column:1/-1;opacity:.9}
+.edit-label{font-size:12px;color:var(--text);margin-bottom:6px}
+.input{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);outline:none}
+#editProfileModal .profile-edit-preview{background:var(--surface);border-color:var(--border);padding:12px;border-radius:14px}
+#editProfileModal .profile-edit-preview img{width:70px;height:70px;border:3px solid var(--surface2)}
+.edit-file{font-size:12px;color:var(--muted)}
+#editProfileModal .modal-footer,#createModal .modal-footer{background:rgba(5,10,12,.96);border-top:1px solid var(--border);padding:12px 16px}
+body:not(.dark) #editProfileModal .modal-footer,body:not(.dark) #createModal .modal-footer{background:#fff}
+#editProfileModal .modal-footer .primary,#createModal .modal-footer .primary{min-width:105px}
+#createModal .modal > textarea{width:min(620px,calc(100% - 32px));margin:18px auto 0;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:15px;padding:16px;min-height:190px}
+#createModal .modal > div:not(.modal-head):not(.modal-footer){width:min(620px,calc(100% - 32px));margin:14px auto}
+#createModal input[type=file]{color:var(--muted);width:100%;padding:14px;border:1px dashed var(--border);border-radius:14px;background:var(--surface2)}
+.mobile-nav{height:62px;background:rgba(5,10,12,.96);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+body:not(.dark) .mobile-nav{background:rgba(255,255,255,.96)}
+.mobile-nav button{font-size:21px;color:var(--muted)}
+.mobile-nav button:first-child{color:var(--text)}
+@media(max-width:900px){.layout{width:min(560px,100%);padding-top:68px}.sidebar{display:none}.mobile-nav{display:flex}}
+@media(min-width:901px){.mobile-nav{display:none}}
+@media(max-width:600px){.topbar{height:56px}.layout{padding:65px 0 74px}.stories-bar{padding-left:12px}.profile-cover{height:155px}.profile-head-v2{padding-left:14px;padding-right:14px}.profile-avatar-v2{width:86px;height:86px}.profile-main-info{padding-top:44px}.post-media{max-height:560px}.post-head{padding-left:10px;padding-right:10px}}
+
+</style>
+</head>
+
+<body>
+
+<div id="loginScreen" class="login card">
+
+  <h1>Vibra</h1>
+
+  <p id="loginDescription">
+    Entre na sua conta para continuar.
+  </p>
+
+  <div class="field">
+    <input id="email" type="email" placeholder="Seu e-mail">
+  </div>
+
+  <div class="field">
+    <input id="password" type="password" placeholder="Sua senha">
+  </div>
+
+  <button class="primary" id="authButton" onclick="handleAuth()">
+    Entrar
+  </button>
+
+  <div class="switch">
+    <span id="switchText">Ainda não tem uma conta?</span>
+    <button onclick="toggleAuthMode()" id="switchButton">
+      Criar conta
+    </button>
+  </div>
+
+</div>
+
+
+<div id="app" class="app hidden">
+
+  <header class="topbar">
+
+    <div class="logo">Vibra</div>
+
+    <div class="top-actions">
+      <button class="icon-btn top-icon" onclick="showPage('profile')" title="Notificações">♡</button>
+      <button class="icon-btn top-icon" onclick="showPage('search')" title="Mensagens">▱</button>
+      <button class="icon-btn top-icon" onclick="toggleTheme()" title="Tema">◐</button>
+    </div>
+
+  </header>
+
+
+  <div class="layout">
+
+    <aside class="sidebar">
+
+      <button class="nav-item active" onclick="showPage('home',this)">
+        🏠 Início
+      </button>
+
+      <button class="nav-item" onclick="showPage('search',this)">
+        🔎 Buscar
+      </button>
+
+      <button class="nav-item" onclick="openCreate()">
+        ➕ Criar
+      </button>
+
+      <button class="nav-item" onclick="showPage('profile',this)">
+        👤 Perfil
+      </button>
+
+      <button class="nav-item" onclick="showPage('reposts',this)">
+        🔄 Repostados
+      </button>
+
+    </aside>
+
+
+    <main>
+
+      <section id="homePage">
+
+        <div class="stories-bar card" id="storiesBar">
+          <button class="story-item" onclick="openCreate()">
+            <span class="story-ring own"><span class="story-plus">+</span></span>
+            <span>Seu story</span>
+          </button>
+        </div>
+
+        <div class="composer card">
+
+          <textarea
+            id="quickCaption"
+            placeholder="No que você está pensando?"
+          ></textarea>
+
+          <div class="composer-bottom">
+
+            <button
+              class="secondary"
+              onclick="openCreate()"
+            >
+              📷 Foto / vídeo
+            </button>
+
+            <button
+              class="primary"
+              onclick="quickPost()"
+            >
+              Publicar
+            </button>
+
+          </div>
+
+        </div>
+
+        <div id="feed"></div>
+
+      </section>
+
+
+      <section id="searchPage" class="hidden">
+
+        <div class="card" style="padding:18px">
+
+          <h2 style="margin-bottom:15px">
+            Buscar
+          </h2>
+
+          <div class="search-box">
+
+            <input
+              id="searchInput"
+              placeholder="Pesquisar pessoas ou posts..."
+              oninput="searchEverything()"
+            >
+
+          </div>
+
+          <div id="searchResults"></div>
+
+        </div>
+
+      </section>
+
+
+      <section id="profilePage" class="hidden">
+
+  <div class="profile card">
+
+    <div class="profile-cover" id="profileCover">
+      <button class="profile-cover-edit" onclick="openEditProfile()">✏️ Editar</button>
+    </div>
+
+    <div class="profile-head-v2">
+      <img class="profile-avatar-v2" id="profileAvatar" src="" alt="Foto de perfil">
+
+      <div class="profile-main-info">
+        <div class="profile-name-v2" id="profileName">Usuário</div>
+        <div class="profile-handle-v2" id="profileUsername">@usuario</div>
+        <div class="profile-bio-v2" id="profileBio"></div>
+
+        <div class="profile-meta">
+          <span id="profileBirthday"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-status" id="profileStatus"></div>
+
+    <div class="profile-music hidden" id="profileMusic">
+      <div class="profile-music-icon">🎵</div>
+      <div class="profile-music-info">
+        <div class="profile-music-title" id="profileMusicTitle"></div>
+        <div class="profile-music-artist" id="profileMusicArtist"></div>
+      </div>
+      <button id="profileMusicPlay" class="profile-music-link" type="button" onclick="toggleProfileMusic()">▶ Ouvir no Vibra</button>
+      <div id="profileMusicPlayer" class="profile-music-player hidden"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="profileTab('posts',this)">Posts</button>
+      <button class="tab" onclick="profileTab('reposts',this)">Repostados</button>
+    </div>
+
+  </div>
+
+  <div id="profileContent"></div>
+
+</section>
+
+<section id="repostsPage" class="hidden">
+
+        <div class="card" style="padding:20px;margin-bottom:18px">
+
+          <h2>
+            🔄 Repostados
+          </h2>
+
+          <p style="color:var(--muted);margin-top:5px">
+            Aqui ficam somente os conteúdos que você repostou.
+          </p>
+
+        </div>
+
+        <div id="repostsContent"></div>
+
+      </section>
+
+    </main>
+
+
+    <aside class="right">
+
+      <div class="right-card card">
+
+        <div class="right-title">
+          Seu Vibra
+        </div>
+
+        <p style="color:var(--muted);line-height:1.5">
+          Compartilhe momentos, descubra pessoas e deixe sua vibração registrada.
+        </p>
+
+        <button
+          class="primary"
+          style="width:100%;margin-top:15px"
+          onclick="openCreate()"
+        >
+          Criar publicação
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <nav class="mobile-nav">
+
+    <button onclick="showPage('home')">⌂</button>
+
+    <button onclick="showPage('search')">⌕</button>
+
+    <button onclick="openCreate()">＋</button>
+
+    <button onclick="showPage('reposts')">↻</button>
+
+    <button onclick="showPage('profile')">◉</button>
+
+  </nav>
+
+</div>
+
+
+<div class="modal-bg" id="editProfileModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+      <h2>← Editar perfil</h2>
+      <button class="icon-btn" onclick="closeEditProfile()" title="Voltar">×</button>
+    </div>
+
+    <div class="edit-profile-grid">
+
+      <div>
+        <label class="edit-label">Foto de perfil</label>
+        <div class="profile-edit-preview">
+          <img id="editAvatarPreview" src="" alt="">
+          <div>
+            <div style="font-weight:700">Sua foto</div>
+            <input class="edit-file" type="file" id="editAvatarInput" accept="image/*">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Foto de capa</label>
+        <input class="edit-file" type="file" id="editCoverInput" accept="image/*">
+      </div>
+
+      <div class="edit-row">
+        <div>
+          <label class="edit-label">Nome</label>
+          <input class="input" id="editDisplayName" placeholder="Seu nome">
+        </div>
+        <div>
+          <label class="edit-label">Nome de usuário</label>
+          <input class="input" id="editUsername" placeholder="seuusuario">
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Bio</label>
+        <textarea id="editBio" class="input" style="min-height:95px;resize:vertical" placeholder="Conte um pouco sobre você..."></textarea>
+      </div>
+
+      <div class="edit-row">
+        <div>
+          <label class="edit-label">Aniversário</label>
+          <input class="input" id="editBirthday" type="date">
+          <div style="font-size:12px;color:var(--muted);margin-top:-4px;">Você escolhe se a data aparece no seu perfil.</div>
+        </div>
+        <div>
+          <label class="edit-label">Mostrar aniversário</label>
+          <select class="input" id="editShowBirthday">
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="edit-label">Frase/status</label>
+        <input class="input" id="editStatus" maxlength="60" placeholder="Uma frase curta sobre você">
+      </div>
+
+      <div>
+        <label class="edit-label">🎵 Música do perfil</label>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Envie um arquivo de áudio para ele tocar diretamente dentro do Vibra. MP3, M4A, OGG e WAV.</div>
+        <input class="input" id="editMusicTitle" placeholder="Nome da música">
+        <input class="input" id="editMusicArtist" placeholder="Artista" style="margin-top:8px">
+        <input class="edit-file" id="editMusicFile" type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/ogg,audio/wav,audio/*" style="margin-top:8px">
+        <div id="musicFileStatus" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+        <input type="hidden" id="editMusicUrl">
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="secondary" onclick="closeEditProfile()">Cancelar</button>
+      <button class="primary" onclick="saveProfile()">Salvar perfil</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-bg" id="createModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <h2>Criar publicação</h2>
+
+      <button
+        class="icon-btn"
+        onclick="closeCreate()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <textarea
+      id="postCaption"
+      placeholder="Escreva uma legenda..."
+    ></textarea>
+
+    <div style="margin-top:12px">
+
+      <input
+        type="file"
+        id="mediaInput"
+        accept="image/*,video/*"
+      >
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="secondary"
+        onclick="closeCreate()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="primary"
+        onclick="createPost()"
+      >
+        Publicar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+/* ==========================================
+   SUPABASE
+========================================== */
+
+const SUPABASE_URL =
+"https://dkkudlzpopmfhyqwjfsv.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_r1YEZ_TDBIJsfZUKfVTLPQ_y2pTX6re";
+
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* ==========================================
+   ESTADO
+========================================== */
+
+let currentUser = null;
+let authMode = "login";
+let allPosts = [];
+
+
+/* ==========================================
+   TOAST
+========================================== */
+
+function toast(message){
+
+  const el =
+  document.getElementById("toast");
+
+  el.textContent = message;
+
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+
+}
+
+
+/* ==========================================
+   AUTENTICAÇÃO
+========================================== */
+
+function toggleAuthMode(){
+
+  authMode =
+  authMode === "login"
+  ? "signup"
+  : "login";
+
+  const button =
+  document.getElementById("authButton");
+
+  const desc =
+  document.getElementById("loginDescription");
+
+  const text =
+  document.getElementById("switchText");
+
+  const switchButton =
+  document.getElementById("switchButton");
+
+  if(authMode === "signup"){
+
+    button.textContent = "Criar conta";
+
+    desc.textContent =
+    "Crie sua conta no Vibra.";
+
+    text.textContent =
+    "Já tem uma conta?";
+
+    switchButton.textContent =
+    "Entrar";
+
+  }else{
+
+    button.textContent = "Entrar";
+
+    desc.textContent =
+    "Entre na sua conta para continuar.";
+
+    text.textContent =
+    "Ainda não tem uma conta?";
+
+    switchButton.textContent =
+    "Criar conta";
+
+  }
+
+}
+
+
+async function handleAuth(){
+
+  const email =
+  document.getElementById("email").value.trim();
+
+  const password =
+  document.getElementById("password").value;
+
+  if(!email || !password){
+
+    toast("Preencha e-mail e senha.");
+
+    return;
+  }
+
+  let result;
+
+  if(authMode === "signup"){
+
+    result =
+    await db.auth.signUp({
+      email,
+      password
+    });
+
+  }else{
+
+    result =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  }
+
+  if(result.error){
+
+    toast(result.error.message);
+
+    return;
+  }
+
+  if(authMode === "signup"){
+
+    toast(
+      "Conta criada! Verifique seu e-mail se necessário."
+    );
+
+  }
+
+}
+
+
+async function logout(){
+
+  await db.auth.signOut();
+
+}
+
+
+/* ==========================================
+   SESSÃO
+========================================== */
+
+async function checkSession(){
+
+  const {
+    data
+  } =
+  await db.auth.getSession();
+
+  if(data.session){
+
+    currentUser =
+    data.session.user;
+
+    await enterApp();
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+db.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    if(session){
+
+      currentUser =
+      session.user;
+
+      await enterApp();
+
+    }else{
+
+      currentUser = null;
+
+      showLogin();
+
+    }
+
+  }
+);
+
+
+function showLogin(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("app")
+  .classList.add("hidden");
+
+}
+
+
+async function enterApp(){
+
+  document
+  .getElementById("loginScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("app")
+  .classList.remove("hidden");
+
+  await ensureProfile();
+
+  await loadProfile();
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
+   STORAGE DE MÍDIA
+========================================== */
+
+const VIBRA_BUCKET = "vibra-media";
+
+async function uploadMedia(file, folder){
+  if(!file) return null;
+
+  const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+  const safeExt = ext.replace(/[^a-z0-9]/g, "") || "bin";
+  const path = `${folder}/${currentUser.id}/${Date.now()}-${crypto.randomUUID()}.${safeExt}`;
+
+  const { error } = await db.storage
+    .from(VIBRA_BUCKET)
+    .upload(path, file, {
+      cacheControl: "31536000",
+      upsert: false,
+      contentType: file.type || undefined
+    });
+
+  if(error) throw error;
+
+  const { data } = db.storage
+    .from(VIBRA_BUCKET)
+    .getPublicUrl(path);
+
+  return data.publicUrl;
+}
+
+
+/* ==========================================
+   PERFIL
+========================================== */
+
+async function ensureProfile(){
+
+  const {
+    data
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .eq("id",currentUser.id)
+  .maybeSingle();
+
+  if(!data){
+
+    const emailName =
+    currentUser.email
+    ?.split("@")[0]
+    || "usuario";
+
+    const username =
+    emailName
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"")
+    .slice(0,25)
+    || "usuario";
+
+    await db
+    .from("profiles")
+    .insert({
+      id:currentUser.id,
+      username,
+      display_name:emailName
+    });
+
+  }
+
+}
+
+
+async function loadProfile(){
+
+  const {data,error} =
+    await db.from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  if(!data) return;
+
+  const name = data.display_name || data.username || "Usuário";
+  const username = data.username ? "@" + data.username : "";
+  const avatarUrl = data.avatar_url || defaultAvatar(name);
+
+  document.getElementById("profileAvatar").src = avatarUrl;
+  document.getElementById("profileName").textContent = name;
+  document.getElementById("profileUsername").textContent = username;
+  document.getElementById("profileBio").textContent = data.bio || "";
+
+  const cover = document.getElementById("profileCover");
+  cover.style.backgroundImage = data.cover_url
+    ? `url("${String(data.cover_url).replace(/"/g,'\\"')}")`
+    : "";
+
+  const birthday = document.getElementById("profileBirthday");
+  birthday.textContent =
+    data.birthday && data.show_birthday !== false
+      ? "🎂 " + formatBirthday(data.birthday)
+      : "";
+
+  const status = document.getElementById("profileStatus");
+  status.textContent = data.status || "";
+  status.style.display = data.status ? "block" : "none";
+
+  const musicBox = document.getElementById("profileMusic");
+  const hasMusic = !!(data.music_title || data.music_url);
+
+  musicBox.classList.toggle("hidden",!hasMusic);
+
+  if(hasMusic){
+    document.getElementById("profileMusicTitle").textContent =
+      data.music_title || "Música do perfil";
+    document.getElementById("profileMusicArtist").textContent =
+      data.music_artist || "";
+
+    const play = document.getElementById("profileMusicPlay");
+    play.style.display = data.music_url ? "block" : "none";
+    play.textContent = "▶ Ouvir no Vibra";
+    document.getElementById("profileMusicPlayer").classList.add("hidden");
+    document.getElementById("profileMusicPlayer").innerHTML = "";
+  }
+
+  document.getElementById("editAvatarPreview").src = avatarUrl;
+}
+
+function getMusicEmbed(url){
+  if(!url) return null;
+  try{
+    const u = new URL(url);
+    const host = u.hostname.replace("www.","").toLowerCase();
+
+    // YouTube: watch, shorts, youtu.be e embed
+    if(host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com" || host === "youtu.be"){
+      let id = "";
+      if(host === "youtu.be") id = u.pathname.slice(1);
+      if(u.searchParams.get("v")) id = u.searchParams.get("v");
+      const m = u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/);
+      if(m) id = m[1];
+      if(id){
+        return {
+          type:"iframe",
+          src:`https://www.youtube.com/embed/${encodeURIComponent(id)}?rel=0&playsinline=1`,
+          title:"YouTube"
+        };
+      }
+    }
+
+    // Spotify: track, album, playlist, episode
+    if(host === "open.spotify.com"){
+      const m = u.pathname.match(/^\/(track|album|playlist|episode)\/([^/?]+)/);
+      if(m){
+        return {
+          type:"iframe",
+          src:`https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`,
+          title:"Spotify"
+        };
+      }
+    }
+
+    // Link direto de áudio, caso a pessoa use .mp3/.m4a/.ogg/.wav
+    if(/\.(mp3|m4a|ogg|wav)(\?.*)?$/i.test(u.pathname)){
+      return {type:"audio",src:u.href};
+    }
+  }catch(e){
+    console.error(e);
+  }
+  return null;
+}
+
+function toggleProfileMusic(){
+  const url = currentProfile?.music_url;
+  const player = document.getElementById("profileMusicPlayer");
+  const button = document.getElementById("profileMusicPlay");
+  if(!url || !player || !button) return;
+
+  if(!player.classList.contains("hidden")){
+    const audio = player.querySelector("audio");
+    if(audio){ audio.pause(); }
+    player.classList.add("hidden");
+    player.innerHTML = "";
+    button.textContent = "▶ Ouvir no Vibra";
+    return;
+  }
+
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.preload = "metadata";
+  audio.src = url;
+  audio.style.width = "100%";
+  audio.addEventListener("play",()=>{ button.textContent = "⏸ Pausar"; });
+  audio.addEventListener("pause",()=>{ button.textContent = "▶ Ouvir no Vibra"; });
+  audio.addEventListener("ended",()=>{ button.textContent = "▶ Ouvir no Vibra"; });
+
+  player.innerHTML = "";
+  player.appendChild(audio);
+  player.classList.remove("hidden");
+  button.textContent = "⏸ Pausar";
+  audio.play().catch(()=>{});
+}
+
+function formatBirthday(value){
+  if(!value) return "";
+  const parts = String(value).split("-");
+  if(parts.length !== 3) return value;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function defaultAvatar(name){
+  const letter =
+    String(name || "V").trim().charAt(0).toUpperCase() || "V";
+
+  return "https://ui-avatars.com/api/?name=" +
+    encodeURIComponent(letter) +
+    "&background=777777&color=ffffff&bold=true";
+}
+
+
+/* ==========================================
+   POSTS
+==========================================
+
+
+========================================== */
+
+async function loadFeed(){
+
+  const {
+    data,
+    error
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .order("created_at",{ascending:false});
+
+  if(error){
+
+    console.error(error);
+
+    toast("Não foi possível carregar os posts.");
+
+    return;
+  }
+
+  allPosts =
+  data || [];
+
+  await renderPosts(
+    allPosts,
+    document.getElementById("feed")
+  );
+
+}
+
+
+async function renderPosts(posts,container){
+
+  if(!posts.length){
+
+    container.innerHTML = `
+      <div class="empty card">
+        <div style="font-size:35px">✨</div>
+        <h3 style="margin:10px 0">
+          Seu Vibra começa aqui
+        </h3>
+        <p>
+          Publique alguma coisa para começar.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for(const post of posts){
+
+    const html =
+    await buildPost(post);
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      html
+    );
+
+  }
+
+}
+
+
+async function buildPost(post){
+
+  const {
+    data:like
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const {
+    count
+  } =
+  await db
+  .from("likes")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    count:commentCount
+  } =
+  await db
+  .from("comments")
+  .select("*",{count:"exact",head:true})
+  .eq("post_id",post.id);
+
+  const {
+    data:repost
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",post.id)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  const profile =
+  post.profiles || {};
+
+  const name =
+  profile.display_name ||
+  profile.username ||
+  "Usuário";
+
+  const username =
+  profile.username
+  ? "@" + profile.username
+  : "";
+
+  const date =
+  new Date(post.created_at)
+  .toLocaleString("pt-BR",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+
+  let media = "";
+
+  if(post.media_url){
+
+    if(post.media_type === "video"){
+
+      media =
+      `<video
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        controls
+        playsinline
+      ></video>`;
+
+    }else{
+
+      media =
+      `<img
+        class="post-media"
+        src="${escapeHtml(post.media_url)}"
+        alt="Publicação"
+      >`;
+
+    }
+
+  }
+
+  return `
+
+  <article class="post card">
+
+    <div class="post-head">
+
+      <div class="avatar">
+
+        ${
+          profile.avatar_url
+          ? `<img src="${escapeHtml(profile.avatar_url)}">`
+          : name[0].toUpperCase()
+        }
+
+      </div>
+
+      <div class="user-info">
+
+        <div class="username">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="date">
+          ${escapeHtml(username)}
+          ${username ? " · " : ""}
+          ${date}
+        </div>
+
+      </div>
+
+    </div>
+
+    ${
+      post.caption
+      ? `
+      <div class="post-content">
+        ${escapeHtml(post.caption)}
+      </div>
+      `
+      : ""
+    }
+
+    ${media}
+
+    <div class="post-actions">
+
+      <button
+        class="action ${like ? "liked":""}"
+        onclick="toggleLike('${post.id}')"
+      >
+        ${like ? "♥" : "♡"}
+        ${count || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleComments('${post.id}')"
+      >
+        💬 ${commentCount || 0}
+      </button>
+
+      <button
+        class="action"
+        onclick="toggleRepost('${post.id}')"
+      >
+        ${repost ? "↻ Repostado" : "↻ Repostar"}
+      </button>
+
+    </div>
+
+    <div
+      id="comments-${post.id}"
+      class="comments hidden"
+    ></div>
+
+  </article>
+
+  `;
+
+}
+
+
+/* ==========================================
+   PUBLICAR
+========================================== */
+
+async function quickPost(){
+
+  const textarea =
+  document.getElementById("quickCaption");
+
+  const caption =
+  textarea.value.trim();
+
+  if(!caption){
+
+    openCreate();
+
+    return;
+  }
+
+  const {
+    error
+  } =
+  await db
+  .from("posts")
+  .insert({
+    user_id:currentUser.id,
+    caption,
+    media_type:"text"
+  });
+
+  if(error){
+
+    toast(error.message);
+
+    return;
+  }
+
+  textarea.value = "";
+
+  toast("Publicado! ✨");
+
+  await loadFeed();
+
+}
+
+
+function openCreate(){
+
+  document
+  .getElementById("createModal")
+  .classList.add("open");
+
+}
+
+
+function closeCreate(){
+
+  document
+  .getElementById("createModal")
+  .classList.remove("open");
+
+}
+
+
+async function createPost(){
+
+  const caption =
+    document.getElementById("postCaption").value.trim();
+
+  const file =
+    document.getElementById("mediaInput").files[0];
+
+  let media_url = null;
+  let media_type = "text";
+
+  try{
+
+    if(file){
+      media_url = await uploadMedia(file,"posts");
+      media_type = file.type.startsWith("video") ? "video" : "image";
+    }
+
+    if(!caption && !media_url){
+      toast("Adicione uma legenda ou mídia.");
+      return;
+    }
+
+    const { error } =
+      await db.from("posts").insert({
+        user_id:currentUser.id,
+        caption,
+        media_url,
+        media_type
+      });
+
+    if(error) throw error;
+
+    document.getElementById("postCaption").value = "";
+    document.getElementById("mediaInput").value = "";
+    closeCreate();
+
+    toast("Publicação criada! 🎉");
+    await loadFeed();
+
+  }catch(error){
+    console.error(error);
+    toast(error.message || "Não foi possível publicar a mídia.");
+  }
+}
+
+
+function fileToDataURL(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    () => resolve(reader.result);
+
+    reader.onerror =
+    reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+/* ==========================================
+   CURTIDAS
+========================================== */
+
+async function toggleLike(postId){
+
+  const {
+    data
+  } =
+  await db
+  .from("likes")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  if(data){
+
+    await db
+    .from("likes")
+    .delete()
+    .eq("id",data.id);
+
+  }else{
+
+    await db
+    .from("likes")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
+
+  }
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
+   REPOST
+========================================== */
+
+async function toggleRepost(postId){
+
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select("id")
+  .eq("post_id",postId)
+  .eq("user_id",currentUser.id)
+  .maybeSingle();
+
+  if(data){
+
+    await db
+    .from("reposts")
+    .delete()
+    .eq("id",data.id);
+
+    toast("Repost removido.");
+
+  }else{
+
+    await db
+    .from("reposts")
+    .insert({
+      post_id:postId,
+      user_id:currentUser.id
+    });
+
+    toast("Repostado! 🔄");
+
+  }
+
+  await loadFeed();
+
+}
+
+
+/* ==========================================
+   COMENTÁRIOS
+========================================== */
+
+async function toggleComments(postId){
+
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  if(!box) return;
+
+  if(!box.classList.contains("hidden")){
+
+    box.classList.add("hidden");
+
+    return;
+
+  }
+
+  box.classList.remove("hidden");
+
+  await loadComments(
+    postId,
+    box
+  );
+
+}
+
+
+async function loadComments(postId,box){
+
+  const {
+    data
+  } =
+  await db
+  .from("comments")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name
+    )
+  `)
+  .eq("post_id",postId)
+  .order("created_at",{ascending:true});
+
+  let html = "";
+
+  for(const comment of data || []){
+
+    const name =
+    comment.profiles?.display_name ||
+    comment.profiles?.username ||
+    "Usuário";
+
+    html += `
+      <div class="comment">
+        <b>${escapeHtml(name)}</b>
+        ${escapeHtml(comment.content)}
+      </div>
+    `;
+
+  }
+
+  html += `
+
+    <form
+      class="comment-form"
+      onsubmit="addComment(event,'${postId}')"
+    >
+
+      <input
+        id="comment-${postId}"
+        placeholder="Escreva um comentário..."
+      >
+
+      <button class="primary">
+        Enviar
+      </button>
+
+    </form>
+
+  `;
+
+  box.innerHTML = html;
+
+}
+
+
+async function addComment(event,postId){
+
+  event.preventDefault();
+
+  const input =
+  document
+  .getElementById("comment-"+postId);
+
+  const content =
+  input.value.trim();
+
+  if(!content) return;
+
+  const {
+    error
+  } =
+  await db
+  .from("comments")
+  .insert({
+    post_id:postId,
+    user_id:currentUser.id,
+    content
+  });
+
+  if(error){
+
+    toast(error.message);
+
+    return;
+  }
+
+  input.value = "";
+
+  const box =
+  document
+  .getElementById("comments-"+postId);
+
+  await loadComments(
+    postId,
+    box
+  );
+
+}
+
+
+/* ==========================================
+   EDIÇÃO DO PERFIL
+========================================== */
+
+function openEditProfile(){
+
+  db.from("profiles")
+    .select("*")
+    .eq("id",currentUser.id)
+    .maybeSingle()
+    .then(({data,error})=>{
+
+      if(error || !data){
+        toast("Não foi possível abrir o perfil.");
+        return;
+      }
+
+      document.getElementById("editDisplayName").value = data.display_name || "";
+      document.getElementById("editUsername").value = data.username || "";
+      document.getElementById("editBio").value = data.bio || "";
+      document.getElementById("editBirthday").value = data.birthday || "";
+      document.getElementById("editShowBirthday").value =
+        data.show_birthday === false ? "false" : "true";
+      document.getElementById("editStatus").value = data.status || "";
+      document.getElementById("editMusicTitle").value = data.music_title || "";
+      document.getElementById("editMusicArtist").value = data.music_artist || "";
+      document.getElementById("editMusicUrl").value = data.music_url || "";
+      document.getElementById("editMusicFile").value = "";
+      document.getElementById("musicFileStatus").textContent = data.music_url ? "🎵 Já existe uma música salva. Envie outra para substituir." : "Nenhuma música interna escolhida.";
+      document.getElementById("editAvatarInput").value = "";
+      document.getElementById("editCoverInput").value = "";
+      document.getElementById("editAvatarPreview").src =
+        data.avatar_url || defaultAvatar(data.display_name);
+
+      document.getElementById("editProfileModal").classList.add("open");
+    });
+}
+
+function closeEditProfile(){
+  document.getElementById("editProfileModal").classList.remove("open");
+}
+
+async function saveProfile(){
+
+  const displayName =
+    document.getElementById("editDisplayName").value.trim();
+
+  const username =
+    document.getElementById("editUsername").value.trim()
+      .replace(/^@/,"")
+      .replace(/[^a-zA-Z0-9_.]/g,"")
+      .slice(0,30);
+
+  const bio =
+    document.getElementById("editBio").value.trim();
+
+  const birthday =
+    document.getElementById("editBirthday").value || null;
+
+  const showBirthday =
+    document.getElementById("editShowBirthday").value === "true";
+
+  const status =
+    document.getElementById("editStatus").value.trim().slice(0,60);
+
+  const musicTitle =
+    document.getElementById("editMusicTitle").value.trim();
+
+  const musicArtist =
+    document.getElementById("editMusicArtist").value.trim();
+
+  let musicUrl =
+    document.getElementById("editMusicUrl").value.trim();
+
+  const musicFile =
+    document.getElementById("editMusicFile").files[0];
+
+  const avatarFile =
+    document.getElementById("editAvatarInput").files[0];
+
+  const coverFile =
+    document.getElementById("editCoverInput").files[0];
+
+  const saveButton = document.querySelector("#editProfileModal .modal-footer .primary");
+  if(saveButton) saveButton.disabled = true;
+
+  try{
+
+    const updateData = {
+      display_name:displayName,
+      username:username,
+      bio:bio,
+      birthday:birthday,
+      show_birthday:showBirthday,
+      music_title:musicTitle,
+      music_artist:musicArtist,
+      music_url:musicUrl,
+      status:status
+    };
+
+    // Mídias e música são armazenadas no Supabase Storage.
+    // Não usamos Data URL nem o antigo limite artificial de 2 MB.
+    if(musicFile){
+      if(!musicFile.type.startsWith("audio/")){
+        throw new Error("Escolha um arquivo de áudio válido.");
+      }
+      musicUrl = await uploadMedia(musicFile,"music");
+    }
+
+    if(avatarFile){
+      updateData.avatar_url = await uploadMedia(avatarFile,"profiles");
+    }
+
+    if(coverFile){
+      updateData.cover_url = await uploadMedia(coverFile,"covers");
+    }
+
+    const {error} =
+      await db.from("profiles")
+        .update(updateData)
+        .eq("id",currentUser.id);
+
+    if(error) throw error;
+
+    closeEditProfile();
+    await loadProfile();
+
+    toast("Perfil atualizado! ✨");
+
+  }catch(error){
+
+    console.error(error);
+    toast(error.message || "Não foi possível salvar o perfil.");
+
+  }finally{
+    if(saveButton) saveButton.disabled = false;
+  }
+}
+
+
+document.getElementById("editMusicFile").addEventListener("change",function(){
+  const file = this.files[0];
+  const status = document.getElementById("musicFileStatus");
+  if(!file){
+    status.textContent = "Nenhuma música interna escolhida.";
+    return;
+  }
+  const sizeMB = file.size / (1024 * 1024);
+  status.textContent = `🎵 ${file.name} • ${sizeMB.toFixed(1)} MB • será tocada dentro do Vibra`;
+});
+
+document.getElementById("editAvatarInput").addEventListener("change",function(){
+
+  const file = this.files[0];
+
+  if(!file) return;
+
+  document.getElementById("editAvatarPreview").src =
+    URL.createObjectURL(file);
+});
+
+/* ==========================================
+   PÁGINAS
+========================================== */
+
+function showPage(page,button){
+
+  const pages = [
+    "homePage",
+    "searchPage",
+    "profilePage",
+    "repostsPage"
+  ];
+
+  pages.forEach(id=>{
+
+    document
+    .getElementById(id)
+    .classList.add("hidden");
+
+  });
+
+  const map = {
+    home:"homePage",
+    search:"searchPage",
+    profile:"profilePage",
+    reposts:"repostsPage"
+  };
+
+  document
+  .getElementById(map[page])
+  .classList.remove("hidden");
+
+  if(page === "profile"){
+
+    profileTab("posts");
+
+  }
+
+  if(page === "reposts"){
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+function profileTab(tab,button){
+
+  document
+  .querySelectorAll(".tab")
+  .forEach(x=>x.classList.remove("active"));
+
+  if(button){
+
+    button.classList.add("active");
+
+  }
+
+  if(tab === "posts"){
+
+    loadMyPosts();
+
+  }else{
+
+    loadMyReposts();
+
+  }
+
+}
+
+
+/* ==========================================
+   MEUS POSTS
+========================================== */
+
+async function loadMyPosts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("posts")
+  .select(`
+    *,
+    profiles:user_id(
+      username,
+      display_name,
+      avatar_url
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  await renderPosts(
+    data || [],
+    document.getElementById("profileContent")
+  );
+
+}
+
+
+async function loadMyReposts(){
+
+  const {
+    data
+  } =
+  await db
+  .from("reposts")
+  .select(`
+    *,
+    posts(
+      *,
+      profiles:user_id(
+        username,
+        display_name,
+        avatar_url
+      )
+    )
+  `)
+  .eq("user_id",currentUser.id)
+  .order("created_at",{ascending:false});
+
+  const posts =
+  (data || [])
+  .map(x=>x.posts)
+  .filter(Boolean);
+
+  await renderPosts(
+    posts,
+    document.getElementById("repostsContent")
+  );
+
+}
+
+
+/* ==========================================
+   BUSCA
+========================================== */
+
+async function searchEverything(){
+
+  const q =
+  document
+  .getElementById("searchInput")
+  .value.trim();
+
+  const result =
+  document
+  .getElementById("searchResults");
+
+  if(!q){
+
+    result.innerHTML = `
+      <div class="empty">
+        Pesquise por pessoas ou publicações.
+      </div>
+    `;
+
+    return;
+  }
+
+  const {
+    data:profiles
+  } =
+  await db
+  .from("profiles")
+  .select("*")
+  .or(
+    `username.ilike.%${q}%,display_name.ilike.%${q}%`
+  )
+  .limit(10);
+
+  let html = "";
+
+  for(const profile of profiles || []){
+
+    html += `
+
+      <div
+        class="card"
+        style="
+          padding:12px;
+          margin-bottom:8px;
+          display:flex;
+          align-items:center;
+          gap:10px
+        "
+      >
+
+        <div class="avatar">
+          ${
+            profile.avatar_url
+            ? `<img src="${escapeHtml(profile.avatar_url)}">`
+            : (
+              profile.display_name ||
+              profile.username ||
+              "U"
+            )[0].toUpperCase()
+          }
+        </div>
+
+        <div>
+
+          <b>
+            ${escapeHtml(
+              profile.display_name ||
+              profile.username
+            )}
+          </b>
+
+          <div class="date">
+            @${escapeHtml(profile.username || "")}
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+  result.innerHTML =
+  html ||
+  `<div class="empty">Nenhum resultado encontrado.</div>`;
+
+}
+
+
+/* ==========================================
+   TEMA
+========================================== */
+
+function toggleTheme(){
+
+  document
+  .body
+  .classList
+  .toggle("dark");
+
+  localStorage.setItem(
+    "vibra-theme",
+    document.body.classList.contains("dark")
+    ? "dark"
+    : "light"
+  );
+
+}
+
+
+function loadTheme(){
+
+  const theme =
+  localStorage.getItem("vibra-theme");
+
+  if(theme === "dark"){
+
+    document
+    .body
+    .classList
+    .add("dark");
+
+  }
+
+}
+
+
+/* ==========================================
+   SEGURANÇA HTML
+========================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
+
+loadTheme();
+
+checkSession();
+
+</script>
+
+</body>
+</html>
